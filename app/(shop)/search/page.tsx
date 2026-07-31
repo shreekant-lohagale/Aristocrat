@@ -1,0 +1,1 @@
+export default function SearchPage() { return <main className="page shell"><p className="eyebrow">Discover Mahera</p><h1>Search</h1><input className="search-input" placeholder="Search occasionwear" aria-label="Search products" /></main>; }

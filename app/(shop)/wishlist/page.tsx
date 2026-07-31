@@ -1,0 +1,1 @@
+export default function WishlistPage() { return <main className="page shell"><p className="eyebrow">Saved for later</p><h1>Your wishlist</h1><p className="lede">Keep the pieces that speak to you close.</p></main>; }
