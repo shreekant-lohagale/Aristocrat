@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { StoreProvider } from '@/context/StoreProvider';
 
 export const metadata: Metadata = {
   title: { default: 'MAHERA | Modern Indian Occasionwear', template: '%s | MAHERA' },
@@ -10,5 +11,5 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   // Browser extensions (Grammarly/form fillers) can inject attributes before React hydrates.
-  return <html lang="en" suppressHydrationWarning><body suppressHydrationWarning>{children}</body></html>;
+  return <html lang="en" suppressHydrationWarning><body suppressHydrationWarning><StoreProvider>{children}</StoreProvider></body></html>;
 }

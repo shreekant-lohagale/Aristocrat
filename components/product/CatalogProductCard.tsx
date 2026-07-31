@@ -1,0 +1,7 @@
+'use client';
+import Link from 'next/link';
+import { Eye, Heart, ShoppingBag, Star } from 'lucide-react';
+import { motion } from 'framer-motion';
+import type { CatalogProduct } from '@/types/commerce';
+import { useStore } from '@/context/StoreProvider';
+export function CatalogProductCard({ product }: { product: CatalogProduct }) { const { addToCart, formatPrice, toggleWishlist, wishlist } = useStore(); const saved = wishlist.includes(product.id); const discount = Math.round((1 - product.price / product.compareAtPrice) * 100); return <motion.article className="catalog-card" whileHover={{ y: -5 }}><div className="catalog-image"><img src={`/api/assets?file=${encodeURIComponent(product.image)}`} alt={product.title} loading="lazy" /><span className="discount-badge">{discount}% off</span><button className="heart-button" onClick={() => toggleWishlist(product.id)} aria-label="Toggle wishlist"><Heart size={18} fill={saved ? 'currentColor' : 'none'} /></button><div className="card-actions"><Link href={`/products/${product.handle}`} aria-label="Quick view"><Eye size={17} /></Link><button onClick={() => addToCart(product)} aria-label="Add to cart"><ShoppingBag size={17} /></button></div></div><div className="catalog-meta"><Link href={`/products/${product.handle}`}><h3>{product.title}</h3></Link><p className="rating"><Star size={13} fill="currentColor" /> {product.rating.toFixed(1)} <span>({product.reviewCount})</span></p><div><b>{formatPrice(product.price)}</b><s>{formatPrice(product.compareAtPrice)}</s></div></div></motion.article>; }
