@@ -3,10 +3,10 @@ import './globals.css';
 import { StoreProvider } from '@/context/StoreProvider';
 
 export const metadata: Metadata = {
-  title: { default: 'MAHERA | Modern Indian Occasionwear', template: '%s | MAHERA' },
+  title: { default: 'HOUSE OF ARISTOCRAT | Modern Indian Occasionwear', template: '%s | HOUSE OF ARISTOCRAT' },
   description: 'Contemporary Indian occasionwear designed for moments worth remembering.',
   metadataBase: new URL('https://mahera.example'),
-  openGraph: { type: 'website', title: 'MAHERA', description: 'Modern Indian occasionwear.' },
+  openGraph: { type: 'website', title: 'HOUSE OF ARISTOCRAT', description: 'Modern Indian occasionwear.' },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

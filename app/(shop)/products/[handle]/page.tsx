@@ -1,2 +1,5 @@
-import Link from 'next/link';
-export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) { const { handle } = await params; const title = handle.replaceAll('-', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase()); return <main className="product-page shell"><Link className="wordmark" href="/">MAHERA</Link><div className="product-detail"><img src="/api/images/Janvi-1.webp" alt={title} /><section><p className="eyebrow">New collection</p><h1>{title}</h1><p>₹18,900</p><hr /><p className="eyebrow">Select size</p><div className="size-row">{['XS', 'S', 'M', 'L', 'XL'].map((size) => <button key={size}>{size}</button>)}</div><button className="add-button">Add to bag</button><p className="lede">A memorable piece rendered in exceptional textiles and finished with patient artisanal detail.</p></section></div></main>; }
+import { notFound } from 'next/navigation';
+import { BackButton } from '@/components/common/BackButton';
+import { ProductDetails } from '@/components/product/ProductDetails';
+import { getCatalog, getProduct } from '@/lib/catalog/products';
+export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) { const { handle } = await params; const product = await getProduct(handle); if (!product) notFound(); const related = (await getCatalog()).filter((item) => item.category === product.category && item.id !== product.id).slice(0, 4); return <main className="product-page shell"><BackButton /><ProductDetails product={product} related={related} /></main>; }

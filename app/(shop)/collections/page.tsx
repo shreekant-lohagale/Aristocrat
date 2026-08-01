@@ -1,4 +1,4 @@
-import { FeaturedProducts } from '@/components/home/FeaturedProducts';
+import { CatalogGrid } from '@/components/collection/CatalogGrid';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-export default function CollectionsPage() { return <><Navbar /><main className="page shell"><p className="eyebrow">The Mahera edit</p><h1>Collections</h1><p className="lede">Contemporary occasionwear, designed for the moments that become memories.</p></main><FeaturedProducts /><Footer /></>; }
+export default function CollectionsPage() { return <><Navbar /><main className="collection-page shell"><section className="collection-hero"><p className="eyebrow">The House of Aristocrat edit</p><h1>Collections</h1><p className="lede">Contemporary occasionwear, designed for the moments that become memories.</p></section><aside className="filter-bar"><span>Filters</span><button>Availability</button><button>Size</button><button>Colour</button><button>Price</button></aside><CatalogGrid /></main><Footer /></>; }
