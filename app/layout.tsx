@@ -5,7 +5,7 @@ import { StoreProvider } from '@/context/StoreProvider';
 export const metadata: Metadata = {
   title: { default: 'HOUSE OF ARISTOCRAT | Modern Indian Occasionwear', template: '%s | HOUSE OF ARISTOCRAT' },
   description: 'Contemporary Indian occasionwear designed for moments worth remembering.',
-  metadataBase: new URL('https://mahera.example'),
+  metadataBase: new URL('https://houseofaristocrat.example'),
   openGraph: { type: 'website', title: 'HOUSE OF ARISTOCRAT', description: 'Modern Indian occasionwear.' },
 };
 

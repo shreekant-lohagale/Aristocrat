@@ -1,28 +1,24 @@
 import { readdir } from 'node:fs/promises';
-import { join, relative } from 'node:path';
+import { join } from 'node:path';
 import { cache } from 'react';
 import type { CatalogProduct } from '@/types/commerce';
 
-const root = join(process.cwd(), 'files', 'women fashion');
-const categories = ['Sarees', 'Suits', 'Kurtis', 'Dresses', 'Lehengas', 'Indo-Western', 'Co-ord Sets', 'Jewellery', 'Bags'];
-const names: Record<string, string[]> = {
-  Sarees: ['Banarasi Silk Saree', 'Handwoven Ikat Saree', 'Pichwai Printed Saree', 'Festive Bandhani Saree'],
-  Suits: ['Embroidered Anarkali Suit', 'Velvet Occasion Suit', 'Mirrorwork Salwar Set'],
-  Kurtis: ['Cotton Embroidered Kurti', 'Floral Straight Kurti', 'Festive A-line Kurta'],
-  Dresses: ['Celeste Evening Dress', 'Satin Occasion Dress', 'Embellished Party Dress'],
-  Lehengas: ['Zari Embroidered Lehenga', 'Rose Garden Lehenga Set', 'Silk Celebration Lehenga'],
-  'Indo-Western': ['Drape Detail Indo-Western Set', 'Contemporary Cape Set', 'Modern Festive Gown'],
-  'Co-ord Sets': ['Tailored Co-ord Set', 'Printed Resort Co-ord', 'Embroidered Two Piece Set'],
-  Jewellery: ['Kundan Statement Set', 'Pearl Drop Earrings', 'Polki Celebration Set'],
-  Bags: ['Embroidered Potli Bag', 'Crystal Evening Clutch', 'Mini Occasion Bag'],
-};
-
-async function files(directory: string): Promise<string[]> { const entries = await readdir(directory, { withFileTypes: true }); const nested = await Promise.all(entries.map((entry) => entry.isDirectory() ? files(join(directory, entry.name)) : /\.(jpe?g|png|webp)$/i.test(entry.name) ? [join(directory, entry.name)] : [])); return nested.flat(); }
-function categoryFor(path: string, index: number) { const source = path.toLowerCase(); if (source.includes('saree') || source.includes('banarasi') || source.includes('ikat') || source.includes('bandhani') || source.includes('pichwai')) return 'Sarees'; if (source.includes('suit') || source.includes('anarkali') || source.includes('salwar')) return 'Suits'; if (source.includes('kurta')) return 'Kurtis'; if (source.includes('lehenga')) return 'Lehengas'; if (source.includes('bag') || source.includes('clutch')) return 'Bags'; return categories[index % categories.length]; }
+const root = join(process.cwd(), 'files');
+const productSeed = [
+  ['02_blue_patchwork_kurta.png', 'Kurtis', 'Blue Patchwork Kurta', 4490, 5990, 4.9, 'Cobalt', 'Cotton blend'],
+  ['03_white_embroidered_kurta.png', 'Kurtis', 'White Embroidered Kurta', 4290, 5490, 4.8, 'Ivory', 'Cotton silk'],
+  ['04_magenta_kurta_set.png', 'Kurtis', 'Magenta Kurta Set', 5990, 7590, 4.9, 'Magenta', 'Viscose silk'],
+  ['05_slate_ruffled_kurta.png', 'Kurtis', 'Slate Ruffled Kurta', 4790, 6290, 4.7, 'Slate', 'Premium rayon'],
+  ['06_turquoise_ruffled_kurta.png', 'Kurtis', 'Turquoise Ruffled Kurta', 4890, 6490, 4.8, 'Turquoise', 'Cotton blend'],
+  ['07_black_floral_kurta.png', 'Kurtis', 'Black Floral Kurta', 4590, 5890, 4.7, 'Black', 'Printed viscose'],
+  ['01_black_sleeveless_maxi.png', 'Dresses', 'Black Sleeveless Maxi', 6990, 8990, 4.9, 'Black', 'Satin crepe'],
+  ['03_black_polka_red_new_model.png', 'Dresses', 'Black Polka Occasion Dress', 6490, 8290, 4.6, 'Black', 'Printed georgette'],
+  ['09_black_maxi_high_res.png', 'Dresses', 'Black Maxi', 7490, 9490, 4.8, 'Black', 'Fluid satin'],
+  ['04_red_green_stylish.png', 'Indo-Western', 'Red Green Stylish Set', 8490, 10990, 4.9, 'Red green', 'Embroidered silk blend'],
+  ['02_black_printed_new_model.png', 'Indo-Western', 'Black Printed Indo-Western', 7290, 9290, 4.7, 'Black', 'Printed crepe'],
+  ['08_blue_patchwork_high_res.png', 'Indo-Western', 'Blue Patchwork High Resolution', 7790, 9990, 4.8, 'Blue', 'Textured cotton'],
+] as const;
 function slug(value: string) { return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
-
-export const getCatalog = cache(async (): Promise<CatalogProduct[]> => {
-  const imageFiles = await files(root);
-  return imageFiles.map((file, index) => { const category = categoryFor(file, index); const variants = names[category] ?? names.Dresses; const title = variants[index % variants.length]; const price = 3900 + ((index * 1375) % 19800); const discount = index % 3 === 0 ? 0.24 : index % 5 === 0 ? 0.16 : 0.1; const relativePath = relative(join(process.cwd(), 'files'), file).replaceAll('\\', '/'); return { id: `mahera-${index + 1}`, handle: `${slug(title)}-${index + 1}`, title, category, image: relativePath, images: [relativePath], price, compareAtPrice: Math.round(price / (1 - discount)), rating: 4.3 + ((index % 7) / 10), reviewCount: 12 + ((index * 11) % 180), colors: ['Ivory', 'Rose', 'Midnight'], sizes: ['XS', 'S', 'M', 'L', 'XL'], fabric: category === 'Sarees' ? 'Silk blend' : 'Premium artisan textile', inStock: index % 13 !== 0, isNew: index % 4 === 0, isBestSeller: index % 5 === 0 }; });
-});
+export const activeCollections = ['New Arrivals', 'Kurtis', 'Dresses', 'Indo-Western', 'Best Sellers', 'Sale'] as const;
+export const getCatalog = cache(async (): Promise<CatalogProduct[]> => { const available = new Set(await readdir(root)); return productSeed.filter(([file]) => available.has(file)).map(([file, category, title, price, compareAtPrice, rating, color, fabric], index) => ({ id: `aristocrat-${index + 1}`, handle: `${slug(title)}-${index + 1}`, title, category, image: file, images: [file], price, compareAtPrice, rating, reviewCount: 24 + index * 13, colors: [color, 'Ivory', 'Navy'], sizes: ['XS', 'S', 'M', 'L', 'XL'], fabric, inStock: true, isNew: true, isBestSeller: rating >= 4.8 })); });
 export const getProduct = cache(async (handle: string) => (await getCatalog()).find((product) => product.handle === handle));

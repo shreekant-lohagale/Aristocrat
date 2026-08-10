@@ -1,6 +1,3 @@
 import type { MetadataRoute } from 'next';
-
-export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://mahera.example';
-  return ['', 'collections', 'about', 'contact', 'faq', 'size-guide', 'shipping', 'returns'].map((path) => ({ url: `${base}/${path}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: path === '' ? 1 : 0.7 }));
-}
+import { activeCollections } from '@/lib/catalog/products';
+export default function sitemap(): MetadataRoute.Sitemap { const base = 'https://houseofaristocrat.example'; const staticPages = ['', 'collections', 'search', 'wishlist', 'account']; const collectionPages = activeCollections.map((collection) => `collections/${collection.toLowerCase().replaceAll(' ', '-')}`); return [...staticPages, ...collectionPages].map((path) => ({ url: `${base}/${path}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: path === '' ? 1 : 0.7 })); }
