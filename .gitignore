@@ -8,6 +8,8 @@ out/
 .env.local
 .env*.local
 !.env.example
+.env.*
+client_secret_*.json
 
 # logs and editor files
 *.log

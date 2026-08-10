@@ -2,6 +2,7 @@
 import { join } from 'node:path';
 import { cache } from 'react';
 import type { CatalogProduct } from '@/types/commerce';
+import { collectionNames } from '@/lib/catalog/collections';
 
 const root = join(process.cwd(), 'files');
 const productSeed = [
@@ -19,6 +20,6 @@ const productSeed = [
   ['08_blue_patchwork_high_res.png', 'Indo-Western', 'Blue Patchwork High Resolution', 7790, 9990, 4.8, 'Blue', 'Textured cotton'],
 ] as const;
 function slug(value: string) { return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
-export const activeCollections = ['New Arrivals', 'Kurtis', 'Dresses', 'Indo-Western', 'Best Sellers', 'Sale'] as const;
+export const activeCollections = collectionNames;
 export const getCatalog = cache(async (): Promise<CatalogProduct[]> => { const available = new Set(await readdir(root)); return productSeed.filter(([file]) => available.has(file)).map(([file, category, title, price, compareAtPrice, rating, color, fabric], index) => ({ id: `aristocrat-${index + 1}`, handle: `${slug(title)}-${index + 1}`, title, category, image: file, images: [file], price, compareAtPrice, rating, reviewCount: 24 + index * 13, colors: [color, 'Ivory', 'Navy'], sizes: ['XS', 'S', 'M', 'L', 'XL'], fabric, inStock: true, isNew: true, isBestSeller: rating >= 4.8 })); });
 export const getProduct = cache(async (handle: string) => (await getCatalog()).find((product) => product.handle === handle));

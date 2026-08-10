@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { CatalogProduct } from '@/types/commerce';
 import { CatalogProductCard } from '@/components/product/CatalogProductCard';
+import { isSpecialCollection, normalizeCollectionHandle } from '@/lib/catalog/collections';
 
 const pageSize = 8;
 const sortOptions = [
@@ -62,15 +63,16 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
   const sizes = [...new Set(products.flatMap((product) => product.sizes))];
 
   const filtered = useMemo(() => {
-    let list = collection && !['New Arrivals', 'Best Sellers', 'Sale'].includes(collection)
-      ? products.filter((product) => product.category === collection)
-      : collection === 'Best Sellers'
+    const collectionHandle = collection ? normalizeCollectionHandle(collection) : '';
+    let list = collection && !isSpecialCollection(collection)
+      ? products.filter((product) => normalizeCollectionHandle(product.category) === collectionHandle)
+      : collectionHandle === 'best-sellers'
         ? products.filter((product) => product.isBestSeller)
-        : collection === 'Sale'
+        : collectionHandle === 'sale'
           ? products.filter((product) => product.compareAtPrice > product.price)
           : products;
 
-    if (values.category) list = list.filter((product) => product.category === values.category);
+    if (values.category) list = list.filter((product) => normalizeCollectionHandle(product.category) === normalizeCollectionHandle(values.category));
     if (values.size) list = list.filter((product) => product.sizes.includes(values.size));
     if (values.color) list = list.filter((product) => product.colors.includes(values.color));
     if (values.availability) list = list.filter((product) => values.availability === 'in-stock' ? product.inStock : !product.inStock);
@@ -172,6 +174,7 @@ function Filter({ label, value, options, onChange, defaultOpen }: { label: strin
     })}</div>
   </details>;
 }
+
 
 
 

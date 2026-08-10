@@ -2,6 +2,7 @@
 import './globals.css';
 import { StoreProvider } from '@/context/StoreProvider';
 import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider';
+import { AuthSessionProvider } from '@/components/providers/AuthSessionProvider';
 
 export const metadata: Metadata = {
   title: { default: 'HOUSE OF ARISTOCRAT | Modern Indian Occasionwear', template: '%s | HOUSE OF ARISTOCRAT' },
@@ -11,6 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  // Browser extensions (Grammarly/form fillers) can inject attributes before React hydrates.
-  return <html lang="en" suppressHydrationWarning><body suppressHydrationWarning><SmoothScrollProvider><StoreProvider>{children}</StoreProvider></SmoothScrollProvider></body></html>;
+  return <html lang="en" suppressHydrationWarning><body suppressHydrationWarning><SmoothScrollProvider><AuthSessionProvider><StoreProvider>{children}</StoreProvider></AuthSessionProvider></SmoothScrollProvider></body></html>;
 }

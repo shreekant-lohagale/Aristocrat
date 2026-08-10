@@ -1,14 +1,20 @@
-'use client';
+﻿'use client';
+
 import Link from 'next/link';
 import { Heart, Menu, Search, ShoppingBag, UserRound, X } from 'lucide-react';
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { useStore } from '@/context/StoreProvider';
 import { CartDrawer } from '@/components/cart/CartDrawer';
+import { collectionDefinitions } from '@/lib/catalog/collections';
 import { CountrySelector } from './CountrySelector';
 import { AnnouncementBar } from './AnnouncementBar';
 
-const menuItems = ['New Arrivals', 'Kurtis', 'Dresses', 'Indo-Western', 'Best Sellers', 'Sale'];
 export function Navbar() {
-  const [open, setOpen] = useState(false); const [cartOpen, setCartOpen] = useState(false); const { cartCount, wishlist } = useStore();
-  return <><AnnouncementBar /><header className="navbar shell"><button suppressHydrationWarning className="icon-button nav-menu" onClick={() => setOpen(true)} aria-label="Open navigation"><Menu size={21} /></button><nav className="desktop-nav">{['New Arrivals', 'Collections', 'The maison'].map((item) => <Link key={item} href={item === 'Collections' ? '/collections' : item === 'New Arrivals' ? '/collections/new-arrivals' : '/#story'}>{item}</Link>)}</nav><Link className="wordmark" href="/">HOUSE OF ARISTOCRAT</Link><div className="nav-actions"><CountrySelector /><Link className="desktop-only nav-icon" href="/search" aria-label="Search"><Search size={19} /></Link><Link className="nav-icon" href="/wishlist" aria-label="Wishlist"><Heart size={19} /><span>{wishlist.length}</span></Link><Link className="desktop-only nav-icon" href="/account" aria-label="Account"><UserRound size={19} /></Link><button suppressHydrationWarning className="nav-icon cart-trigger" onClick={() => setCartOpen(true)} aria-label="Shopping bag"><ShoppingBag size={19} /><span>{cartCount}</span></button></div></header>{open && <aside className="mobile-menu" aria-label="Mobile navigation"><button suppressHydrationWarning className="icon-button menu-close" onClick={() => setOpen(false)} aria-label="Close navigation"><X /></button><p className="wordmark">HOUSE OF ARISTOCRAT</p>{menuItems.map((item) => <Link key={item} href={`/collections/${item.toLowerCase().replaceAll(' ', '-')}`} onClick={() => setOpen(false)}>{item}</Link>)}</aside>}<CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} /></>;
+  const [open, setOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const { cartCount, wishlist } = useStore();
+  const { data: session } = useSession();
+
+  return <><AnnouncementBar /><header className="navbar shell"><button suppressHydrationWarning className="icon-button nav-menu" onClick={() => setOpen(true)} aria-label="Open navigation"><Menu size={21} /></button><nav className="desktop-nav">{['New Arrivals', 'Collections', 'The maison'].map((item) => <Link key={item} href={item === 'Collections' ? '/collections' : item === 'New Arrivals' ? '/collections/new-arrivals' : '/#story'}>{item}</Link>)}</nav><Link className="wordmark" href="/">HOUSE OF ARISTOCRAT</Link><div className="nav-actions"><CountrySelector /><Link className="desktop-only nav-icon" href="/search" aria-label="Search"><Search size={19} /></Link><Link className="nav-icon" href="/wishlist" aria-label="Wishlist"><Heart size={19} /><span>{wishlist.length}</span></Link><Link className="desktop-only nav-icon" href={session?.user ? '/account' : '/account/login'} aria-label="Account"><UserRound size={19} /></Link><button suppressHydrationWarning className="nav-icon cart-trigger" onClick={() => setCartOpen(true)} aria-label="Shopping bag"><ShoppingBag size={19} /><span>{cartCount}</span></button></div></header>{open && <aside className="mobile-menu" aria-label="Mobile navigation"><button suppressHydrationWarning className="icon-button menu-close" onClick={() => setOpen(false)} aria-label="Close navigation"><X /></button><p className="wordmark">HOUSE OF ARISTOCRAT</p>{collectionDefinitions.map((collection) => <Link key={collection.handle} href={`/collections/${collection.handle}`} onClick={() => setOpen(false)}>{collection.name}</Link>)}</aside>}<CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} /></>;
 }
