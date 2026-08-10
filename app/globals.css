@@ -137,3 +137,532 @@ body { overflow-x: hidden; }
 /* Hero composition tightening: larger, more central model without changing the design system */
 @media(min-width:1025px){.hero.hero-editorial .hero-editorial-visual{right:3%;width:48%}.hero.hero-editorial .hero-model{right:14%;height:98%}.hero.hero-editorial .hero-editorial-copy{left:clamp(52px,7.6vw,136px)}}
 @media(min-width:769px) and (max-width:1024px){.hero.hero-editorial .hero-editorial-visual{width:49%;right:1%}.hero.hero-editorial .hero-model{right:11%;height:94%}}
+
+/* Featured collections — editorial campaign tiles */
+.featured-collections {
+  background: #F8F5EF;
+  padding: clamp(84px, 8vw, 116px) 0 clamp(92px, 9vw, 128px);
+}
+
+.featured-collections__inner {
+  width: min(100%, 1500px);
+  margin: 0 auto;
+  padding: 0 clamp(24px, 4vw, 64px);
+}
+
+.featured-collections__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: clamp(30px, 3.25vw, 48px);
+}
+
+.featured-collections__eyebrow {
+  margin: 0 0 11px;
+  color: #D4AF37;
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.featured-collections__header h2 {
+  margin: 0;
+  color: #173B63;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(40px, 4.2vw, 62px);
+  font-weight: 400;
+  letter-spacing: -.035em;
+  line-height: .98;
+}
+
+.featured-collections__all {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  padding: 0 0 6px;
+  border-bottom: 1px solid #D4AF37;
+  color: #173B63;
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  transition: color .25s ease, border-color .25s ease;
+}
+
+.featured-collections__all svg {
+  transition: transform .25s ease;
+}
+
+.featured-collections__all:hover {
+  border-color: #173B63;
+  color: #D4AF37;
+}
+
+.featured-collections__all:hover svg {
+  transform: translate(2px, -2px);
+}
+
+.featured-collections__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  grid-template-rows: repeat(2, minmax(280px, 1fr));
+  min-height: clamp(590px, 48vw, 730px);
+  gap: 14px;
+}
+
+.featured-collection-tile {
+  position: relative;
+  display: block;
+  min-height: 0;
+  overflow: hidden;
+  background: #E4D9C8;
+  isolation: isolate;
+}
+
+.featured-collection-tile--kurtis {
+  grid-row: span 2;
+}
+
+.featured-collection-tile__image {
+  z-index: -2;
+  object-fit: cover;
+  transition: transform 750ms cubic-bezier(.2, .72, .2, 1);
+}
+
+.featured-collection-tile--kurtis .featured-collection-tile__image {
+  object-position: center 28%;
+}
+
+.featured-collection-tile--dresses .featured-collection-tile__image {
+  object-position: center 22%;
+}
+
+.featured-collection-tile--indo .featured-collection-tile__image {
+  object-position: center 20%;
+}
+
+.featured-collection-tile__shade {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(23 59 99 / 0%) 34%, rgb(8 26 46 / 76%) 100%);
+  transition: background-color 450ms ease;
+}
+
+.featured-collection-tile__content {
+  position: absolute;
+  right: clamp(22px, 3vw, 42px);
+  bottom: clamp(24px, 3vw, 42px);
+  left: clamp(22px, 3vw, 42px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: #F8F5EF;
+}
+
+.featured-collection-tile__line {
+  width: 35px;
+  height: 1px;
+  margin-bottom: 15px;
+  background: #D4AF37;
+  transform-origin: left;
+  transition: width 450ms ease;
+}
+
+.featured-collection-tile strong {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(31px, 3vw, 48px);
+  font-weight: 400;
+  letter-spacing: -.035em;
+  line-height: 1;
+  transition: transform 450ms cubic-bezier(.2, .72, .2, 1);
+}
+
+.featured-collection-tile__explore {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 13px;
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.featured-collection-tile__explore svg {
+  transition: transform 350ms ease;
+}
+
+.featured-collection-tile:hover .featured-collection-tile__image {
+  transform: scale(1.045);
+}
+
+.featured-collection-tile:hover .featured-collection-tile__shade {
+  background-color: rgb(7 23 42 / 16%);
+}
+
+.featured-collection-tile:hover .featured-collection-tile__line {
+  width: 54px;
+}
+
+.featured-collection-tile:hover strong {
+  transform: translateY(-4px);
+}
+
+.featured-collection-tile:hover .featured-collection-tile__explore svg {
+  transform: translateX(5px);
+}
+
+.featured-collection-tile:focus-visible,
+.featured-collections__all:focus-visible {
+  outline: 2px solid #D4AF37;
+  outline-offset: 4px;
+}
+
+@media (max-width: 900px) {
+  .featured-collections__grid {
+    grid-template-columns: minmax(0, 1.45fr) minmax(240px, 1fr);
+    min-height: 560px;
+    gap: 11px;
+  }
+
+  .featured-collection-tile__content {
+    right: 24px;
+    bottom: 25px;
+    left: 24px;
+  }
+}
+
+@media (max-width: 680px) {
+  .featured-collections {
+    padding: 72px 0 80px;
+  }
+
+  .featured-collections__inner {
+    padding: 0 18px;
+  }
+
+  .featured-collections__header {
+    align-items: flex-start;
+    margin-bottom: 27px;
+  }
+
+  .featured-collections__header h2 {
+    font-size: clamp(37px, 11vw, 49px);
+  }
+
+  .featured-collections__all {
+    margin-top: 21px;
+    font-size: 9px;
+  }
+
+  .featured-collections__grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    min-height: 0;
+    gap: 11px;
+  }
+
+  .featured-collection-tile,
+  .featured-collection-tile--kurtis {
+    grid-row: auto;
+    min-height: min(126vw, 560px);
+  }
+
+  .featured-collection-tile--dresses,
+  .featured-collection-tile--indo {
+    min-height: min(98vw, 440px);
+  }
+
+  .featured-collection-tile__content {
+    right: 22px;
+    bottom: 24px;
+    left: 22px;
+  }
+
+  .featured-collection-tile strong {
+    font-size: 37px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featured-collection-tile,
+  .featured-collection-tile *,
+  .featured-collections__all,
+  .featured-collections__all * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Featured collections refinement: tighter transition and consistent editorial overlays */
+.intro + .featured-collections {
+  margin-top: -120px;
+  padding-top: clamp(78px, 6vw, 90px);
+}
+
+.featured-collections__header {
+  align-items: flex-end;
+  margin-bottom: clamp(28px, 2.7vw, 40px);
+}
+
+.featured-collections__header > div {
+  display: grid;
+  gap: 0;
+}
+
+.featured-collections__all {
+  align-self: flex-end;
+  margin-bottom: 5px;
+}
+
+.featured-collections__grid {
+  grid-template-columns: minmax(0, 1.94fr) minmax(280px, 1fr);
+  gap: 13px;
+}
+
+.featured-collection-tile--kurtis .featured-collection-tile__image {
+  object-position: center 17%;
+}
+
+.featured-collection-tile--dresses .featured-collection-tile__image {
+  object-position: center 16%;
+}
+
+.featured-collection-tile--indo .featured-collection-tile__image {
+  object-position: center 14%;
+}
+
+.featured-collection-tile__shade {
+  background: linear-gradient(180deg, transparent 35%, rgb(9 28 45 / 12%) 62%, rgb(9 28 45 / 65%) 100%);
+}
+
+.featured-collection-tile__content {
+  right: clamp(23px, 2.7vw, 38px);
+  bottom: clamp(23px, 2.7vw, 38px);
+  left: clamp(23px, 2.7vw, 38px);
+}
+
+.featured-collection-tile__line {
+  width: 36px;
+  margin-bottom: 14px;
+}
+
+.featured-collection-tile strong {
+  transform: translateY(0);
+}
+
+.featured-collection-tile:hover .featured-collection-tile__image {
+  transform: scale(1.03);
+}
+
+.featured-collection-tile:hover .featured-collection-tile__shade {
+  background-color: rgb(9 28 45 / 10%);
+}
+
+.featured-collection-tile:hover strong {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .intro + .featured-collections {
+    margin-top: -72px;
+    padding-top: 76px;
+  }
+
+  .featured-collections__grid {
+    grid-template-columns: minmax(0, 1.7fr) minmax(230px, 1fr);
+    gap: 12px;
+  }
+
+  .featured-collection-tile--kurtis .featured-collection-tile__image {
+    object-position: center 15%;
+  }
+
+  .featured-collection-tile--dresses .featured-collection-tile__image,
+  .featured-collection-tile--indo .featured-collection-tile__image {
+    object-position: center 12%;
+  }
+}
+
+@media (max-width: 680px) {
+  .intro + .featured-collections {
+    margin-top: -72px;
+    padding-top: 72px;
+  }
+
+  .featured-collections__header {
+    align-items: flex-end;
+  }
+
+  .featured-collections__all {
+    margin-bottom: 4px;
+  }
+
+  .featured-collections__grid {
+    gap: 12px;
+  }
+
+  .featured-collection-tile--kurtis .featured-collection-tile__image,
+  .featured-collection-tile--dresses .featured-collection-tile__image,
+  .featured-collection-tile--indo .featured-collection-tile__image {
+    object-position: center 14%;
+  }
+}
+
+/* Hero mobile correction — a dedicated copy-first editorial composition */
+@media (max-width: 768px) {
+  .hero.hero-editorial {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, #173B63 0%, #315c7e 45%, #7f9caf 67%, #d9e4e8 84%, #F8F5EF 100%);
+  }
+
+  .hero.hero-editorial:before {
+    background: radial-gradient(ellipse at 55% 86%, rgb(248 245 239 / 52%) 0%, transparent 42%);
+  }
+
+  .hero.hero-editorial .hero-editorial-overlay {
+    z-index: 1;
+    background: linear-gradient(180deg, rgb(10 37 66 / 18%) 0%, transparent 43%);
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .hero.hero-editorial .hero-editorial-copy {
+    position: relative;
+    z-index: 3;
+    top: auto;
+    left: auto;
+    order: 1;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 52px 24px 24px;
+    transform: none !important;
+  }
+
+  .hero.hero-editorial .hero-label {
+    margin-bottom: 15px;
+    font-size: 10px;
+    letter-spacing: .22em;
+  }
+
+  .hero.hero-editorial .hero-title {
+    max-width: 8ch;
+    margin: 0;
+    font-size: clamp(46px, 13vw, 55px);
+    line-height: .94;
+    letter-spacing: -.04em;
+  }
+
+  .hero.hero-editorial .hero-description {
+    width: 100%;
+    max-width: 340px;
+    margin: 18px 0 24px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .hero.hero-editorial .hero-editorial-actions {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+    margin: 0;
+  }
+
+  .hero.hero-editorial .hero-shop-button {
+    width: auto;
+    min-height: 48px;
+    padding: 0 22px;
+  }
+
+  .hero.hero-editorial .hero-best-link {
+    padding-bottom: 3px;
+  }
+
+  .hero.hero-editorial .hero-editorial-visual {
+    position: relative;
+    z-index: 2;
+    right: auto;
+    bottom: auto;
+    order: 2;
+    display: block;
+    width: 100%;
+    height: clamp(420px, 52vh, 500px);
+    min-height: 420px;
+    margin-top: 8px;
+    flex: none;
+    overflow: visible;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .hero.hero-editorial .hero-model-glow {
+    right: 50%;
+    bottom: 4%;
+    width: 86%;
+    height: 70%;
+    transform: translateX(50%);
+  }
+
+  .hero.hero-editorial .hero-model {
+    position: absolute;
+    z-index: 2;
+    right: auto !important;
+    bottom: 0;
+    left: 50%;
+    display: block;
+    width: auto !important;
+    height: 100% !important;
+    max-width: none !important;
+    overflow: visible;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .hero.hero-editorial .hero-model-blur,
+  .hero.hero-editorial .hero-model-main {
+    display: block !important;
+    object-fit: contain !important;
+    object-position: bottom center !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .hero.hero-editorial .hero-model-blur {
+    opacity: .28 !important;
+    filter: blur(22px);
+    transform: scale(1.035);
+  }
+}
+
+@media (max-width: 390px) {
+  .hero.hero-editorial .hero-editorial-copy {
+    padding: 48px 22px 22px;
+  }
+
+  .hero.hero-editorial .hero-title {
+    font-size: clamp(45px, 12.7vw, 50px);
+  }
+
+  .hero.hero-editorial .hero-description {
+    max-width: 326px;
+    font-size: 14px;
+  }
+
+  .hero.hero-editorial .hero-editorial-visual {
+    height: 420px;
+    min-height: 420px;
+  }
+}
