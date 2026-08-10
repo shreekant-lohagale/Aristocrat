@@ -1,4 +1,4 @@
-import { readdir } from 'node:fs/promises';
+﻿import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { cache } from 'react';
 import type { CatalogProduct } from '@/types/commerce';
