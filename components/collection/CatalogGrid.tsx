@@ -123,7 +123,7 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
       {drawerOpen && (
         <div className="mobile-filter-sheet" role="dialog" aria-modal="true" aria-label="Filters">
           <button className="mobile-filter-sheet__scrim" aria-label="Close filters" onClick={() => setDrawerOpen(false)} />
-          <div className="mobile-filter-sheet__panel">
+          <div className="mobile-filter-sheet__panel" data-lenis-prevent>
             <header>
               <div><p>Refine the edit</p><h3>Filters</h3></div>
               <button type="button" aria-label="Close filters" onClick={() => setDrawerOpen(false)}><X size={20} /></button>
@@ -172,6 +172,7 @@ function Filter({ label, value, options, onChange, defaultOpen }: { label: strin
     })}</div>
   </details>;
 }
+
 
 
 
