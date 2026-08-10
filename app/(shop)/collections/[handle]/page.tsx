@@ -16,6 +16,5 @@ export default async function CollectionPage({ params }: { params: Promise<{ han
   const { handle } = await params;
   const collection = getCollectionByHandle(handle);
   if (!collection) notFound();
-
-  return <main className="collection-page shell"><BackButton /><section className="collection-hero"><p className="eyebrow">House of Aristocrat</p><h1>{collection.name}</h1><p className="lede">{descriptions[collection.handle]}</p></section><CatalogGrid collection={collection.handle} /></main>;
+  return <main className="collection-page shell"><BackButton href="/collections" label="Back to Collections" /><section className="collection-hero"><p className="eyebrow">House of Aristocrat</p><h1>{collection.name}</h1><p className="lede">{descriptions[collection.handle]}</p></section><CatalogGrid collection={collection.handle} /></main>;
 }

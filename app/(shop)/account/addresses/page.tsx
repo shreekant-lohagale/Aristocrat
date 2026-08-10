@@ -1,9 +1,9 @@
-﻿import { redirect } from 'next/navigation';
-import { auth } from '@/auth';
-import { BackButton } from '@/components/common/BackButton';
+﻿import { requireAccountUser } from '@/lib/auth/account';
+import { AccountShell } from '@/components/account/AccountShell';
+import { AccountHeader } from '@/components/account/AccountHeader';
+import { AddressManager } from '@/components/account/AddressManager';
 
 export default async function AddressesPage() {
-  const session = await auth();
-  if (!session?.user) redirect('/account/login');
-  return <main className="page shell account-page"><BackButton /><p className="eyebrow search-kicker">Your account</p><h1>Addresses</h1><section className="account-panel"><p>Saved delivery addresses will be available once Shopify customer accounts are connected.</p></section></main>;
+  const user = await requireAccountUser();
+  return <AccountShell user={user}><AccountHeader title="Saved Addresses">Addresses are stored locally on this device until Shopify customer addresses are connected.</AccountHeader><AddressManager /></AccountShell>;
 }

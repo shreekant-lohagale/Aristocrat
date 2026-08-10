@@ -1,4 +1,12 @@
-'use client';
+﻿import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-export function BackButton() { const router = useRouter(); return <button className="back-button" onClick={() => window.history.length > 1 ? router.back() : router.push('/')}><ArrowLeft size={16} /> Back</button>; }
+
+type BackButtonProps = {
+  href?: string;
+  label?: string;
+  className?: string;
+};
+
+export function BackButton({ href = '/', label = 'Back to Home', className = '' }: BackButtonProps) {
+  return <Link href={href} className={`back-button ${className}`.trim()} aria-label={label}><ArrowLeft size={17} aria-hidden="true" /><span>{label}</span></Link>;
+}
