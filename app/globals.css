@@ -666,3 +666,113 @@ body { overflow-x: hidden; }
     min-height: 420px;
   }
 }
+
+/* Featured collections mobile correction — reset editorial grid to full-width campaign cards */
+@media (max-width: 768px) {
+  .featured-collections {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .featured-collections__inner {
+    width: 100%;
+    max-width: 100%;
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .featured-collections__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 100%;
+    gap: 16px;
+  }
+
+  .featured-collections__header h2 {
+    max-width: min(68vw, 260px);
+    font-size: clamp(36px, 10vw, 44px);
+    line-height: .96;
+  }
+
+  .featured-collections__all {
+    flex: 0 0 auto;
+    margin: 0 0 4px;
+    white-space: nowrap;
+  }
+
+  .featured-collections__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 0;
+    gap: 14px;
+  }
+
+  .featured-collection-tile,
+  .featured-collection-tile--kurtis,
+  .featured-collection-tile--dresses,
+  .featured-collection-tile--indo {
+    position: relative;
+    grid-column: auto;
+    grid-row: auto;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    height: clamp(420px, 125vw, 560px);
+    min-height: 0;
+    aspect-ratio: 4 / 5;
+  }
+
+  .featured-collection-tile__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .featured-collection-tile--kurtis .featured-collection-tile__image {
+    object-position: center 16%;
+  }
+
+  .featured-collection-tile--dresses .featured-collection-tile__image {
+    object-position: center 15%;
+  }
+
+  .featured-collection-tile--indo .featured-collection-tile__image {
+    object-position: center 14%;
+  }
+
+  .featured-collection-tile__content {
+    right: 22px;
+    bottom: 22px;
+    left: 22px;
+    width: auto;
+    max-width: calc(100% - 44px);
+    padding: 0;
+  }
+
+  .featured-collection-tile__line {
+    margin-bottom: 13px;
+  }
+
+  .featured-collection-tile strong {
+    max-width: 100%;
+    overflow-wrap: normal;
+    word-break: normal;
+    white-space: normal;
+    font-size: clamp(30px, 9vw, 42px);
+    line-height: .95;
+  }
+
+  .featured-collection-tile__explore {
+    max-width: 100%;
+    font-size: 9px;
+    letter-spacing: .12em;
+    white-space: nowrap;
+  }
+}
