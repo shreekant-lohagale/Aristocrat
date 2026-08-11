@@ -1,0 +1,7 @@
+﻿import { NextResponse } from 'next/server';
+import { prepareShopifyCheckout } from '@/lib/shopify/cart';
+import type { CheckoutLineInput } from '@/types/checkout';
+
+function isCheckoutLine(value: unknown): value is CheckoutLineInput { if (!value || typeof value !== 'object') return false; const line = value as Record<string, unknown>; return typeof line.handle === 'string' && typeof line.quantity === 'number' && (line.size === undefined || typeof line.size === 'string') && (line.color === undefined || typeof line.color === 'string'); }
+
+export async function POST(request: Request) { try { const body = await request.json() as { lines?: unknown; mode?: unknown }; if (!Array.isArray(body.lines) || !body.lines.every(isCheckoutLine)) return NextResponse.json({ error: 'Your bag could not be prepared for checkout.' }, { status: 400 }); const cart = await prepareShopifyCheckout(body.lines, body.mode === 'buy-now' ? 'buy-now' : 'cart'); if (!cart.totalQuantity || !cart.checkoutUrl) return NextResponse.json({ error: 'Checkout is temporarily unavailable. Please try again.' }, { status: 422 }); return NextResponse.json({ checkoutUrl: cart.checkoutUrl }); } catch (error) { console.error('Shopify checkout preparation failed.', error); const message = error instanceof Error && error.message === 'Your bag is empty.' ? error.message : 'Checkout is temporarily unavailable. Please try again.'; return NextResponse.json({ error: message }, { status: 503 }); } }
