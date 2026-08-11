@@ -1,1 +1,2 @@
-export { storefront } from '@/shopify/storefront';
+﻿export { shopifyFetch } from './shopify';
+export { hasShopifyStorefrontConfig, storefrontApiVersion } from './config';

@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test:shopify": "node --env-file=.env.local scripts/test-shopify-connection.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -33,3 +34,4 @@
     "typescript": "^5.7.2"
   }
 }
+
