@@ -1,0 +1,3 @@
+﻿import { NextResponse } from 'next/server';
+import { createCustomerAuthorizationUrl, hasCustomerAccountConfig } from '@/lib/shopify/customer-auth';
+export async function GET() { if (!hasCustomerAccountConfig()) return NextResponse.redirect(new URL('/account/login?error=configuration', process.env.NEXT_PUBLIC_SITE_URL || 'https://house-of-aristocrat.vercel.app')); try { return NextResponse.redirect(await createCustomerAuthorizationUrl()); } catch (error) { console.error('Customer authorization setup failed.', { message: error instanceof Error ? error.message : 'unknown' }); return NextResponse.redirect(new URL('/account/login?error=signin', process.env.NEXT_PUBLIC_SITE_URL || 'https://house-of-aristocrat.vercel.app')); } }

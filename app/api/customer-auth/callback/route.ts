@@ -1,0 +1,3 @@
+﻿import { NextResponse } from 'next/server';
+import { exchangeCustomerCode } from '@/lib/shopify/customer-auth';
+export async function GET(request: Request) { const url = new URL(request.url); const code = url.searchParams.get('code'); const state = url.searchParams.get('state'); if (!code || !state) return NextResponse.redirect(new URL('/account/login?error=signin', url.origin)); try { await exchangeCustomerCode(code, state); return NextResponse.redirect(new URL('/account', url.origin)); } catch (error) { console.error('Customer authentication callback failed.', { message: error instanceof Error ? error.message : 'unknown' }); return NextResponse.redirect(new URL('/account/login?error=signin', url.origin)); } }

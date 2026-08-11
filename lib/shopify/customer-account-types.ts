@@ -1,0 +1,3 @@
+﻿export type CustomerAddress = { id: string; firstName?: string | null; lastName?: string | null; address1?: string | null; address2?: string | null; city?: string | null; territoryCode?: string | null; zoneCode?: string | null; zip?: string | null; phoneNumber?: string | null };
+export type ShopifyCustomer = { id: string; firstName?: string | null; lastName?: string | null; displayName?: string | null; emailAddress?: { emailAddress: string } | null; phoneNumber?: { phoneNumber: string } | null; defaultAddress?: CustomerAddress | null };
+export type CustomerAccountSession = { accessToken: string; refreshToken?: string; expiresAt: number; idToken?: string };

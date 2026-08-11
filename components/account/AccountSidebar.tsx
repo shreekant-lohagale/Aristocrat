@@ -25,7 +25,7 @@ function AccountLinks({ close }: { close?: () => void }) {
 }
 
 export function AccountSidebar({ user }: { user: AccountUser }) {
-  return <aside className="account-sidebar"><ProfileIdentity user={user} /><AccountLinks /><div className="account-sidebar__signout"><LogOut size={16} aria-hidden="true" /><SignOutButton /></div></aside>;
+  return <aside className="account-sidebar"><ProfileIdentity user={user} /><AccountLinks /><div className="account-sidebar__signout"><LogOut size={16} aria-hidden="true" /><SignOutButton source={user.source} /></div></aside>;
 }
 
 export function AccountMobileNav({ user }: { user: AccountUser }) {
@@ -45,8 +45,9 @@ export function AccountMobileNav({ user }: { user: AccountUser }) {
         <header><p>My account</p><button type="button" aria-label="Close account navigation" onClick={() => setOpen(false)}><X size={20} /></button></header>
         <ProfileIdentity user={user} />
         <AccountLinks close={() => setOpen(false)} />
-        <div className="account-sidebar__signout"><LogOut size={16} aria-hidden="true" /><SignOutButton /></div>
+        <div className="account-sidebar__signout"><LogOut size={16} aria-hidden="true" /><SignOutButton source={user.source} /></div>
       </div>
     </div>}
   </>;
 }
+
