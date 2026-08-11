@@ -93,9 +93,11 @@ export function CinematicCollections() {
   return (
     <section ref={root} className="cinematic-collections">
       <header className="cinematic-intro">
-        <p className="eyebrow">The House edit</p>
-        <h2>Dressing,<br /><i>Reimagined</i></h2>
-        <p>A study in modern Indian elegance — timeless silhouettes shaped for the way we live now.</p>
+        <div className="cinematic-intro__content">
+          <p className="eyebrow">The House edit</p>
+          <h2>Dressing,<br /><i>Reimagined</i></h2>
+          <p>A study in modern Indian elegance — timeless silhouettes shaped for the way we live now.</p>
+        </div>
         <span>Scroll to discover <b /></span>
       </header>
 
@@ -126,3 +128,5 @@ export function CinematicCollections() {
     </section>
   );
 }
+
+

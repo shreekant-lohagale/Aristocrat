@@ -1360,3 +1360,44 @@ html.lenis.lenis-stopped {
   .campaign-banner > div { justify-content: flex-end; min-height: 100dvh; padding: 52px 24px max(52px, env(safe-area-inset-bottom)); }
   .campaign-banner h2 { font-size: clamp(3.7rem, 16vw, 5.8rem); }
 }
+
+/* Cinematic collections — mobile lookbook flow */
+@media (max-width: 768px) {
+  .cinematic-collections { overflow-x: clip; }
+  .cinematic-intro { position: relative; display: grid; grid-template-rows: 1fr auto; justify-items: center; min-height: 100dvh; padding: 52px 22px 30px; }
+  .cinematic-intro__content { align-self: center; width: 100%; max-width: 520px; text-align: center; }
+  .cinematic-intro h2 { margin: 19px 0 24px; font-size: clamp(3rem, 15vw, 5rem); line-height: .92; }
+  .cinematic-intro > p:not(.eyebrow), .cinematic-intro__content > p:not(.eyebrow) { max-width: 100%; margin: 0; font-size: 14px; line-height: 1.7; }
+  .cinematic-intro > span { align-self: end; margin: 0; padding: 0; }
+  .cinematic-intro b { height: 30px; }
+
+  .cinematic-story, .cinematic-story:nth-of-type(odd) { height: auto; min-height: 0; }
+  .cinematic-story__sticky, .cinematic-story--reversed .cinematic-story__sticky { position: static; display: flex; flex-direction: column; min-height: 0; }
+  .cinematic-story__image, .cinematic-story--reversed .cinematic-story__image { width: 100%; min-height: clamp(440px, 64dvh, 620px); aspect-ratio: 4 / 5; padding: 18px 16px 8px; }
+  .cinematic-story__image::after { background: linear-gradient(90deg, rgb(248 245 239 / 8%), transparent 14% 86%, rgb(248 245 239 / 8%)); }
+  .cinematic-story__image img { object-fit: contain; object-position: center bottom; transform: none; }
+  .cinematic-story.is-revealed .cinematic-story__image img { transform: none; }
+  .cinematic-story__copy, .cinematic-story--reversed .cinematic-story__copy { position: static; display: flex; min-height: 0; padding: 32px 23px 56px; background: #F8F5EF; text-align: left; }
+  .cinematic-story--reversed .cinematic-story__copy { background: #FBF8F2; }
+  .cinematic-story__copy > .eyebrow { font-size: 9px; letter-spacing: .25em; }
+  .cinematic-story__copy h3 { max-width: 100%; margin: 22px 0 24px; font-size: clamp(2.6rem, 12vw, 4rem); line-height: .97; }
+  .cinematic-story__copy > p:not(.eyebrow) { max-width: 100%; font-size: 14px; line-height: 1.7; }
+  .cinematic-story__cta { margin-top: 32px; font-size: 10px; letter-spacing: .15em; }
+
+  .campaign-banner { position: relative; min-height: 100dvh; overflow: hidden; }
+  .campaign-banner > img { object-position: 60% center; }
+  .campaign-banner > div { justify-content: flex-end; min-height: 100dvh; padding: 52px 24px max(88px, env(safe-area-inset-bottom)); }
+  .campaign-banner h2 { margin: 15px 0 22px; font-size: clamp(3.7rem, 16vw, 5.8rem); }
+  .campaign-banner p:not(.eyebrow) { max-width: 340px; margin: 0; font-size: 14px; line-height: 1.7; }
+  .campaign-banner a { margin-top: 31px; }
+}
+@media (max-width: 768px) and (orientation: landscape) {
+  .cinematic-intro, .campaign-banner, .campaign-banner > div { min-height: 640px; }
+  .cinematic-story__image, .cinematic-story--reversed .cinematic-story__image { min-height: 430px; }
+}
+
+/* Keep the cinematic intro copy styled after its semantic content wrapper. */
+.cinematic-intro__content > p:not(.eyebrow) { max-width: 600px; margin: 0 auto; color: #3A3A3A; line-height: 1.75; }
+@media (max-width: 768px) {
+  .cinematic-overview { display: none; }
+}
