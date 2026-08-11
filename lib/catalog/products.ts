@@ -3,23 +3,21 @@ import { join } from 'node:path';
 import { cache } from 'react';
 import type { CatalogProduct } from '@/types/commerce';
 import { collectionNames } from '@/lib/catalog/collections';
+import { hasShopifyStorefrontConfig } from '@/lib/shopify/config';
+import { shopifyFetch } from '@/lib/shopify/shopify';
 
 const root = join(process.cwd(), 'files');
 const productSeed = [
-  ['02_blue_patchwork_kurta.png', 'Kurtis', 'Blue Patchwork Kurta', 4490, 5990, 4.9, 'Cobalt', 'Cotton blend'],
-  ['03_white_embroidered_kurta.png', 'Kurtis', 'White Embroidered Kurta', 4290, 5490, 4.8, 'Ivory', 'Cotton silk'],
-  ['04_magenta_kurta_set.png', 'Kurtis', 'Magenta Kurta Set', 5990, 7590, 4.9, 'Magenta', 'Viscose silk'],
-  ['05_slate_ruffled_kurta.png', 'Kurtis', 'Slate Ruffled Kurta', 4790, 6290, 4.7, 'Slate', 'Premium rayon'],
-  ['06_turquoise_ruffled_kurta.png', 'Kurtis', 'Turquoise Ruffled Kurta', 4890, 6490, 4.8, 'Turquoise', 'Cotton blend'],
-  ['07_black_floral_kurta.png', 'Kurtis', 'Black Floral Kurta', 4590, 5890, 4.7, 'Black', 'Printed viscose'],
-  ['01_black_sleeveless_maxi.png', 'Dresses', 'Black Sleeveless Maxi', 6990, 8990, 4.9, 'Black', 'Satin crepe'],
-  ['03_black_polka_red_new_model.png', 'Dresses', 'Black Polka Occasion Dress', 6490, 8290, 4.6, 'Black', 'Printed georgette'],
-  ['09_black_maxi_high_res.png', 'Dresses', 'Black Maxi', 7490, 9490, 4.8, 'Black', 'Fluid satin'],
-  ['04_red_green_stylish.png', 'Indo-Western', 'Red Green Stylish Set', 8490, 10990, 4.9, 'Red green', 'Embroidered silk blend'],
-  ['02_black_printed_new_model.png', 'Indo-Western', 'Black Printed Indo-Western', 7290, 9290, 4.7, 'Black', 'Printed crepe'],
-  ['08_blue_patchwork_high_res.png', 'Indo-Western', 'Blue Patchwork High Resolution', 7790, 9990, 4.8, 'Blue', 'Textured cotton'],
+  ['02_blue_patchwork_kurta.png', 'Kurtis', 'Blue Patchwork Kurta', 4490, 5990, 4.9, 'Cobalt', 'Cotton blend'], ['03_white_embroidered_kurta.png', 'Kurtis', 'White Embroidered Kurta', 4290, 5490, 4.8, 'Ivory', 'Cotton silk'], ['04_magenta_kurta_set.png', 'Kurtis', 'Magenta Kurta Set', 5990, 7590, 4.9, 'Magenta', 'Viscose silk'], ['05_slate_ruffled_kurta.png', 'Kurtis', 'Slate Ruffled Kurta', 4790, 6290, 4.7, 'Slate', 'Premium rayon'], ['06_turquoise_ruffled_kurta.png', 'Kurtis', 'Turquoise Ruffled Kurta', 4890, 6490, 4.8, 'Turquoise', 'Cotton blend'], ['07_black_floral_kurta.png', 'Kurtis', 'Black Floral Kurta', 4590, 5890, 4.7, 'Black', 'Printed viscose'], ['01_black_sleeveless_maxi.png', 'Dresses', 'Black Sleeveless Maxi', 6990, 8990, 4.9, 'Black', 'Satin crepe'], ['03_black_polka_red_new_model.png', 'Dresses', 'Black Polka Occasion Dress', 6490, 8290, 4.6, 'Black', 'Printed georgette'], ['09_black_maxi_high_res.png', 'Dresses', 'Black Maxi', 7490, 9490, 4.8, 'Black', 'Fluid satin'], ['04_red_green_stylish.png', 'Indo-Western', 'Red Green Stylish Set', 8490, 10990, 4.9, 'Red green', 'Embroidered silk blend'], ['02_black_printed_new_model.png', 'Indo-Western', 'Black Printed Indo-Western', 7290, 9290, 4.7, 'Black', 'Printed crepe'], ['08_blue_patchwork_high_res.png', 'Indo-Western', 'Blue Patchwork High Resolution', 7790, 9990, 4.8, 'Blue', 'Textured cotton'],
 ] as const;
+type ShopifyVariant = { id: string; availableForSale: boolean; price: { amount: string; currencyCode: string } };
+type ShopifyProduct = { id: string; title: string; handle: string; availableForSale: boolean; publishedAt: string | null; selectedOrFirstAvailableVariant: ShopifyVariant | null; variants: { nodes: ShopifyVariant[] } };
+type ShopifyCatalogResponse = { products: { nodes: ShopifyProduct[] } };
+const SHOPIFY_CATALOG_QUERY = `query StorefrontCatalog @inContext(country: IN) { products(first: 100, sortKey: TITLE) { nodes { id title handle availableForSale publishedAt selectedOrFirstAvailableVariant { id availableForSale price { amount currencyCode } } variants(first: 50) { nodes { id availableForSale currentlyNotInStock quantityAvailable selectedOptions { name value } price { amount currencyCode } } } } } }`;
 function slug(value: string) { return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
+function normalize(value: string) { return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
 export const activeCollections = collectionNames;
-export const getCatalog = cache(async (): Promise<CatalogProduct[]> => { const available = new Set(await readdir(root)); return productSeed.filter(([file]) => available.has(file)).map(([file, category, title, price, compareAtPrice, rating, color, fabric], index) => ({ id: `aristocrat-${index + 1}`, handle: `${slug(title)}-${index + 1}`, title, category, image: file, images: [file], price, compareAtPrice, rating, reviewCount: 24 + index * 13, colors: [color, 'Ivory', 'Navy'], sizes: ['XS', 'S', 'M', 'L', 'XL'], fabric, inStock: true, isNew: true, isBestSeller: rating >= 4.8 })); });
+async function getShopifyProducts() { if (!hasShopifyStorefrontConfig()) return new Map<string, ShopifyProduct>(); try { const data = await shopifyFetch<ShopifyCatalogResponse>(SHOPIFY_CATALOG_QUERY, {}, { cache: 'no-store' }); return new Map(data.products.nodes.map((product) => [normalize(product.title), product])); } catch (error) { console.error('Shopify catalog enrichment failed.', { message: error instanceof Error ? error.message : 'unknown' }); return new Map<string, ShopifyProduct>(); } }
+export const getCatalog = cache(async (): Promise<CatalogProduct[]> => { const available = new Set(await readdir(root)); const shopifyProducts = await getShopifyProducts(); return productSeed.filter(([file]) => available.has(file)).map(([file, category, title, price, compareAtPrice, rating, color, fabric], index) => { const shopify = shopifyProducts.get(normalize(title)); const selected = shopify?.selectedOrFirstAvailableVariant?.availableForSale ? shopify.selectedOrFirstAvailableVariant : shopify?.variants.nodes.find((variant) => variant.availableForSale); const catalogProduct: CatalogProduct = { id: shopify?.id ?? `aristocrat-${index + 1}`, handle: shopify?.handle ?? `${slug(title)}-${index + 1}`, title, category, image: file, images: [file], price: selected ? Number(selected.price.amount) : price, compareAtPrice, rating, reviewCount: 24 + index * 13, colors: [color, 'Ivory', 'Navy'], sizes: ['XS', 'S', 'M', 'L', 'XL'], fabric, inStock: Boolean(selected), isNew: true, isBestSeller: rating >= 4.8, shopifyVariantId: selected?.id, shopifyAvailableForSale: Boolean(selected), shopifyVariantCount: shopify?.variants.nodes.length }; console.info('Shopify catalog diagnostic', { title, handle: catalogProduct.handle, source: shopify ? 'shopify' : 'local', productId: shopify?.id ?? null, variantId: selected?.id ?? null, availableForSale: Boolean(selected), publishedAt: shopify?.publishedAt ?? null }); return catalogProduct; }); });
 export const getProduct = cache(async (handle: string) => (await getCatalog()).find((product) => product.handle === handle));
+
