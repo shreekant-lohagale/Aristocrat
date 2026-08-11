@@ -1,34 +1,17 @@
 ﻿# House of Aristocrat
 
-## Shopify Customer Accounts
+## Shopify hosted Customer Accounts
 
-Customer identity is being migrated to Shopify Customer Accounts. Auth.js remains installed only as a temporary fallback until the Shopify production flow is verified.
+This storefront uses Shopify’s hosted Customer Accounts for customer sign-in, Google, Shop, email verification, profile management, orders, addresses, and logout. The account icon leads to the branded `/account/login` page, whose CTA navigates to the Shopify-hosted account URL.
 
-Required **server-only** Vercel variables:
-
-```bash
-SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID=
-SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_SECRET=
-SHOPIFY_CUSTOMER_ACCOUNT_SESSION_SECRET=
-SHOPIFY_CUSTOMER_ACCOUNT_CALLBACK_URL=https://house-of-aristocrat.vercel.app/api/customer-auth/callback
-```
-
-The implementation uses Shopify discovery on the configured shop domain by default. Optional endpoint overrides are supported only when Shopify provides them:
+Set this non-secret Vercel variable from **Shopify Admin → Settings → Customer accounts → URL**:
 
 ```bash
-SHOPIFY_CUSTOMER_ACCOUNT_AUTHORIZATION_URL=
-SHOPIFY_CUSTOMER_ACCOUNT_TOKEN_URL=
-SHOPIFY_CUSTOMER_ACCOUNT_LOGOUT_URL=
-SHOPIFY_CUSTOMER_ACCOUNT_API_URL=
-NEXT_PUBLIC_SITE_URL=https://house-of-aristocrat.vercel.app
+SHOPIFY_CUSTOMER_ACCOUNT_URL=https://your-shopify-hosted-customer-account-url
 ```
 
-In Shopify Admin, enable Customer Account API access for the Headless sales channel, configure the callback URL above, and allow the storefront production origin. Shopify manages email, Google, and Shop sign-in. Do not add a second Google OAuth callback to this application.
+Do not guess or hardcode this URL. The Storefront API configuration remains separate and continues to power products, cart, and hosted checkout.
 
-For local development, use an HTTPS tunnel (for example ngrok) and set `SHOPIFY_CUSTOMER_ACCOUNT_CALLBACK_URL` to its `/api/customer-auth/callback` URL. Plain `http://localhost` callbacks are not supported.
+When the store can use Shopify’s Headless sales channel, this project can later add a custom Customer Account API experience inside Next.js. Until then, `/account`, `/account/orders`, `/account/addresses`, and `/account/profile` redirect to Shopify-hosted Customer Accounts. `/account/wishlist` remains a local storefront feature.
 
-Do not remove `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, or `AUTH_SECRET` from Vercel until Shopify login, callback, account data, logout, and checkout have all been verified in production.
-
-## Shopify Storefront connection
-
-The Storefront client reads only `VTBSJMYH_SHOPIFY_STORE_DOMAIN` and `VTBSJMYH_SHOPIFY_STOREFRONT_ACCESS_TOKEN` on the server. They are provided by the Vercel Shopify integration and are not exposed to the browser.
+After hosted account sign-in is verified, old Auth.js Vercel variables (`AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_SECRET`) can be removed manually. Do not remove them automatically.

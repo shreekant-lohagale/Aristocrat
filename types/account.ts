@@ -1,0 +1,1 @@
+﻿export type AccountUser = { name?: string | null; email?: string | null; image?: string | null };

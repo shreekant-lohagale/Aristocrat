@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { Heart, LayoutDashboard, LogOut, MapPin, Menu, Package, User, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import type { AccountUser } from '@/lib/auth/account';
-import { SignOutButton } from '@/components/auth/SignOutButton';
+import type { AccountUser } from '@/types/account';
 
 const navigation = [
   { href: '/account', label: 'Overview', icon: LayoutDashboard },
@@ -25,7 +24,7 @@ function AccountLinks({ close }: { close?: () => void }) {
 }
 
 export function AccountSidebar({ user }: { user: AccountUser }) {
-  return <aside className="account-sidebar"><ProfileIdentity user={user} /><AccountLinks /><div className="account-sidebar__signout"><LogOut size={16} aria-hidden="true" /><SignOutButton source={user.source} /></div></aside>;
+  return <aside className="account-sidebar"><ProfileIdentity user={user} /><AccountLinks /><a className="account-sign-out" href="/account/login"><LogOut size={16} aria-hidden="true" />Manage account</a></aside>;
 }
 
 export function AccountMobileNav({ user }: { user: AccountUser }) {
@@ -45,9 +44,11 @@ export function AccountMobileNav({ user }: { user: AccountUser }) {
         <header><p>My account</p><button type="button" aria-label="Close account navigation" onClick={() => setOpen(false)}><X size={20} /></button></header>
         <ProfileIdentity user={user} />
         <AccountLinks close={() => setOpen(false)} />
-        <div className="account-sidebar__signout"><LogOut size={16} aria-hidden="true" /><SignOutButton source={user.source} /></div>
+        <a className="account-sign-out" href="/account/login"><LogOut size={16} aria-hidden="true" />Manage account</a>
       </div>
     </div>}
   </>;
 }
+
+
 

@@ -1,3 +1,0 @@
-﻿import { NextResponse } from 'next/server';
-import { clearCustomerSession, getCustomerLogoutUrl } from '@/lib/shopify/customer-auth';
-export async function GET(request: Request) { const home = new URL('/', request.url); try { const logoutUrl = await getCustomerLogoutUrl(); await clearCustomerSession(); if (logoutUrl) { const url = new URL(logoutUrl); url.searchParams.set('post_logout_redirect_uri', home.toString()); return NextResponse.redirect(url); } } catch (error) { console.error('Customer logout failed.', { message: error instanceof Error ? error.message : 'unknown' }); await clearCustomerSession(); } return NextResponse.redirect(home); }

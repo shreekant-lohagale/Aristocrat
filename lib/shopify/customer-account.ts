@@ -1,9 +1,0 @@
-﻿import { getCustomerApiEndpoint, getCustomerSession } from './customer-auth';
-import type { ShopifyCustomer } from './customer-account-types';
-
-type GraphQLError = { message: string };
-type GraphQLResponse<T> = { data?: T; errors?: GraphQLError[] };
-const CUSTOMER_QUERY = `query CustomerForStorefront { customer { id firstName lastName displayName emailAddress { emailAddress } phoneNumber { phoneNumber } defaultAddress { id firstName lastName address1 address2 city territoryCode zoneCode zip phoneNumber } } }`;
-
-export async function customerAccountFetch<T>(query: string, variables: Record<string, unknown> = {}) { const session = await getCustomerSession(); if (!session) throw new Error('Customer session is missing or expired.'); const endpoint = await getCustomerApiEndpoint(); const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: session.accessToken, 'User-Agent': 'House of Aristocrat Customer Account' }, body: JSON.stringify({ query, variables }), cache: 'no-store' }); if (response.status === 401) throw new Error('Customer session has expired.'); if (!response.ok) throw new Error(`Customer Account API request failed with status ${response.status}.`); const payload = await response.json() as GraphQLResponse<T>; if (payload.errors?.length) throw new Error(`Customer Account API request failed: ${payload.errors.map((error) => error.message).join('; ')}`); if (!payload.data) throw new Error('Customer Account API returned no data.'); return payload.data; }
-export async function getAuthenticatedCustomer() { const session = await getCustomerSession(); if (!session) return null; try { const data = await customerAccountFetch<{ customer: ShopifyCustomer }>(CUSTOMER_QUERY); return data.customer; } catch (error) { console.error('Shopify customer lookup failed.', { message: error instanceof Error ? error.message : 'unknown' }); return null; } }
