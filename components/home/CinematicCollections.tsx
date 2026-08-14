@@ -48,8 +48,19 @@ export function CinematicCollections() {
       { threshold: 0.35 },
     );
 
+    const intro = root.current?.querySelector<HTMLElement>('.cinematic-intro');
+    const introObserver = new IntersectionObserver(
+      ([entry]) => entry.target.classList.toggle('intro-is-revealed', entry.isIntersecting),
+      { threshold: 0.2 },
+    );
+
     root.current?.querySelectorAll('.cinematic-story').forEach((story) => observer.observe(story));
-    return () => observer.disconnect();
+    if (intro) introObserver.observe(intro);
+
+    return () => {
+      observer.disconnect();
+      introObserver.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -94,9 +105,14 @@ export function CinematicCollections() {
     <section ref={root} className="cinematic-collections">
       <header className="cinematic-intro">
         <div className="cinematic-intro__content">
-          <p className="eyebrow">The House edit</p>
-          <h2>Dressing,<br /><i>Reimagined</i></h2>
+          <p className="cinematic-intro__marker">01 / The House Edit</p>
+          <h2><span>Dressing,</span><i>Reimagined</i></h2>
           <p>A study in modern Indian elegance — timeless silhouettes shaped for the way we live now.</p>
+        </div>
+        <div className="cinematic-intro__gallery" aria-label="House of Aristocrat editorial looks">
+          <figure className="cinematic-intro__image cinematic-intro__image--one"><Image src={asset('03_white_embroidered_kurta.png')} alt="White embroidered House of Aristocrat kurta look" fill sizes="(max-width: 768px) 50vw, 18vw" /></figure>
+          <figure className="cinematic-intro__image cinematic-intro__image--two"><Image src={asset('04_magenta_kurta_set.png')} alt="Magenta House of Aristocrat kurta set" fill sizes="(max-width: 768px) 50vw, 22vw" /></figure>
+          <figure className="cinematic-intro__image cinematic-intro__image--three"><Image src={asset('09_black_maxi_high_res.png')} alt="Black House of Aristocrat maxi dress" fill sizes="(max-width: 768px) 50vw, 15vw" /></figure>
         </div>
         <span>Scroll to discover <b /></span>
       </header>
@@ -128,5 +144,9 @@ export function CinematicCollections() {
     </section>
   );
 }
+
+
+
+
 
 

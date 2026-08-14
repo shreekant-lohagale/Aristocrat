@@ -1,8 +1,10 @@
-﻿export const collectionDefinitions = [
+export const collectionDefinitions = [
   { handle: 'new-arrivals', name: 'New Arrivals' },
   { handle: 'kurtis', name: 'Kurtis' },
   { handle: 'dresses', name: 'Dresses' },
   { handle: 'indo-western', name: 'Indo-Western' },
+  { handle: 'chaniya-choli', name: 'Chaniya Choli' },
+  { handle: 'jewellery', name: 'Jewellery' },
   { handle: 'best-sellers', name: 'Best Sellers' },
   { handle: 'sale', name: 'Sale' },
 ] as const;
@@ -29,3 +31,4 @@ export function isSpecialCollection(value: string) {
   const handle = normalizeCollectionHandle(value);
   return handle === 'new-arrivals' || handle === 'best-sellers' || handle === 'sale';
 }
+
