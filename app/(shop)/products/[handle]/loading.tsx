@@ -1,5 +1,5 @@
 import { HouseLoader } from '@/components/ui/HouseLoader';
 
-export default function AccountLoading() {
+export default function ProductLoading() {
   return <HouseLoader />;
 }

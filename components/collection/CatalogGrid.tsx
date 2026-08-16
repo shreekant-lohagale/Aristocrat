@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { CatalogProduct } from '@/types/commerce';
 import { CatalogProductCard } from '@/components/product/CatalogProductCard';
+import { ProductGridSkeleton } from '@/components/ui/ProductGridSkeleton';
 import { isSpecialCollection, normalizeCollectionHandle } from '@/lib/catalog/collections';
 
 const pageSize = 8;
@@ -25,6 +26,9 @@ type CatalogGridProps = {
 
 export function CatalogGrid({ collection, limit = pageSize, variant = 'default' }: CatalogGridProps) {
   const [products, setProducts] = useState<CatalogProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [requestKey, setRequestKey] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -40,8 +44,26 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
   };
 
   useEffect(() => {
-    fetch('/api/catalog').then((response) => response.json()).then(setProducts);
-  }, []);
+    const controller = new AbortController();
+
+    const loadCatalog = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const response = await fetch('/api/catalog', { signal: controller.signal });
+        if (!response.ok) throw new Error('Unable to load this collection.');
+        setProducts(await response.json() as CatalogProduct[]);
+      } catch (catalogError) {
+        if (controller.signal.aborted) return;
+        setError(catalogError instanceof Error ? catalogError.message : 'Unable to load this collection.');
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+
+    void loadCatalog();
+    return () => controller.abort();
+  }, [requestKey]);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -97,6 +119,14 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
   const activeFilterCount = [values.category, values.price, values.size, values.color, values.availability].filter(Boolean).length;
   const hasFilters = Boolean(activeFilterCount || values.sort !== 'featured');
   const groupProps = { values, categories, colors, sizes, update };
+
+  if (loading) {
+    return <section className={`catalog ${variant === 'new-arrivals' ? 'catalog--new-arrivals' : ''}`} aria-busy="true"><ProductGridSkeleton count={limit} /></section>;
+  }
+
+  if (error) {
+    return <section className="catalog"><div className="catalog-load-error" role="alert"><p>{error} Please try again.</p><button className="button" type="button" onClick={() => setRequestKey((key) => key + 1)}>Retry</button></div></section>;
+  }
 
   return (
     <section className={`catalog ${variant === 'new-arrivals' ? 'catalog--new-arrivals' : ''}`}>

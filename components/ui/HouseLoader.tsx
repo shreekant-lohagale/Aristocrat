@@ -28,11 +28,11 @@ export function HouseLoader() {
       </div>
 
       <div className="house-loader-brand" aria-hidden="true">
-        <span>House of Aristocrat</span>
-        <small>Everyday Fashion</small>
+        <span>HOUSE OF ARISTOCRAT</span>
+        <small>EVERYDAY FASHION</small>
       </div>
 
-      <span className="sr-only">Loading...</span>
+      <span className="sr-only">Loading House of Aristocrat</span>
     </div>
   );
 }
