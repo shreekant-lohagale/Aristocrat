@@ -1,105 +1,204 @@
-﻿'use client';
+'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { Grid2X2, Heart, Home, Search, ShoppingBag, Sparkles, UserRound } from 'lucide-react';
-import { motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useState, type ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
-import { useStore } from '@/context/StoreProvider';
+import {
+  Heart,
+  Menu,
+  Search,
+  ShoppingBag,
+  UserRound,
+  X,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { CartDrawer } from '@/components/cart/CartDrawer';
-import { CountrySelector } from './CountrySelector';
+import { useStore } from '@/context/StoreProvider';
 import { AnnouncementBar } from './AnnouncementBar';
+import { CountrySelector } from './CountrySelector';
 
-type DockActionProps = {
-  label: string;
-  active?: boolean;
-  mobileHidden?: boolean;
-  children: ReactNode;
-};
+const asset = (file: string) => `/api/assets?file=${encodeURIComponent(file)}`;
 
-function DockAction({ label, active = false, mobileHidden = false, children }: DockActionProps) {
-  const reduceMotion = useReducedMotion();
+const collectionLinks = [
+  ['Kurtis', '/collections/kurtis'],
+  ['Dresses', '/collections/dresses'],
+  ['Indo-Western', '/collections/indo-western'],
+  ['Chaniya Choli', '/collections/chaniya-choli'],
+  ['Jewellery', '/collections/jewellery'],
+] as const;
 
-  return (
-    <motion.span
-      className={`nav-dock-action ${active ? 'is-active' : ''} ${mobileHidden ? 'nav-dock-action--mobile-hidden' : ''}`}
-      data-tooltip={label}
-      initial={false}
-      whileHover={reduceMotion ? undefined : 'hover'}
-      whileFocus={reduceMotion ? undefined : 'hover'}
-    >
-      <motion.span
-        aria-hidden="true"
-        className="nav-dock-action__bubble"
-        variants={{ hover: { opacity: 1, scale: 1.18 } }}
-        transition={{ type: 'spring', stiffness: 220, damping: 22 }}
-      />
-      <motion.span
-        className="nav-dock-action__icon"
-        variants={{ hover: { scale: 1.08 } }}
-        transition={{ type: 'spring', stiffness: 220, damping: 22 }}
-      >
-        {children}
-      </motion.span>
-      <span className="nav-dock-action__label">{label}</span>
-    </motion.span>
-  );
-}
+const mobileLinks = [
+  ['New Arrivals', '/collections/new-arrivals'],
+  ...collectionLinks,
+  ['The Maison', '/about'],
+  ['My Account', '/account'],
+  ['Wishlist', '/wishlist'],
+] as const;
 
 export function Navbar() {
   const [cartOpen, setCartOpen] = useState(false);
-  const [footerVisible, setFooterVisible] = useState(false);
-  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const { cartCount, wishlist } = useStore();
 
   useEffect(() => {
-    const footer = document.querySelector('footer');
-    if (!footer) return;
+    const update = () => setScrolled(window.scrollY > 88);
 
-    const observer = new IntersectionObserver(
-      ([entry]) => setFooterVisible(entry.isIntersecting && entry.intersectionRatio > 0.35),
-      { threshold: [0, 0.35, 0.7] },
-    );
-    observer.observe(footer);
-    return () => observer.disconnect();
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    return () => window.removeEventListener('scroll', update);
   }, []);
 
-  const isHome = pathname === '/';
-  const isCollections = pathname === '/collections' || pathname.startsWith('/collections/');
-  const isNewArrivals = pathname === '/collections/new-arrivals';
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
+
+  const solidNav = scrolled || hovered || menuOpen;
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <>
       <AnnouncementBar />
-      <header className={`navbar ${footerVisible ? 'navbar--footer-hidden' : ''} ${cartOpen ? 'navbar--cart-hidden' : ''}`} aria-label="Storefront navigation">
-        <div className="desktop-country"><CountrySelector /></div>
-        <nav className="bottom-dock-nav" aria-label="Primary navigation">
-          <DockAction label="Home" active={isHome}>
-            <Link className="nav-icon" href="/" aria-label="Home"><Home size={19} /></Link>
-          </DockAction>
-          <DockAction label="New Arrivals" active={isNewArrivals} mobileHidden>
-            <Link className="nav-icon nav-new-arrivals" href="/collections/new-arrivals" aria-label="New Arrivals"><Sparkles size={18} /></Link>
-          </DockAction>
-          <DockAction label="Collections" active={isCollections && !isNewArrivals}>
-            <Link className="nav-icon" href="/collections" aria-label="Collections"><Grid2X2 size={18} /></Link>
-          </DockAction>
-          <DockAction label="Search" active={pathname === '/search'}>
-            <Link className="nav-icon" href="/search" aria-label="Search"><Search size={18} /></Link>
-          </DockAction>
-          <DockAction label="Wishlist" active={pathname === '/wishlist'} mobileHidden>
-            <Link className="nav-icon nav-wishlist" href="/wishlist" aria-label={`Wishlist, ${wishlist.length} items`}><Heart size={18} /><span>{wishlist.length}</span></Link>
-          </DockAction>
-          <DockAction label="Account" active={pathname.startsWith('/account')}>
-            <Link className="nav-icon" href="/account" aria-label="Account"><UserRound size={18} /></Link>
-          </DockAction>
-          <DockAction label="Shopping Bag" active={pathname === '/cart'}>
-            <button suppressHydrationWarning className="nav-icon cart-trigger" onClick={() => setCartOpen(true)} aria-label={`Open shopping bag, ${cartCount} items`}><ShoppingBag size={18} /><span>{cartCount}</span></button>
-          </DockAction>
-        </nav>
+
+      <header
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className={`navbar editorial-navbar ${
+          scrolled ? 'editorial-navbar--scrolled' : ''
+        } ${solidNav ? 'editorial-navbar--solid' : ''}`}
+        aria-label="Storefront navigation"
+      >
+        <div className="editorial-navbar__inner">
+          <div className="editorial-navbar__left">
+            <button
+              className="editorial-navbar__menu"
+              type="button"
+              aria-label="Open navigation"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-navigation"
+              onClick={() => setMenuOpen(true)}
+            >
+              <Menu size={20} strokeWidth={1.6} />
+            </button>
+
+            <Link
+              className="editorial-navbar__search"
+              href="/search"
+              aria-label="Search the collection"
+            >
+              <span>Search the collection...</span>
+              <Search size={17} strokeWidth={1.6} />
+            </Link>
+
+            <div className="editorial-navbar__market">
+              <CountrySelector />
+            </div>
+          </div>
+
+          <div className="editorial-navbar__right">
+            <Link
+              className="editorial-navbar__mobile-search"
+              href="/search"
+              aria-label="Search the collection"
+            >
+              <Search size={19} strokeWidth={1.6} />
+            </Link>
+
+            <Link
+              className="editorial-navbar__icon"
+              href="/wishlist"
+              aria-label={`Wishlist, ${wishlist.length} items`}
+            >
+              <Heart size={19} strokeWidth={1.6} />
+              {wishlist.length > 0 && <small>{wishlist.length}</small>}
+            </Link>
+
+            <Link
+              className="editorial-navbar__icon editorial-navbar__account"
+              href="/account"
+              aria-label="Account"
+            >
+              <UserRound size={19} strokeWidth={1.6} />
+            </Link>
+
+            <button
+              suppressHydrationWarning
+              className="editorial-navbar__icon"
+              type="button"
+              aria-label={`Open shopping bag, ${cartCount} items`}
+              onClick={() => setCartOpen(true)}
+            >
+              <ShoppingBag size={20} strokeWidth={1.6} />
+              {cartCount > 0 && <small suppressHydrationWarning>{cartCount}</small>}
+            </button>
+          </div>
+        </div>
       </header>
+
+      {menuOpen && (
+        <div
+          id="mobile-navigation"
+          className="editorial-mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+        >
+          <header>
+            <Link href="/" aria-label="House of Aristocrat home" onClick={closeMenu}>
+              <Image
+                src={asset('House_of_Aristocrat_Logo_Transparent_2000px.png')}
+                alt="House of Aristocrat"
+                width={180}
+                height={42}
+              />
+            </Link>
+            <button type="button" aria-label="Close navigation" onClick={closeMenu}>
+              <X size={22} strokeWidth={1.6} />
+            </button>
+          </header>
+
+          <div className="editorial-mobile-menu__market">
+            <CountrySelector />
+          </div>
+
+          <nav aria-label="Mobile navigation">
+            {mobileLinks.map(([label, href]) => (
+              <Link href={href} key={href} onClick={closeMenu}>
+                {label}
+              </Link>
+            ))}
+          </nav>
+
+          <Link
+            className="editorial-mobile-menu__search"
+            href="/search"
+            onClick={closeMenu}
+          >
+            Search House of Aristocrat
+            <Search size={18} strokeWidth={1.6} />
+          </Link>
+        </div>
+      )}
+
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </>
   );
 }
-
-

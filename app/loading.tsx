@@ -1,1 +1,5 @@
-export default function Loading() { return <div className="loading-screen">Loading House of Aristocrat…</div>; }
+import { HouseLoader } from '@/components/ui/HouseLoader';
+
+export default function Loading() {
+  return <HouseLoader />;
+}
