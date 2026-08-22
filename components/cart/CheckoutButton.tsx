@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { InlineLoader } from '@/components/ui/InlineLoader';
 import type { CartLine } from '@/types/commerce';
 import type { CheckoutLineInput } from '@/types/checkout';
+import { useStore } from '@/context/StoreProvider';
 
 type CheckoutButtonProps = {
   lines: CartLine[] | CheckoutLineInput[];
@@ -18,7 +19,7 @@ function toInput(line: CartLine | CheckoutLineInput): CheckoutLineInput {
     ? {
         handle: line.product.handle,
         title: line.product.title,
-        variantId: line.product.shopifyVariantId,
+        variantId: line.variantId ?? line.product.shopifyVariantId,
         quantity: line.quantity,
         size: line.size,
         color: line.color,
@@ -27,6 +28,7 @@ function toInput(line: CartLine | CheckoutLineInput): CheckoutLineInput {
 }
 
 export function CheckoutButton({ lines, mode = 'cart', className, onStart, children }: CheckoutButtonProps) {
+  const { country } = useStore();
   const unavailable = lines.some((line) => !toInput(line).variantId);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
@@ -47,7 +49,7 @@ export function CheckoutButton({ lines, mode = 'cart', className, onStart, child
       const response = await fetch('/api/shopify/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lines: lines.map(toInput), mode }),
+        body: JSON.stringify({ lines: lines.map(toInput), mode, country: country.code }),
         signal: controller.signal,
       });
       const data = await response.json() as { checkoutUrl?: string; error?: string };

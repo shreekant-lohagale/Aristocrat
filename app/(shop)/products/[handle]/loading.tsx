@@ -1,5 +1,5 @@
-import { HouseLoader } from '@/components/ui/HouseLoader';
+import { ProductDetailsSkeleton } from '@/components/ui/ProductDetailsSkeleton';
 
 export default function ProductLoading() {
-  return <HouseLoader />;
+  return <main className="product-page shell"><ProductDetailsSkeleton /></main>;
 }

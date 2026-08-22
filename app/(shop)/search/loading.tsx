@@ -1,5 +1,5 @@
-import { HouseLoader } from '@/components/ui/HouseLoader';
+import { ProductGridSkeleton } from '@/components/ui/ProductGridSkeleton';
 
 export default function SearchLoading() {
-  return <HouseLoader />;
+  return <main className="page shell"><ProductGridSkeleton count={8} /></main>;
 }

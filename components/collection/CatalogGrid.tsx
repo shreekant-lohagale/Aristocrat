@@ -6,7 +6,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { CatalogProduct } from '@/types/commerce';
 import { CatalogProductCard } from '@/components/product/CatalogProductCard';
 import { ProductGridSkeleton } from '@/components/ui/ProductGridSkeleton';
-import { isSpecialCollection, normalizeCollectionHandle } from '@/lib/catalog/collections';
+import { normalizeCollectionHandle } from '@/lib/catalog/collections';
+import { useStore } from '@/context/StoreProvider';
 
 const pageSize = 8;
 const sortOptions = [
@@ -15,7 +16,6 @@ const sortOptions = [
   ['price-low', 'Price: Low to high'],
   ['price-high', 'Price: High to low'],
   ['best-selling', 'Best selling'],
-  ['highest-rated', 'Highest rated'],
 ] as const;
 
 type CatalogGridProps = {
@@ -25,6 +25,7 @@ type CatalogGridProps = {
 };
 
 export function CatalogGrid({ collection, limit = pageSize, variant = 'default' }: CatalogGridProps) {
+  const { country, formatPrice } = useStore();
   const [products, setProducts] = useState<CatalogProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -50,7 +51,10 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
       setLoading(true);
       setError('');
       try {
-        const response = await fetch('/api/catalog', { signal: controller.signal });
+        const params = new URLSearchParams({ country: country.code });
+        if (collection) params.set('collection', normalizeCollectionHandle(collection));
+        params.set('sort', values.sort);
+        const response = await fetch(`/api/catalog?${params}`, { signal: controller.signal });
         if (!response.ok) throw new Error('Unable to load this collection.');
         setProducts(await response.json() as CatalogProduct[]);
       } catch (catalogError) {
@@ -63,7 +67,7 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
 
     void loadCatalog();
     return () => controller.abort();
-  }, [requestKey]);
+  }, [collection, country.code, requestKey, values.sort]);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -83,16 +87,13 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
   const categories = [...new Set(products.map((product) => product.category))];
   const colors = [...new Set(products.flatMap((product) => product.colors))];
   const sizes = [...new Set(products.flatMap((product) => product.sizes))];
+  const maxPrice = Math.max(0, ...products.map((product) => product.price));
+  const firstPrice = Math.max(1, Math.ceil(maxPrice / 3));
+  const secondPrice = Math.max(firstPrice + 1, Math.ceil(maxPrice * 2 / 3));
+  const priceOptions = maxPrice ? [[`0-${firstPrice}`, `Under ${formatPrice(firstPrice, products[0]?.currencyCode)}`], [`${firstPrice}-${secondPrice}`, `${formatPrice(firstPrice, products[0]?.currencyCode)} – ${formatPrice(secondPrice, products[0]?.currencyCode)}`], [`${secondPrice}-0`, `${formatPrice(secondPrice, products[0]?.currencyCode)}+`]] as const : [];
 
   const filtered = useMemo(() => {
-    const collectionHandle = collection ? normalizeCollectionHandle(collection) : '';
-    let list = collection && !isSpecialCollection(collection)
-      ? products.filter((product) => normalizeCollectionHandle(product.category) === collectionHandle)
-      : collectionHandle === 'best-sellers'
-        ? products.filter((product) => product.isBestSeller)
-        : collectionHandle === 'sale'
-          ? products.filter((product) => product.compareAtPrice > product.price)
-          : products;
+    let list = products;
 
     if (values.category) list = list.filter((product) => normalizeCollectionHandle(product.category) === normalizeCollectionHandle(values.category));
     if (values.size) list = list.filter((product) => product.sizes.includes(values.size));
@@ -106,19 +107,18 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
     return [...list].sort((a, b) => {
       if (values.sort === 'price-low') return a.price - b.price;
       if (values.sort === 'price-high') return b.price - a.price;
-      if (values.sort === 'highest-rated') return b.rating - a.rating || b.reviewCount - a.reviewCount;
-      if (values.sort === 'best-selling') return Number(b.isBestSeller) - Number(a.isBestSeller) || b.rating - a.rating;
-      if (values.sort === 'newest') return Number(b.isNew) - Number(a.isNew) || b.id.localeCompare(a.id);
-      return Number(b.isBestSeller) - Number(a.isBestSeller) || b.rating - a.rating;
+      if (values.sort === 'best-selling') return 0;
+      if (values.sort === 'newest') return (b.publishedAt ?? '').localeCompare(a.publishedAt ?? '');
+      return 0;
     });
-  }, [collection, products, values.availability, values.category, values.color, values.price, values.size, values.sort]);
+  }, [products, values.availability, values.category, values.color, values.price, values.size, values.sort]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / limit));
   const currentPage = Math.min(values.page, totalPages);
   const visible = filtered.slice((currentPage - 1) * limit, currentPage * limit);
   const activeFilterCount = [values.category, values.price, values.size, values.color, values.availability].filter(Boolean).length;
   const hasFilters = Boolean(activeFilterCount || values.sort !== 'featured');
-  const groupProps = { values, categories, colors, sizes, update };
+  const groupProps = { values, categories, colors, sizes, priceOptions, update };
 
   if (loading) {
     return <section className={`catalog ${variant === 'new-arrivals' ? 'catalog--new-arrivals' : ''}`} aria-busy="true"><ProductGridSkeleton count={limit} /></section>;
@@ -149,7 +149,7 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
         <aside className="filter-sidebar" aria-label="Product filters">
           <FilterPanel {...groupProps} hasFilters={hasFilters} clear={clear} />
         </aside>
-        <CatalogResults currentPage={currentPage} clear={clear} filtered={filtered.length} totalPages={totalPages} update={update} visible={visible} />
+        <CatalogResults currentPage={currentPage} clear={clear} emptyMessage={normalizeCollectionHandle(collection ?? '') === 'jewellery' ? 'Jewellery collection coming soon.' : undefined} filtered={filtered.length} totalPages={totalPages} update={update} visible={visible} />
       </div>
 
       {drawerOpen && (
@@ -174,28 +174,28 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
   );
 }
 
-function CatalogResults({ visible, filtered, totalPages, currentPage, update, clear }: { visible: CatalogProduct[]; filtered: number; totalPages: number; currentPage: number; update: (key: string, value: string) => void; clear: () => void }) {
+function CatalogResults({ visible, filtered, totalPages, currentPage, update, clear, emptyMessage }: { visible: CatalogProduct[]; filtered: number; totalPages: number; currentPage: number; update: (key: string, value: string) => void; clear: () => void; emptyMessage?: string }) {
   return (
     <div className="catalog-results">
       <div className="catalog-grid">{visible.map((product) => <CatalogProductCard key={product.id} product={product} />)}</div>
-      {visible.length === 0 && <div className="empty-results"><p>No pieces match your selection.</p><button className="button" onClick={clear}>Clear filters</button></div>}
+      {visible.length === 0 && <div className="empty-results"><p>{emptyMessage ?? 'No pieces match your selection.'}</p>{!emptyMessage && <button className="button" onClick={clear}>Clear filters</button>}</div>}
       {filtered > 0 && totalPages > 1 && <div className="pagination">{Array.from({ length: totalPages }, (_, index) => <button key={index} className={currentPage === index + 1 ? 'active' : ''} onClick={() => update('page', String(index + 1))}>{index + 1}</button>)}</div>}
     </div>
   );
 }
 
-function FilterPanel({ values, categories, colors, sizes, update, hasFilters, clear, mobile = false }: { values: { category: string; price: string; size: string; color: string; availability: string }; categories: string[]; colors: string[]; sizes: string[]; update: (key: string, value: string) => void; hasFilters: boolean; clear: () => void; mobile?: boolean }) {
+function FilterPanel({ values, categories, colors, sizes, priceOptions, update, hasFilters, clear, mobile = false }: { values: { category: string; price: string; size: string; color: string; availability: string }; categories: string[]; colors: string[]; sizes: string[]; priceOptions: readonly (readonly [string, string])[]; update: (key: string, value: string) => void; hasFilters: boolean; clear: () => void; mobile?: boolean }) {
   return <>
     <div className="filter-heading"><b>Filters</b>{hasFilters && <button type="button" onClick={clear}>Clear all</button>}</div>
     <Filter label="Category" value={values.category} options={categories} onChange={(value) => update('category', value)} defaultOpen={!mobile} />
-    <Filter label="Price" value={values.price} options={[['0-5000', 'Under ₹5,000'], ['5000-7000', '₹5,000 – ₹7,000'], ['7000-0', '₹7,000+']]} onChange={(value) => update('price', value)} defaultOpen={!mobile} />
+    <Filter label="Price" value={values.price} options={priceOptions} onChange={(value) => update('price', value)} defaultOpen={!mobile} />
     <Filter label="Size" value={values.size} options={sizes} onChange={(value) => update('size', value)} defaultOpen={!mobile} />
     <Filter label="Colour" value={values.color} options={colors} onChange={(value) => update('color', value)} defaultOpen={!mobile} />
     <Filter label="Availability" value={values.availability} options={[['in-stock', 'In stock'], ['out-of-stock', 'Out of stock']]} onChange={(value) => update('availability', value)} defaultOpen={!mobile} />
   </>;
 }
 
-function Filter({ label, value, options, onChange, defaultOpen }: { label: string; value: string; options: (string | readonly [string, string])[]; onChange: (value: string) => void; defaultOpen: boolean }) {
+function Filter({ label, value, options, onChange, defaultOpen }: { label: string; value: string; options: readonly (string | readonly [string, string])[]; onChange: (value: string) => void; defaultOpen: boolean }) {
   return <details className="filter-group" open={defaultOpen || undefined}>
     <summary>{label}</summary>
     <div>{options.map((option) => {

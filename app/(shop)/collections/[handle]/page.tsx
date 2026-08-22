@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { BackButton } from '@/components/common/BackButton';
 import { CatalogGrid } from '@/components/collection/CatalogGrid';
 import { getCollectionByHandle } from '@/lib/catalog/collections';
+import { getCollectionDetails } from '@/lib/catalog/products';
 
 const descriptions: Record<string, string> = {
   'new-arrivals': 'The latest House of Aristocrat pieces, made for an elevated everyday wardrobe.',
@@ -19,15 +20,18 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
   const { handle } = await params;
   const collection = getCollectionByHandle(handle);
   if (!collection) return { title: 'Collection not found' };
-  const description = descriptions[collection.handle] ?? 'Explore elevated Indo-Western fashion from House of Aristocrat.';
+  const shopifyCollection = await getCollectionDetails(collection.handle);
+  const description = shopifyCollection?.description || descriptions[collection.handle] || 'Explore elevated Indo-Western fashion from House of Aristocrat.';
   const canonical = `/collections/${collection.handle}`;
-  return { title: collection.name, description, alternates: { canonical }, openGraph: { url: canonical, title: `${collection.name} | House of Aristocrat`, description } };
+  const title = shopifyCollection?.title || collection.name;
+  return { title, description, alternates: { canonical }, openGraph: { url: canonical, title: `${title} | House of Aristocrat`, description } };
 }
 
 export default async function CollectionPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params;
   const collection = getCollectionByHandle(handle);
   if (!collection) notFound();
-  const description = descriptions[collection.handle] ?? 'Explore elevated Indo-Western fashion from House of Aristocrat.';
-  return <main className="collection-page shell"><BackButton href="/collections" label="Back to Collections" /><section className="collection-hero"><p className="eyebrow">House of Aristocrat</p><h1>{collection.name}</h1><p className="lede">{description}</p></section><CatalogGrid collection={collection.handle} /></main>;
+  const shopifyCollection = await getCollectionDetails(collection.handle);
+  const description = shopifyCollection?.description || descriptions[collection.handle] || 'Explore elevated Indo-Western fashion from House of Aristocrat.';
+  return <main className="collection-page shell"><BackButton href="/collections" label="Back to Collections" /><section className="collection-hero"><p className="eyebrow">House of Aristocrat</p><h1>{shopifyCollection?.title || collection.name}</h1><p className="lede">{description}</p></section><CatalogGrid collection={collection.handle} /></main>;
 }
