@@ -3354,3 +3354,144 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
     transition: none;
   }
 }
+
+/* Homepage section two — full-bleed House editorial campaign. */
+.cinematic-intro.cinematic-intro--campaign {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: clamp(680px, 92vh, 1080px);
+  padding: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--hoa-navy);
+  color: var(--hoa-cream);
+  text-align: initial;
+}
+
+.cinematic-intro.cinematic-intro--campaign::before,
+.cinematic-intro.cinematic-intro--campaign::after {
+  content: none;
+}
+
+.cinematic-intro--campaign .cinematic-intro__backdrop {
+  z-index: 0;
+  object-fit: cover;
+  object-position: center 10%;
+}
+
+.cinematic-intro--campaign .cinematic-intro__veil {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: rgb(1 27 60 / 27%);
+  pointer-events: none;
+}
+
+.cinematic-intro--campaign .cinematic-intro__content {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  width: 100%;
+  max-width: none;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  padding: clamp(38px, 5vw, 82px) clamp(28px, 4.7vw, 90px);
+  color: var(--hoa-cream);
+  transform: none;
+}
+
+.cinematic-intro--campaign .cinematic-intro__marker {
+  align-self: start;
+  margin: 0;
+  color: rgb(252 247 240 / 90%);
+  font-size: clamp(9px, .65vw, 11px);
+  letter-spacing: .3em;
+  text-shadow: 0 1px 16px rgb(1 27 60 / 45%);
+}
+
+.cinematic-intro--campaign .cinematic-intro__marker::after {
+  background: var(--hoa-gold-muted);
+}
+
+.cinematic-intro--campaign h2 {
+  align-self: center;
+  display: flex;
+  width: 100%;
+  max-width: none;
+  flex-direction: column;
+  margin: 0;
+  color: var(--hoa-cream);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(5.2rem, 13vw, 15.5rem);
+  font-weight: 400;
+  line-height: .72;
+  letter-spacing: -.065em;
+  text-align: center;
+  text-shadow: 0 3px 28px rgb(1 27 60 / 28%);
+}
+
+.cinematic-intro--campaign h2 span,
+.cinematic-intro--campaign h2 i {
+  display: block;
+  margin: 0;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  animation: none;
+}
+
+.cinematic-intro--campaign h2 i {
+  color: var(--hoa-cream);
+  font-style: italic;
+}
+
+.cinematic-intro--campaign .cinematic-intro__content > p:last-child {
+  justify-self: end;
+  max-width: 430px;
+  margin: 0;
+  color: rgb(252 247 240 / 92%);
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: clamp(12px, .9vw, 15px);
+  line-height: 1.75;
+  text-align: right;
+  text-shadow: 0 2px 18px rgb(1 27 60 / 38%);
+}
+
+@media (max-width: 768px) {
+  .cinematic-intro.cinematic-intro--campaign {
+    min-height: 88svh;
+  }
+
+  .cinematic-intro--campaign .cinematic-intro__backdrop {
+    object-position: center top;
+  }
+
+  .cinematic-intro--campaign .cinematic-intro__veil {
+    background: rgb(1 27 60 / 25%);
+  }
+
+  .cinematic-intro--campaign .cinematic-intro__content {
+    padding: 28px 20px 34px;
+  }
+
+  .cinematic-intro--campaign .cinematic-intro__marker {
+    font-size: 8px;
+    letter-spacing: .25em;
+  }
+
+  .cinematic-intro--campaign h2 {
+    font-size: clamp(3.6rem, 17vw, 6rem);
+    line-height: .8;
+    letter-spacing: -.055em;
+  }
+
+  .cinematic-intro--campaign .cinematic-intro__content > p:last-child {
+    justify-self: start;
+    max-width: min(310px, 88vw);
+    font-size: 12px;
+    line-height: 1.65;
+    text-align: left;
+  }
+}

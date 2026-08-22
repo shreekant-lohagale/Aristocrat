@@ -13,22 +13,23 @@ const stories = [
 ];
 
 export function CinematicIntro() {
-  const intro = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const node = intro.current;
-    if (!node || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const observer = new IntersectionObserver(([entry]) => node.classList.toggle('intro-is-revealed', entry.isIntersecting), { threshold: 0.18 });
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-  return <section ref={intro} className="cinematic-intro">
-    <div className="cinematic-intro__content"><p className="cinematic-intro__marker">01 / The House Edit</p><h2><span>Dressing,</span><i>Reimagined</i></h2><p>A study in modern Indian elegance — timeless silhouettes shaped for the way we live now.</p></div>
-    <div className="cinematic-intro__gallery" aria-label="House of Aristocrat editorial looks">
-      <figure className="cinematic-intro__image cinematic-intro__image--one"><Image src={asset('03_white_embroidered_kurta.png')} alt="White embroidered House of Aristocrat kurta look" fill sizes="(max-width: 768px) 50vw, 18vw" /></figure>
-      <figure className="cinematic-intro__image cinematic-intro__image--two"><Image src={asset('04_magenta_kurta_set.png')} alt="Magenta House of Aristocrat kurta set" fill sizes="(max-width: 768px) 50vw, 22vw" /></figure>
-      <figure className="cinematic-intro__image cinematic-intro__image--three"><Image src={asset('09_black_maxi_high_res.png')} alt="Black House of Aristocrat maxi dress" fill sizes="(max-width: 768px) 50vw, 15vw" /></figure>
-    </div><span>Scroll to discover <b /></span>
-  </section>;
+  return (
+    <section className="cinematic-intro cinematic-intro--campaign" aria-labelledby="cinematic-intro-title">
+      <Image
+        className="cinematic-intro__backdrop"
+        src={asset('Product..png')}
+        alt="House of Aristocrat Chaniya Choli editorial campaign"
+        fill
+        sizes="100vw"
+      />
+      <div className="cinematic-intro__veil" aria-hidden="true" />
+      <div className="cinematic-intro__content">
+        <p className="cinematic-intro__marker">01 / The House Edit</p>
+        <h2 id="cinematic-intro-title"><span>Dressing</span><i>Reimagined</i></h2>
+        <p>A study in modern Indian elegance — timeless silhouettes shaped for the way we live now.</p>
+      </div>
+    </section>
+  );
 }
 
 export function CinematicCollections() {
