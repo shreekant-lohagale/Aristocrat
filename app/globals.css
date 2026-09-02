@@ -3878,3 +3878,130 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
   .product-page .product-detail-skeleton__gallery span { aspect-ratio: 4 / 5; }
   .product-page .product-detail-skeleton__gallery span + span { display: none; }
 }
+
+/* Dressing, Reimagined — asymmetric Chaniya Choli campaign imagery. */
+.cinematic-intro.cinematic-intro--campaign {
+  display: block;
+  min-height: clamp(720px, 96svh, 1040px);
+  background: var(--hoa-cream);
+  color: var(--hoa-navy);
+}
+.cinematic-intro.cinematic-intro--campaign .cinematic-intro__gallery {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  width: 100%;
+  margin: 0;
+  pointer-events: none;
+}
+.cinematic-intro--campaign .cinematic-intro__portrait {
+  position: absolute;
+  overflow: hidden;
+  margin: 0;
+  background: var(--hoa-white);
+  box-shadow: 0 28px 70px rgb(1 27 60 / 14%);
+}
+.cinematic-intro--campaign .cinematic-intro__portrait img {
+  object-fit: cover;
+  object-position: center top;
+}
+.cinematic-intro--campaign .cinematic-intro__portrait--1 {
+  top: 8%;
+  left: clamp(24px, 4vw, 76px);
+  width: clamp(300px, 31vw, 520px);
+  aspect-ratio: 3 / 4;
+}
+.cinematic-intro--campaign .cinematic-intro__portrait--2 {
+  right: clamp(28px, 5.5vw, 104px);
+  bottom: 10%;
+  width: clamp(230px, 23vw, 390px);
+  aspect-ratio: 3 / 4;
+}
+.cinematic-intro.cinematic-intro--campaign .cinematic-intro__veil {
+  z-index: 1;
+  background:
+    linear-gradient(90deg, transparent 0 27%, rgb(252 247 240 / 80%) 43% 61%, transparent 76%),
+    radial-gradient(circle at 50% 51%, rgb(252 247 240 / 94%) 0 20%, transparent 52%);
+}
+.cinematic-intro.cinematic-intro--campaign .cinematic-intro__content {
+  z-index: 2;
+  color: var(--hoa-navy);
+}
+.cinematic-intro.cinematic-intro--campaign .cinematic-intro__marker {
+  color: var(--hoa-gold-muted);
+  text-shadow: none;
+}
+.cinematic-intro.cinematic-intro--campaign h2 {
+  color: var(--hoa-navy);
+  font-size: clamp(4.8rem, 10vw, 12rem);
+  line-height: .77;
+  text-shadow: none;
+}
+.cinematic-intro.cinematic-intro--campaign h2 i {
+  color: var(--hoa-gold-muted);
+}
+.cinematic-intro.cinematic-intro--campaign .cinematic-intro__content > p:last-child {
+  color: var(--hoa-navy);
+  text-shadow: none;
+}
+.campaign-banner > img {
+  object-position: center 24%;
+}
+
+@media (max-width: 768px) {
+  .cinematic-intro.cinematic-intro--campaign {
+    display: flex;
+    min-height: auto;
+    flex-direction: column;
+    padding: 58px 20px 72px;
+  }
+  .cinematic-intro.cinematic-intro--campaign .cinematic-intro__content {
+    position: relative;
+    inset: auto;
+    order: 1;
+    display: block;
+    padding: 0;
+  }
+  .cinematic-intro.cinematic-intro--campaign .cinematic-intro__gallery {
+    position: relative;
+    inset: auto;
+    order: 2;
+    display: flex;
+    height: auto;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 36px;
+  }
+  .cinematic-intro--campaign .cinematic-intro__portrait,
+  .cinematic-intro--campaign .cinematic-intro__portrait--1,
+  .cinematic-intro--campaign .cinematic-intro__portrait--2 {
+    position: relative;
+    inset: auto;
+    width: min(84%, 350px);
+    aspect-ratio: 3 / 4;
+  }
+  .cinematic-intro--campaign .cinematic-intro__portrait--1 {
+    align-self: flex-start;
+  }
+  .cinematic-intro--campaign .cinematic-intro__portrait--2 {
+    width: min(72%, 300px);
+    align-self: flex-end;
+    margin-top: -42px;
+  }
+  .cinematic-intro.cinematic-intro--campaign .cinematic-intro__veil {
+    background: linear-gradient(180deg, rgb(252 247 240 / 38%), transparent 34% 100%);
+  }
+  .cinematic-intro.cinematic-intro--campaign h2 {
+    margin-top: 26px;
+    font-size: clamp(3.45rem, 16vw, 5.1rem);
+    line-height: .82;
+    text-align: left;
+  }
+  .cinematic-intro.cinematic-intro--campaign .cinematic-intro__content > p:last-child {
+    margin-top: 26px;
+  }
+  .campaign-banner > img {
+    object-position: 55% top;
+  }
+}

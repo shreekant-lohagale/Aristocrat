@@ -19,7 +19,7 @@ export const editorialCategories: readonly EditorialCategory[] = [
   { id: 'kurtis', title: 'Kurtis', handle: 'kurtis', href: '/collections/kurtis', image: '06_turquoise_ruffled_kurta.png', eyebrow: 'The everyday edit', description: 'Modern silhouettes, made for every rhythm of the day.', imagePosition: 'center 20%', featured: true },
   { id: 'dresses', title: 'Dresses', handle: 'dresses', href: '/collections/dresses', image: 'Product.png', eyebrow: 'After hours', description: 'Effortless pieces with a distinctly elevated point of view.', imagePosition: 'center center' },
   { id: 'indo-western', title: 'Indo-Western', handle: 'indo-western', href: '/collections/indo-western', image: '08_blue_patchwork_high_res.png', eyebrow: 'A modern heritage', description: 'Indian craft reinterpreted through contemporary tailoring.', imagePosition: 'center 16%', featured: true },
-  { id: 'chaniya-choli', title: 'Chaniya Choli', handle: 'chaniya-choli', href: '/collections/chaniya-choli', image: '04_red_green_stylish.png', eyebrow: 'Celebration dressing', description: 'Vibrant occasionwear with a refined, modern sensibility.', imagePosition: 'center top' },
+  { id: 'chaniya-choli', title: 'Chaniya Choli', handle: 'chaniya-choli', href: '/collections/chaniya-choli', image: 'new images/WhatsApp Image 2026-08-31 at 11.09.10 PM (1).jpeg', eyebrow: 'Celebration dressing', description: 'Vibrant occasionwear with a refined, modern sensibility.', imagePosition: 'center 18%' },
   {
     id: 'jewellery', title: 'Jewellery', handle: 'jewellery', href: '/collections/jewellery',
     // TODO: Replace with dedicated Jewellery campaign asset when it is available.

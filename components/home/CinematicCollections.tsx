@@ -6,22 +6,32 @@ import { useEffect, useRef } from 'react';
 
 const asset = (file: string) => `/api/assets?file=${encodeURIComponent(file)}`;
 
+const dressingImages = [
+  'new images/WhatsApp Image 2026-08-31 at 11.09.09 PM.jpeg',
+  'new images/WhatsApp Image 2026-08-31 at 11.09.12 PM (2).jpeg',
+] as const;
+
 const stories = [
   { number: '01 / Everyday elegance', title: <>Kurtis,<br />Refined for<br />Every Day</>, copy: 'Modern proportions, thoughtful details and timeless Indian character — designed to move effortlessly from day to evening.', href: '/collections/kurtis', cta: 'Explore Kurtis', image: '05_slate_ruffled_kurta.png', overviewImage: '02_blue_patchwork_kurta.png' },
   { number: '02 / Modern femininity', title: <>Dresses,<br />Made to Be<br />Remembered</>, copy: 'Fluid silhouettes and elevated details for moments that deserve something beautifully effortless.', href: '/collections/dresses', cta: 'Explore Dresses', image: '01_black_sleeveless_maxi.png', overviewImage: '03_black_polka_red_new_model.png', reversed: true },
-  { number: '03 / Modern heritage', title: <>Tradition,<br />Styled Forward</>, copy: 'Indian craft language meets contemporary form — a collection created between heritage and modernity.', href: '/collections/indo-western', cta: 'Explore Indo-Western', image: '02_black_printed_new_model.png', overviewImage: '04_red_green_stylish.png' },
+  { number: '03 / Modern heritage', title: <>Tradition,<br />Styled Forward</>, copy: 'Indian craft language meets contemporary form — a collection created between heritage and modernity.', href: '/collections/indo-western', cta: 'Explore Indo-Western', image: 'new images/WhatsApp Image 2026-08-31 at 11.09.11 PM (1).jpeg', overviewImage: '04_red_green_stylish.png' },
 ];
 
 export function CinematicIntro() {
   return (
     <section className="cinematic-intro cinematic-intro--campaign" aria-labelledby="cinematic-intro-title">
-      <Image
-        className="cinematic-intro__backdrop"
-        src={asset('Product..png')}
-        alt="House of Aristocrat Chaniya Choli editorial campaign"
-        fill
-        sizes="100vw"
-      />
+      <div className="cinematic-intro__gallery" aria-hidden="true">
+        {dressingImages.map((file, index) => (
+          <figure className={`cinematic-intro__portrait cinematic-intro__portrait--${index + 1}`} key={file}>
+            <Image
+              src={asset(file)}
+              alt=""
+              fill
+              sizes={index === 0 ? '(max-width: 768px) 84vw, 34vw' : '(max-width: 768px) 70vw, 25vw'}
+            />
+          </figure>
+        ))}
+      </div>
       <div className="cinematic-intro__veil" aria-hidden="true" />
       <div className="cinematic-intro__content">
         <p className="cinematic-intro__marker">01 / The House Edit</p>
