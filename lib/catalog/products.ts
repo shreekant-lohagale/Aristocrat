@@ -15,8 +15,8 @@ export const activeCollections = collectionNames;
 
 function safeCountry(country: string): CountryCode { return ['IN', 'US', 'CA', 'GB', 'AU'].includes(country) ? country as CountryCode : 'IN'; }
 function mapProducts(products: ShopifyProduct[]) { return products.map(mapShopifyProductToStoreProduct); }
-function productSort(sort = 'featured') { if (sort === 'price-low') return { sortKey: 'PRICE', reverse: false }; if (sort === 'price-high') return { sortKey: 'PRICE', reverse: true }; if (sort === 'best-selling') return { sortKey: 'BEST_SELLING', reverse: false }; return { sortKey: 'CREATED_AT', reverse: true }; }
-function collectionSort(sort = 'featured') { if (sort === 'price-low') return { sortKey: 'PRICE', reverse: false }; if (sort === 'price-high') return { sortKey: 'PRICE', reverse: true }; if (sort === 'newest') return { sortKey: 'CREATED', reverse: true }; if (sort === 'best-selling') return { sortKey: 'BEST_SELLING', reverse: false }; return { sortKey: 'COLLECTION_DEFAULT', reverse: false }; }
+function productSort(sort = 'featured') { if (sort === 'price-low') return { sortKey: 'PRICE', reverse: false }; if (sort === 'price-high') return { sortKey: 'PRICE', reverse: true }; if (sort === 'best-selling') return { sortKey: 'BEST_SELLING', reverse: false }; if (sort === 'alphabetical') return { sortKey: 'TITLE', reverse: false }; return { sortKey: 'CREATED_AT', reverse: true }; }
+function collectionSort(sort = 'featured') { if (sort === 'price-low') return { sortKey: 'PRICE', reverse: false }; if (sort === 'price-high') return { sortKey: 'PRICE', reverse: true }; if (sort === 'newest') return { sortKey: 'CREATED', reverse: true }; if (sort === 'best-selling') return { sortKey: 'BEST_SELLING', reverse: false }; if (sort === 'alphabetical') return { sortKey: 'ALPHA_ASC', reverse: false }; return { sortKey: 'COLLECTION_DEFAULT', reverse: false }; }
 
 export async function getCatalog(country = 'IN', sort = 'featured'): Promise<CatalogProduct[]> {
   if (!hasShopifyStorefrontConfig()) return getFallbackCatalog();

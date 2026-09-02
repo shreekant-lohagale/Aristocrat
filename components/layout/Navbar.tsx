@@ -34,7 +34,7 @@ const mobileLinks = [
   ['Wishlist', '/wishlist'],
 ] as const;
 
-export function Navbar() {
+export function Navbar({ solid = false }: { solid?: boolean }) {
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -71,7 +71,7 @@ export function Navbar() {
     };
   }, [menuOpen]);
 
-  const solidNav = scrolled || hovered || menuOpen;
+  const solidNav = solid || scrolled || hovered || menuOpen;
   const closeMenu = () => setMenuOpen(false);
 
   return (

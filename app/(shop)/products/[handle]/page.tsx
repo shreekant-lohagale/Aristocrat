@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { BackButton } from '@/components/common/BackButton';
 import { ProductDetails } from '@/components/product/ProductDetails';
-import { getCatalog, getProduct } from '@/lib/catalog/products';
+import { Navbar } from '@/components/layout/Navbar';
+import { getCollectionProducts, getProduct } from '@/lib/catalog/products';
 import { normalizeCollectionHandle } from '@/lib/catalog/collections';
 import { productImageSrc } from '@/lib/catalog/image';
 
@@ -20,7 +22,8 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
   const { handle } = await params;
   const product = await getProduct(handle);
   if (!product) notFound();
-  const related = (await getCatalog()).filter((item) => item.category === product.category && item.id !== product.id).slice(0, 4);
-  const collectionHref = `/collections/${normalizeCollectionHandle(product.category)}`;
-  return <main className="product-page shell"><BackButton href={collectionHref} label={`Back to ${product.category}`} /><ProductDetails product={product} related={related} /></main>;
+  const collectionHandle = product.collectionHandles.find((entry) => !['new-arrivals', 'best-sellers', 'sale'].includes(entry)) ?? normalizeCollectionHandle(product.category);
+  const collectionHref = `/collections/${collectionHandle}`;
+  const related = (await getCollectionProducts(collectionHandle)).filter((item) => item.id !== product.id).slice(0, 4);
+  return <><Navbar solid /><main className="product-page"><div className="product-page__utility"><BackButton href={collectionHref} label={`Back to ${product.category}`} /><nav className="product-breadcrumbs" aria-label="Breadcrumb"><Link href="/">Home</Link><span aria-hidden="true">/</span><Link href={collectionHref}>{product.category}</Link><span aria-hidden="true">/</span><span aria-current="page">{product.title}</span></nav></div><ProductDetails product={product} related={related} /></main></>;
 }

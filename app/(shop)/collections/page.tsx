@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/BackButton';
 import { CatalogGrid } from '@/components/collection/CatalogGrid';
+import { CollectionHeader } from '@/components/collection/CollectionHeader';
 import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
@@ -10,4 +11,4 @@ export const metadata: Metadata = {
   openGraph: { url: '/collections', title: 'Collections | House of Aristocrat' },
 };
 
-export default function CollectionsPage() { return <><main className="collection-page shell"><BackButton href="/" label="Back to Home" /><section className="collection-hero"><p className="eyebrow">The House edit</p><h1>Collections</h1><p className="lede">Contemporary occasionwear, designed for the moments that become memories.</p></section><CatalogGrid /></main><Footer /></>; }
+export default function CollectionsPage() { return <><main className="collection-page"><div className="collection-page__inner"><BackButton href="/" label="Back to Home" /><CollectionHeader title="Collections" description="Contemporary occasionwear, designed for the moments that become memories." /><CatalogGrid /></div></main><Footer /></>; }

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Eye, Heart } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -19,7 +19,13 @@ export function CatalogProductCard({ product }: { product: CatalogProduct }) {
   const purchasable = Boolean(product.shopifyVariantId && product.shopifyAvailableForSale);
   const needsOptions = (product.shopifyVariantCount ?? 0) > 1;
   const hasDiscount = Boolean(product.compareAtPrice && product.compareAtPrice > product.price);
-  const discount = hasDiscount ? Math.round((1 - product.price / product.compareAtPrice!) * 100) : 0;
+  const secondImage = product.images.find((entry) => entry !== product.image);
+  const badges = [
+    !product.inStock ? 'Sold out' : '',
+    product.inStock && hasDiscount ? 'Sale' : '',
+    product.inStock && product.isBestSeller ? 'Bestseller' : '',
+    product.inStock && product.isNew ? 'New' : '',
+  ].filter(Boolean).slice(0, 2);
 
   const add = () => {
     if (!purchasable || added) return;
@@ -34,7 +40,7 @@ export function CatalogProductCard({ product }: { product: CatalogProduct }) {
   };
 
   const buttonLabel = !purchasable
-    ? 'Currently unavailable'
+    ? 'Sold out'
     : needsOptions
       ? 'Choose options'
       : added
@@ -42,22 +48,16 @@ export function CatalogProductCard({ product }: { product: CatalogProduct }) {
         : 'Add to bag';
 
   return (
-    <motion.article className="catalog-card" whileHover={{ y: -5 }}>
+    <motion.article className="catalog-card" whileHover={{ y: -2 }}>
       <div className="catalog-image">
-        <ImageWithLoader
-          src={productImageSrc(product.image)}
-          alt={product.title}
-          fill
-          sizes="(max-width: 560px) 50vw, (max-width: 960px) 33vw, 25vw"
-        />
-        {hasDiscount && product.inStock && <span className="discount-badge">{discount}% off</span>}
-        {!product.inStock && <span className="discount-badge">Sold out</span>}
+        <Link className="catalog-image-link" href={`/products/${product.handle}`} aria-label={`View ${product.title}`}>
+          <ImageWithLoader wrapperClassName="catalog-card__primary-image" src={productImageSrc(product.image)} alt={product.imageAlt ?? product.title} fill sizes="(max-width: 560px) 50vw, (max-width: 1023px) 50vw, (max-width: 1439px) 33vw, 25vw" />
+          {secondImage && <ImageWithLoader wrapperClassName="catalog-card__secondary-image" src={productImageSrc(secondImage)} alt="" fill sizes="(max-width: 560px) 50vw, (max-width: 1023px) 50vw, (max-width: 1439px) 33vw, 25vw" />}
+        </Link>
+        {badges.length > 0 && <div className="catalog-badges">{badges.map((badge) => <span key={badge}>{badge}</span>)}</div>}
         <button type="button" className="heart-button" onClick={() => toggleWishlist(product.handle, productWishlistAliases(product))} aria-label={`Toggle ${product.title} wishlist`}>
           <Heart size={18} fill={saved ? 'currentColor' : 'none'} />
         </button>
-        <div className="card-actions">
-          <Link href={`/products/${product.handle}`} aria-label={`Quick view ${product.title}`}><Eye size={17} /></Link>
-        </div>
         <button type="button" className="catalog-add-button" onClick={add} disabled={!purchasable || added} aria-label={`${buttonLabel}: ${product.title}`}>
           {buttonLabel}
         </button>
