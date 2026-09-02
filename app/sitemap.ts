@@ -4,7 +4,7 @@ import { getCatalog } from '@/lib/catalog/products';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://house-of-aristocrat.vercel.app';
-  const staticPages = ['', 'collections', 'search', 'wishlist', 'account'];
+  const staticPages = ['', 'store', 'collections', 'search', 'wishlist', 'account'];
   const collectionPages = collectionDefinitions.map((collection) => `collections/${collection.handle}`);
   let productPages: string[] = [];
   try {
