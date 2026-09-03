@@ -1,9 +1,9 @@
-﻿const domain = process.env.VTBSJMYH_SHOPIFY_STORE_DOMAIN?.trim();
-const token = process.env.VTBSJMYH_SHOPIFY_STOREFRONT_ACCESS_TOKEN?.trim();
+const domain = process.env.SHOPIFY_STORE_DOMAIN?.trim() || process.env.VTBSJMYH_SHOPIFY_STORE_DOMAIN?.trim();
+const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN?.trim() || process.env.VTBSJMYH_SHOPIFY_STOREFRONT_ACCESS_TOKEN?.trim();
 const apiVersion = '2026-07';
 
 if (!domain || !token) {
-  console.error('Shopify connection test skipped: Vercel Shopify environment variables are not available locally.');
+  console.error('Shopify connection test skipped: Shopify Storefront environment variables are not available locally.');
   process.exitCode = 1;
 } else {
   const endpoint = `https://${domain.replace(/^https?:\/\//, '').replace(/\/$/, '')}/api/${apiVersion}/graphql.json`;

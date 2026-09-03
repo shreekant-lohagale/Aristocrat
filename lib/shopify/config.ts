@@ -1,18 +1,21 @@
 ﻿const storefrontApiVersion = '2026-07';
 
-function getRequiredEnvironment(name: 'VTBSJMYH_SHOPIFY_STORE_DOMAIN' | 'VTBSJMYH_SHOPIFY_STOREFRONT_ACCESS_TOKEN') {
-  const value = process.env[name]?.trim();
-  if (!value) throw new Error(`Shopify Storefront is not configured: missing ${name}.`);
-  return value;
-}
+const storeDomain = () => process.env.SHOPIFY_STORE_DOMAIN?.trim() || process.env.VTBSJMYH_SHOPIFY_STORE_DOMAIN?.trim();
+const storefrontToken = () => process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN?.trim() || process.env.VTBSJMYH_SHOPIFY_STOREFRONT_ACCESS_TOKEN?.trim();
 
 export function hasShopifyStorefrontConfig() {
-  return Boolean(process.env.VTBSJMYH_SHOPIFY_STORE_DOMAIN?.trim() && process.env.VTBSJMYH_SHOPIFY_STOREFRONT_ACCESS_TOKEN?.trim());
+  return Boolean(storeDomain() && storefrontToken());
+}
+
+export function hasDevelopmentCatalogFallback() {
+  return process.env.NODE_ENV !== 'production' && process.env.ENABLE_LOCAL_CATALOG_FALLBACK === 'true';
 }
 
 export function getShopifyConfig() {
-  const domain = getRequiredEnvironment('VTBSJMYH_SHOPIFY_STORE_DOMAIN').replace(/^https?:\/\//, '').replace(/\/$/, '');
-  const storefrontAccessToken = getRequiredEnvironment('VTBSJMYH_SHOPIFY_STOREFRONT_ACCESS_TOKEN');
+  const configuredDomain = storeDomain();
+  const storefrontAccessToken = storefrontToken();
+  if (!configuredDomain || !storefrontAccessToken) throw new Error('Shopify Storefront is not configured: set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_ACCESS_TOKEN.');
+  const domain = configuredDomain.replace(/^https?:\/\//, '').replace(/\/$/, '');
   return {
     storefrontAccessToken,
     endpoint: `https://${domain}/api/${storefrontApiVersion}/graphql.json`,

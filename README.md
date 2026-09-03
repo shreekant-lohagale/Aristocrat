@@ -1,5 +1,13 @@
 ﻿# House of Aristocrat
 
+## Shopify catalog source
+
+Shopify is the catalog source in production. Configure `SHOPIFY_STORE_DOMAIN` and `SHOPIFY_STOREFRONT_ACCESS_TOKEN` in both local development and Vercel Production. The legacy `VTBSJMYH_SHOPIFY_STORE_DOMAIN` and `VTBSJMYH_SHOPIFY_STOREFRONT_ACCESS_TOKEN` names remain supported; do not define both naming schemes with different values.
+
+Local fallback products are disabled by default so missing credentials cannot make localhost appear healthier than production. For an explicit local UI preview only, set `ENABLE_LOCAL_CATALOG_FALLBACK=true`. Production ignores that switch.
+
+Collection routes use Shopify collection membership by canonical handle. Product types and tags do not implicitly place products in collections, and a missing `new-arrivals` collection does not substitute the complete catalog.
+
 ## Shopify hosted Customer Accounts
 
 Shopify owns customer identity, including email verification, Google, Shop login, profile data, orders, addresses, and logout. The storefront does not keep an authentication state or attempt to determine whether a Shopify customer is signed in.
