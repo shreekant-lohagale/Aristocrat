@@ -13,6 +13,13 @@ type ProductResponse = { product: ShopifyProduct | null };
 type CollectionResponse = { collection: ShopifyCollection | null };
 export const activeCollections = collectionNames;
 
+export class ShopifyCollectionNotFoundError extends Error {
+  constructor(public readonly handle: string) {
+    super(`Shopify collection was not found or is not published: ${handle}`);
+    this.name = 'ShopifyCollectionNotFoundError';
+  }
+}
+
 function safeCountry(country: string): CountryCode { return ['IN', 'US', 'CA', 'GB', 'AU'].includes(country) ? country as CountryCode : 'IN'; }
 function mapProducts(products: ShopifyProduct[]) { return products.map(mapShopifyProductToStoreProduct); }
 function requireCatalogSource() { if (!hasDevelopmentCatalogFallback()) throw new Error('Shopify Storefront is not configured. Local catalog fallback is disabled.'); }
@@ -30,8 +37,8 @@ export async function getCollectionProducts(handle: string, country = 'IN', sort
   if (!hasShopifyStorefrontConfig()) { requireCatalogSource(); return (await getFallbackCatalog()).filter((product) => product.collectionHandles.includes(normalized)); }
   const data = await shopifyFetch<CollectionResponse>(COLLECTION_BY_HANDLE_QUERY, { country: safeCountry(country), handle: normalized, first: 100, ...collectionSort(sort) }, { cache: 'no-store' });
   if (data.collection) return mapProducts(data.collection.products.nodes);
-  console.warn('Shopify collection is not published to the Storefront channel.', { handle: normalized });
-  return [];
+  if (normalized === 'new-arrivals') return getCatalog(country, 'featured');
+  throw new ShopifyCollectionNotFoundError(normalized);
 }
 
 export async function getCollectionDetails(handle: string, country = 'IN') {

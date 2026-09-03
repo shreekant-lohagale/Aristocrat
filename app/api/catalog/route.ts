@@ -1,4 +1,4 @@
-import { getCatalog, getCollectionProducts, getProduct, searchCatalog } from '@/lib/catalog/products';
+import { getCatalog, getCollectionProducts, getProduct, searchCatalog, ShopifyCollectionNotFoundError } from '@/lib/catalog/products';
 import { hasShopifyStorefrontConfig } from '@/lib/shopify/config';
 
 const responseHeaders = (source?: string) => ({
@@ -30,7 +30,18 @@ export async function GET(request: Request) {
 
     return Response.json(products, { headers: responseHeaders(products[0]?.source ?? (hasShopifyStorefrontConfig() ? 'shopify' : 'fallback')) });
   } catch (error) {
-    console.error('Shopify catalog request failed.', { message: error instanceof Error ? error.message : 'Unknown error' });
+    if (error instanceof ShopifyCollectionNotFoundError) {
+      console.warn('Shopify collection is missing or unpublished.', { handle: error.handle, country });
+      return Response.json(
+        { code: 'COLLECTION_NOT_FOUND', error: 'This collection is not available in Shopify.' },
+        { status: 404, headers: responseHeaders('shopify') },
+      );
+    }
+    console.error('Shopify catalog request failed.', {
+      country,
+      shopifyConfigured: hasShopifyStorefrontConfig(),
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
     return Response.json({ error: 'The House collection is temporarily unavailable.' }, { status: 503 });
   }
 }

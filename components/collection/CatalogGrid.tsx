@@ -54,7 +54,11 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
         const params = new URLSearchParams({ country: country.code, sort: values.sort });
         if (collection) params.set('collection', normalizeCollectionHandle(collection));
         const response = await fetch(`/api/catalog?${params}`, { signal: controller.signal });
-        if (!response.ok) throw new Error('Unable to load this collection.');
+        if (!response.ok) {
+          const payload = await response.json().catch(() => null) as { code?: string; error?: string } | null;
+          if (payload?.code === 'COLLECTION_NOT_FOUND') throw new Error('This collection is not available in Shopify.');
+          throw new Error(payload?.error || 'Unable to load this collection.');
+        }
         setProducts(await response.json() as CatalogProduct[]);
       } catch (catalogError) {
         if (!controller.signal.aborted) setError(catalogError instanceof Error ? catalogError.message : 'Unable to load this collection.');
@@ -123,7 +127,7 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
   const rangeStart = filtered.length ? (currentPage - 1) * limit + 1 : 0;
   const rangeEnd = Math.min(currentPage * limit, filtered.length);
   const activeFilterCount = [values.category, values.price, values.size, values.color, values.availability].filter(Boolean).length;
-  const hasFilters = Boolean(activeFilterCount || values.sort !== 'featured');
+  const hasActiveFilters = Boolean(activeFilterCount);
   const groupProps = { values, categories, colors, sizes, priceOptions, update };
 
   if (loading) return <section className={`catalog ${variant === 'new-arrivals' ? 'catalog--new-arrivals' : ''}`} aria-busy="true"><ProductGridSkeleton count={limit} /></section>;
@@ -141,22 +145,23 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
         </div>
       </div>
 
-      <CatalogResults currentPage={currentPage} clear={clear} emptyMessage={normalizeCollectionHandle(collection ?? '') === 'jewellery' ? 'Pieces for this collection are coming soon.' : undefined} filtered={filtered.length} totalPages={totalPages} update={update} visible={visible} />
+      <CatalogResults currentPage={currentPage} clear={clear} hasActiveFilters={hasActiveFilters} emptyMessage={normalizeCollectionHandle(collection ?? '') === 'jewellery' ? 'Pieces for this collection are coming soon.' : undefined} filtered={filtered.length} totalPages={totalPages} update={update} visible={visible} />
 
       {drawerOpen && <div className="mobile-filter-sheet" role="dialog" aria-modal="true" aria-label="Product filters">
         <button className="mobile-filter-sheet__scrim" aria-label="Close filters" onClick={() => setDrawerOpen(false)} />
         <div className="mobile-filter-sheet__panel" data-lenis-prevent>
           <header><div><p>Refine the edit</p><h3>Filters</h3></div><button type="button" aria-label="Close filters" onClick={() => setDrawerOpen(false)}><X size={20} /></button></header>
-          <div className="mobile-filter-sheet__content"><FilterPanel {...groupProps} hasFilters={hasFilters} clear={clear} /></div>
-          <footer><button type="button" className="mobile-filter-sheet__clear" onClick={clear} disabled={!hasFilters}>Clear all</button><button type="button" className="mobile-filter-sheet__apply" onClick={() => setDrawerOpen(false)}>View {filtered.length} {filtered.length === 1 ? 'piece' : 'pieces'}</button></footer>
+          <div className="mobile-filter-sheet__content"><FilterPanel {...groupProps} hasFilters={hasActiveFilters} clear={clear} /></div>
+          <footer><button type="button" className="mobile-filter-sheet__clear" onClick={clear} disabled={!hasActiveFilters}>Clear all</button><button type="button" className="mobile-filter-sheet__apply" onClick={() => setDrawerOpen(false)}>View {filtered.length} {filtered.length === 1 ? 'piece' : 'pieces'}</button></footer>
         </div>
       </div>}
     </section>
   );
 }
 
-function CatalogResults({ visible, filtered, totalPages, currentPage, update, clear, emptyMessage }: { visible: CatalogProduct[]; filtered: number; totalPages: number; currentPage: number; update: (key: string, value: string) => void; clear: () => void; emptyMessage?: string }) {
-  return <div className="catalog-results"><div className="catalog-grid">{visible.map((product) => <CatalogProductCard key={product.id} product={product} />)}</div>{visible.length === 0 && <div className="empty-results"><p>{emptyMessage ?? 'No pieces match your selection.'}</p>{!emptyMessage && <button className="button" onClick={clear}>Clear filters</button>}</div>}{filtered > 0 && totalPages > 1 && <div className="pagination">{Array.from({ length: totalPages }, (_, index) => <button key={index} className={currentPage === index + 1 ? 'active' : ''} aria-label={`Page ${index + 1}`} aria-current={currentPage === index + 1 ? 'page' : undefined} onClick={() => update('page', String(index + 1))}>{index + 1}</button>)}</div>}</div>;
+function CatalogResults({ visible, filtered, totalPages, currentPage, update, clear, emptyMessage, hasActiveFilters }: { visible: CatalogProduct[]; filtered: number; totalPages: number; currentPage: number; update: (key: string, value: string) => void; clear: () => void; emptyMessage?: string; hasActiveFilters: boolean }) {
+  const resolvedEmptyMessage = emptyMessage ?? (hasActiveFilters ? 'No pieces match your selection.' : 'This collection does not have any published pieces yet.');
+  return <div className="catalog-results"><div className="catalog-grid">{visible.map((product) => <CatalogProductCard key={product.id} product={product} />)}</div>{visible.length === 0 && <div className="empty-results"><p>{resolvedEmptyMessage}</p>{hasActiveFilters && <button className="button" onClick={clear}>Clear filters</button>}</div>}{filtered > 0 && totalPages > 1 && <div className="pagination">{Array.from({ length: totalPages }, (_, index) => <button key={index} className={currentPage === index + 1 ? 'active' : ''} aria-label={`Page ${index + 1}`} aria-current={currentPage === index + 1 ? 'page' : undefined} onClick={() => update('page', String(index + 1))}>{index + 1}</button>)}</div>}</div>;
 }
 
 function FilterPanel({ values, categories, colors, sizes, priceOptions, update, hasFilters, clear }: { values: { category: string; price: string; size: string; color: string; availability: string }; categories: string[]; colors: string[]; sizes: string[]; priceOptions: readonly (readonly [string, string])[]; update: (key: string, value: string) => void; hasFilters: boolean; clear: () => void }) {

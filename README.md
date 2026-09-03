@@ -6,7 +6,7 @@ Shopify is the catalog source in production. Configure `SHOPIFY_STORE_DOMAIN` an
 
 Local fallback products are disabled by default so missing credentials cannot make localhost appear healthier than production. For an explicit local UI preview only, set `ENABLE_LOCAL_CATALOG_FALLBACK=true`. Production ignores that switch.
 
-Collection routes use Shopify collection membership by canonical handle. Product types and tags do not implicitly place products in collections, and a missing `new-arrivals` collection does not substitute the complete catalog.
+Collection routes use Shopify collection membership by canonical handle. Product types and tags do not implicitly place products in collections. `new-arrivals` uses its Shopify collection when published; until that collection exists, it intentionally shows the newest Shopify products rather than local data.
 
 ## Shopify hosted Customer Accounts
 
