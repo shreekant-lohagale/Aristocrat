@@ -4226,3 +4226,15 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
 @media (prefers-reduced-motion: reduce) {
   .store-category > img { transition: none; }
 }
+
+/* Homepage flow: soften the editorial-to-shopping handoff without another block. */
+.cinematic-intro--campaign + .editorial-categories {
+  border-top: 1px solid rgb(1 27 60 / 7%);
+  background: linear-gradient(180deg, var(--hoa-cream) 0, var(--hoa-white) clamp(96px, 12vw, 176px));
+}
+
+@media (max-width: 768px) {
+  .cinematic-intro--campaign + .editorial-categories {
+    background: linear-gradient(180deg, var(--hoa-cream) 0, var(--hoa-white) 92px);
+  }
+}
