@@ -4269,3 +4269,157 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
     background: linear-gradient(180deg, var(--hoa-cream) 0, var(--hoa-white) 92px);
   }
 }
+
+/* Branded customer dashboard; Shopify remains the secure account authority. */
+.account-dashboard.account-dashboard {
+  min-height: 76svh;
+  padding-top: calc(var(--announcement-height) + var(--navbar-height) + clamp(42px, 5vw, 76px));
+  padding-bottom: clamp(82px, 9vw, 132px);
+  background: var(--hoa-cream);
+  color: var(--hoa-navy);
+}
+.auth-page { padding-top: calc(var(--announcement-height) + var(--navbar-height) + 48px); }
+.auth-back { top: calc(var(--announcement-height) + var(--navbar-height) + 12px); }
+.account-dashboard__content { min-width: 0; }
+.account-sidebar {
+  top: calc(var(--navbar-height) + 22px);
+  border-color: rgb(1 27 60 / 12%);
+  background: rgb(255 255 255 / 72%);
+  box-shadow: 0 18px 54px rgb(1 27 60 / 5%);
+}
+.account-sidebar .account-sign-out,
+.account-mobile-sheet__panel .account-sign-out {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 9px;
+  justify-content: flex-start;
+  border-color: rgb(1 27 60 / 16%);
+  background: transparent;
+  color: var(--hoa-navy);
+}
+.account-page-header { border-color: rgb(1 27 60 / 12%); }
+.account-page-header .eyebrow,
+.account-content-section__heading .eyebrow,
+.account-welcome-card .eyebrow,
+.account-management-grid .eyebrow { color: var(--hoa-gold-muted); }
+.account-page-header h1,
+.account-content-section__heading h2 { color: var(--hoa-navy); }
+.account-welcome-card {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-top: 32px;
+  padding: clamp(28px, 4vw, 52px);
+  background: var(--hoa-navy);
+  color: var(--hoa-white);
+  box-shadow: 0 24px 64px rgb(1 27 60 / 12%);
+}
+.account-welcome-card h2 {
+  max-width: 620px;
+  margin: 9px 0 14px;
+  color: var(--hoa-white);
+  font-size: clamp(2.2rem, 4vw, 4.4rem);
+  font-weight: 400;
+  letter-spacing: -.035em;
+  line-height: .96;
+}
+.account-welcome-card p:not(.eyebrow) {
+  max-width: 570px;
+  margin: 0;
+  color: rgb(255 255 255 / 72%);
+  font-size: 13px;
+  line-height: 1.75;
+}
+.account-primary-link,
+.account-secure-card > a,
+.account-management-grid article > a {
+  display: inline-flex;
+  min-height: 46px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 19px;
+  border: 1px solid var(--hoa-gold-muted);
+  color: inherit;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  transition: background .24s ease, color .24s ease, transform .24s ease;
+}
+.account-primary-link:hover { background: var(--hoa-gold-muted); color: var(--hoa-navy); transform: translateY(-2px); }
+.account-service-note {
+  margin: 14px 0 0;
+  padding: 13px 16px;
+  border: 1px solid rgb(189 149 105 / 34%);
+  color: var(--hoa-gray);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.account-summary-grid--dashboard { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.account-summary-grid--dashboard .account-summary-card {
+  text-decoration: none;
+  border-color: rgb(1 27 60 / 12%);
+  transition: border-color .24s ease, box-shadow .24s ease, transform .24s ease;
+}
+.account-summary-grid--dashboard .account-summary-card:hover {
+  border-color: var(--hoa-gold-muted);
+  box-shadow: 0 16px 42px rgb(1 27 60 / 7%);
+  transform: translateY(-3px);
+}
+.account-summary-grid--dashboard .account-summary-card svg { color: var(--hoa-gold-muted); }
+.account-summary-grid--dashboard .account-summary-card strong { color: var(--hoa-navy); font-size: clamp(1.55rem, 2.2vw, 2rem); }
+.account-secure-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 22px;
+  padding: clamp(24px, 3vw, 36px);
+  border: 1px solid rgb(1 27 60 / 12%);
+  background: var(--hoa-white);
+}
+.account-secure-card > svg { color: var(--hoa-gold-muted); }
+.account-secure-card h3 { margin: 0 0 7px; color: var(--hoa-navy); font: 400 clamp(1.5rem, 2.4vw, 2rem)/1.1 'Playfair Display', Georgia, serif; }
+.account-secure-card p { max-width: 590px; margin: 0; color: var(--hoa-gray); font-size: 12px; line-height: 1.7; }
+.account-secure-card > a,
+.account-management-grid article > a { border: 0; border-bottom: 1px solid var(--hoa-gold-muted); padding: 0 0 5px; min-height: 0; }
+.account-secure-card > a:hover,
+.account-management-grid article > a:hover { color: var(--hoa-gold-muted); }
+.account-management-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 58px;
+}
+.account-management-grid article { padding: clamp(27px, 3.5vw, 43px); border: 1px solid rgb(1 27 60 / 12%); background: var(--hoa-white); }
+.account-management-grid article > svg { color: var(--hoa-gold-muted); }
+.account-management-grid h2 { margin: 12px 0 13px; color: var(--hoa-navy); font-size: clamp(1.9rem, 3vw, 2.75rem); font-weight: 400; line-height: 1; }
+.account-management-grid article > p:not(.eyebrow) { max-width: 440px; margin: 0; color: var(--hoa-gray); font-size: 12px; line-height: 1.75; }
+.account-management-grid article > a { margin-top: 23px; }
+.account-wishlist-loading { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.account-wishlist-loading span { display: block; aspect-ratio: 3 / 4; animation: account-pulse 1.2s ease-in-out infinite alternate; background: rgb(255 255 255 / 75%); }
+
+@media (max-width: 760px) {
+  .account-dashboard.account-dashboard { padding: calc(var(--announcement-height) + var(--navbar-height) + 24px) 16px 74px; }
+  .account-welcome-card { align-items: stretch; flex-direction: column; gap: 24px; margin-top: 25px; padding: 28px 22px; }
+  .account-welcome-card h2 { font-size: clamp(2.35rem, 11vw, 3.35rem); }
+  .account-primary-link { align-self: flex-start; }
+  .account-summary-grid--dashboard { grid-template-columns: 1fr; }
+  .account-summary-grid--dashboard .account-summary-card { min-height: 132px; }
+  .account-secure-card { grid-template-columns: auto minmax(0, 1fr); gap: 16px; }
+  .account-secure-card > a { grid-column: 2; justify-self: start; }
+  .account-management-grid { grid-template-columns: 1fr; margin-top: 44px; }
+  .account-wishlist-loading { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+  .account-wishlist-loading span:last-child { display: none; }
+  .auth-page { padding-top: calc(var(--announcement-height) + var(--navbar-height) + 42px); }
+  .auth-back { top: calc(var(--announcement-height) + var(--navbar-height) + 8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .account-primary-link,
+  .account-summary-grid--dashboard .account-summary-card { transition: none; }
+  .account-wishlist-loading span { animation: none; }
+}

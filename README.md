@@ -18,8 +18,8 @@ Set this non-secret Vercel variable from **Shopify Admin → Settings → Custom
 SHOPIFY_CUSTOMER_ACCOUNT_URL=https://your-shopify-hosted-customer-account-url
 ```
 
-The navbar account icon and `/account`, `/account/login`, `/account/orders`, `/account/addresses`, and `/account/profile` resolve to this same hosted destination. Shopify then opens the profile for an existing session or requests sign-in when needed. Do not guess or hardcode the URL.
+The navbar account icon opens the branded `/account` dashboard. Secure actions from that dashboard, together with `/account/login`, `/account/orders`, `/account/addresses`, and `/account/profile`, resolve to the configured Shopify-hosted destination. Shopify then opens the account for an existing session or requests sign-in when needed. Do not guess or hardcode the URL.
 
 The Storefront API remains separate and continues to power products, cart, and hosted checkout. `/account/wishlist` remains a local storefront feature.
 
-Because Customer Account API access is unavailable on the current Shopify plan, the custom Next.js storefront cannot display authenticated customer state, names, orders, addresses, or profiles. When the Headless sales channel becomes available, a future integration can add those experiences without emulating a login state now.
+Because Customer Account API access is unavailable on the current Shopify plan, the custom Next.js dashboard does not display authenticated customer state, names, orders, addresses, or profiles. It renders the existing device-local wishlist and delegates private account data and session actions to Shopify. When Customer Account API access becomes available, those sections can be progressively enhanced without replacing Shopify authentication.

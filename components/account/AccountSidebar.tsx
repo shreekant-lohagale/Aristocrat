@@ -1,10 +1,9 @@
 ﻿'use client';
 
 import Link from 'next/link';
-import { Heart, LayoutDashboard, LogOut, MapPin, Menu, Package, User, X } from 'lucide-react';
+import { Heart, Headphones, LayoutDashboard, LogOut, MapPin, Menu, Package, User, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import type { AccountUser } from '@/types/account';
 
 const navigation = [
   { href: '/account', label: 'Overview', icon: LayoutDashboard },
@@ -12,10 +11,11 @@ const navigation = [
   { href: '/account/wishlist', label: 'Wishlist', icon: Heart },
   { href: '/account/addresses', label: 'Addresses', icon: MapPin },
   { href: '/account/profile', label: 'Profile', icon: User },
+  { href: '/account#account-support', label: 'Support', icon: Headphones },
 ];
 
-function ProfileIdentity({ user }: { user: AccountUser }) {
-  return <div className="account-identity"><div className="account-identity__avatar">{user.image ? <img src={user.image} alt="" /> : <span>{user.name?.slice(0, 1) || 'A'}</span>}</div><div><strong>{user.name || 'House client'}</strong><small>{user.email}</small></div></div>;
+function ProfileIdentity() {
+  return <div className="account-identity"><div className="account-identity__avatar" aria-hidden="true"><span>H</span></div><div><strong>Private client account</strong><small>Secured by Shopify</small></div></div>;
 }
 
 function AccountLinks({ close }: { close?: () => void }) {
@@ -23,11 +23,11 @@ function AccountLinks({ close }: { close?: () => void }) {
   return <nav className="account-nav-links" aria-label="Account navigation">{navigation.map(({ href, label, icon: Icon }) => <Link key={href} href={href} className={pathname === href ? 'active' : ''} onClick={close}><Icon size={17} aria-hidden="true" /><span>{label}</span></Link>)}</nav>;
 }
 
-export function AccountSidebar({ user }: { user: AccountUser }) {
-  return <aside className="account-sidebar"><ProfileIdentity user={user} /><AccountLinks /><a className="account-sign-out" href="/account/login"><LogOut size={16} aria-hidden="true" />Manage account</a></aside>;
+export function AccountSidebar() {
+  return <aside className="account-sidebar"><ProfileIdentity /><AccountLinks /><a className="account-sign-out" href="/account/login"><LogOut size={16} aria-hidden="true" />Manage / sign out</a></aside>;
 }
 
-export function AccountMobileNav({ user }: { user: AccountUser }) {
+export function AccountMobileNav() {
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (!open) return;
@@ -37,14 +37,14 @@ export function AccountMobileNav({ user }: { user: AccountUser }) {
   }, [open]);
 
   return <>
-    <div className="account-mobile-nav"><ProfileIdentity user={user} /><button type="button" onClick={() => setOpen(true)} aria-label="Open account navigation"><Menu size={20} /></button></div>
+    <div className="account-mobile-nav"><ProfileIdentity /><button type="button" onClick={() => setOpen(true)} aria-label="Open account navigation"><Menu size={20} /></button></div>
     {open && <div className="account-mobile-sheet" role="dialog" aria-modal="true" aria-label="Account navigation">
       <button className="account-mobile-sheet__scrim" aria-label="Close account navigation" onClick={() => setOpen(false)} />
       <div className="account-mobile-sheet__panel" data-lenis-prevent>
         <header><p>My account</p><button type="button" aria-label="Close account navigation" onClick={() => setOpen(false)}><X size={20} /></button></header>
-        <ProfileIdentity user={user} />
+        <ProfileIdentity />
         <AccountLinks close={() => setOpen(false)} />
-        <a className="account-sign-out" href="/account/login"><LogOut size={16} aria-hidden="true" />Manage account</a>
+        <a className="account-sign-out" href="/account/login"><LogOut size={16} aria-hidden="true" />Manage / sign out</a>
       </div>
     </div>}
   </>;

@@ -1,10 +1,10 @@
-﻿'use client';
+'use client';
 
-import { Heart, MapPin, PackageCheck, Sparkles } from 'lucide-react';
+import { Heart, MapPin, PackageCheck } from 'lucide-react';
 import { useStore } from '@/context/StoreProvider';
 import { AccountSummaryCard } from './AccountSummaryCard';
 
-export function AccountSummaryCards() {
+export function AccountSummaryCards({ accountHref }: { accountHref: string }) {
   const { wishlist } = useStore();
-  return <section className="account-summary-grid"><AccountSummaryCard icon={PackageCheck} label="Orders" value={0} detail="Shopify integration pending" /><AccountSummaryCard icon={Heart} label="Wishlist" value={wishlist.length} detail="Pieces saved for later" /><AccountSummaryCard icon={MapPin} label="Addresses" value="Local" detail="Saved on this device" /><AccountSummaryCard icon={Sparkles} label="Member" value="Active" detail="House of Aristocrat" /></section>;
+  return <section className="account-summary-grid account-summary-grid--dashboard"><AccountSummaryCard icon={PackageCheck} label="Orders" value="View orders" detail="Secure Shopify order history" href={accountHref} /><AccountSummaryCard icon={Heart} label="Wishlist" value={wishlist.length ? `${wishlist.length} saved` : 'View wishlist'} detail="Pieces saved on this device" href="/account/wishlist" /><AccountSummaryCard icon={MapPin} label="Addresses" value="Manage" detail="Securely stored by Shopify" href={accountHref} /></section>;
 }
