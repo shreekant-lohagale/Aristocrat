@@ -4399,6 +4399,12 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
 .account-management-grid h2 { margin: 12px 0 13px; color: var(--hoa-navy); font-size: clamp(1.9rem, 3vw, 2.75rem); font-weight: 400; line-height: 1; }
 .account-management-grid article > p:not(.eyebrow) { max-width: 440px; margin: 0; color: var(--hoa-gray); font-size: 12px; line-height: 1.75; }
 .account-management-grid article > a { margin-top: 23px; }
+.account-management-grid--single { grid-template-columns: minmax(0, 1fr); }
+.account-management-grid--single article { max-width: 680px; }
+.account-customer-identity { display: grid; gap: 9px; margin: 22px 0 0; padding-top: 18px; border-top: 1px solid rgb(1 27 60 / 10%); }
+.account-customer-identity div { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 12px; }
+.account-customer-identity dt { color: var(--hoa-gold-muted); font-size: 9px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+.account-customer-identity dd { min-width: 0; overflow-wrap: anywhere; margin: 0; color: var(--hoa-navy); font-size: 12px; }
 .account-wishlist-loading { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .account-wishlist-loading span { display: block; aspect-ratio: 3 / 4; animation: account-pulse 1.2s ease-in-out infinite alternate; background: rgb(255 255 255 / 75%); }
 

@@ -7,6 +7,11 @@ export function hasShopifyStorefrontConfig() {
   return Boolean(storeDomain() && storefrontToken());
 }
 
+export function getShopifyStoreDomain() {
+  const configuredDomain = storeDomain();
+  return configuredDomain ? configuredDomain.replace(/^https?:\/\//, '').replace(/\/$/, '') : null;
+}
+
 export function hasDevelopmentCatalogFallback() {
   return process.env.NODE_ENV !== 'production' && process.env.ENABLE_LOCAL_CATALOG_FALLBACK === 'true';
 }
