@@ -10,11 +10,13 @@ import {
   UserRound,
   X,
 } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { useStore } from '@/context/StoreProvider';
 import { AnnouncementBar } from './AnnouncementBar';
 import { CountrySelector } from './CountrySelector';
+import { drawerRight } from '@/lib/motion';
 
 const asset = (file: string) => `/api/assets?file=${encodeURIComponent(file)}`;
 
@@ -39,6 +41,7 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const reducedMotion = useReducedMotion();
   const { cartCount, wishlist, customerAuthenticated } = useStore();
   const accountLabel = customerAuthenticated === true ? 'My Account' : customerAuthenticated === false ? 'Sign In' : 'Account';
   const accountHref = customerAuthenticated === false ? '/account/auth/login' : '/account';
@@ -80,7 +83,7 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
     <>
       <AnnouncementBar />
 
-      <header
+      <motion.header
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         className={`navbar editorial-navbar ${
@@ -130,7 +133,7 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
               aria-label={`Wishlist, ${wishlist.length} items`}
             >
               <Heart size={19} strokeWidth={1.6} />
-              {wishlist.length > 0 && <small>{wishlist.length}</small>}
+              <AnimatePresence mode="popLayout" initial={false}>{wishlist.length > 0 && <motion.small key={wishlist.length} initial={reducedMotion ? false : { opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.18 }}>{wishlist.length}</motion.small>}</AnimatePresence>
             </Link>
 
             <Link
@@ -150,19 +153,24 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
               onClick={() => setCartOpen(true)}
             >
               <ShoppingBag size={20} strokeWidth={1.6} />
-              {cartCount > 0 && <small suppressHydrationWarning>{cartCount}</small>}
+              <AnimatePresence mode="popLayout" initial={false}>{cartCount > 0 && <motion.small suppressHydrationWarning key={cartCount} initial={reducedMotion ? false : { opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.18 }}>{cartCount}</motion.small>}</AnimatePresence>
             </button>
           </div>
         </div>
-      </header>
+      </motion.header>
 
+      <AnimatePresence initial={false}>
       {menuOpen && (
-        <div
+        <motion.div
           id="mobile-navigation"
           className="editorial-mobile-menu"
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"
+          variants={drawerRight}
+          initial={reducedMotion ? false : 'hidden'}
+          animate="visible"
+          exit="exit"
         >
           <header>
             <Link href="/" aria-label="House of Aristocrat home" onClick={closeMenu}>
@@ -198,8 +206,9 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
             Search House of Aristocrat
             <Search size={18} strokeWidth={1.6} />
           </Link>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </>

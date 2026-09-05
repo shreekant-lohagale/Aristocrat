@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, ChevronLeft, ChevronRight, Heart, Minus, Plus, Ruler, Share2, X } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CatalogProduct, ProductOptionValue, ProductVariant } from '@/types/commerce';
 import { useStore } from '@/context/StoreProvider';
@@ -10,6 +11,7 @@ import { ImageWithLoader } from '@/components/ui/ImageWithLoader';
 import { productImageSrc } from '@/lib/catalog/image';
 import { isProductWishlisted, productWishlistAliases } from '@/lib/catalog/wishlist';
 import { normalizeCollectionHandle } from '@/lib/catalog/collections';
+import { drawerBottom, fadeUp, overlayFade, staggerContainer } from '@/lib/motion';
 
 const optionKey = (name: string) => name.trim().toLowerCase();
 
@@ -34,6 +36,7 @@ export function ProductDetails({ product: initialProduct, related }: { product: 
   const [activeTab, setActiveTab] = useState('details');
   const [relatedProducts, setRelatedProducts] = useState(related);
   const galleryRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -119,15 +122,15 @@ export function ProductDetails({ product: initialProduct, related }: { product: 
       <section className="product-view">
         <div className={`product-gallery ${images.length === 1 ? 'product-gallery--single' : ''}`}>
           <div ref={galleryRef} className="product-gallery__track" aria-label={`${product.title} image gallery`}>
-            {images.map((entry, index) => <figure key={entry} className="product-gallery__image"><ImageWithLoader src={productImageSrc(entry)} alt={index === 0 ? product.imageAlt ?? product.title : `${product.title}, view ${index + 1}`} fill priority={index === 0} sizes="(max-width: 768px) 100vw, 31vw" /></figure>)}
+            {images.map((entry, index) => <motion.figure key={entry} className="product-gallery__image" initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.38, delay: reducedMotion ? 0 : Math.min(index * 0.06, 0.18) }}><ImageWithLoader src={productImageSrc(entry)} alt={index === 0 ? product.imageAlt ?? product.title : `${product.title}, view ${index + 1}`} fill priority={index === 0} sizes="(max-width: 768px) 100vw, 31vw" /></motion.figure>)}
           </div>
           {images.length > 1 && <div className="product-gallery__controls"><button type="button" onClick={() => scrollGallery(-1)} aria-label="Previous product image"><ChevronLeft /></button><button type="button" onClick={() => scrollGallery(1)} aria-label="Next product image"><ChevronRight /></button></div>}
         </div>
 
-        <article className="product-info">
-          <p className="eyebrow">{product.productType || product.category}</p>
-          <div className="product-title-row"><h1>{product.title}</h1><button type="button" onClick={() => toggleWishlist(product.handle, productWishlistAliases(product))} aria-label={saved ? 'Remove product from wishlist' : 'Add product to wishlist'}><Heart fill={saved ? 'currentColor' : 'none'} /></button></div>
-          <div className="detail-price"><b>{formatPrice(displayPrice, currencyCode)}</b>{compareAtPrice && compareAtPrice > displayPrice && <s>{formatPrice(compareAtPrice, currencyCode)}</s>}</div>
+        <motion.article className="product-info" variants={staggerContainer} initial={reducedMotion ? false : 'hidden'} animate="visible">
+          <motion.p variants={fadeUp} className="eyebrow">{product.productType || product.category}</motion.p>
+          <motion.div variants={fadeUp} className="product-title-row"><h1>{product.title}</h1><motion.button whileTap={reducedMotion ? undefined : { scale: 0.9 }} type="button" onClick={() => toggleWishlist(product.handle, productWishlistAliases(product))} aria-label={saved ? 'Remove product from wishlist' : 'Add product to wishlist'}><Heart fill={saved ? 'currentColor' : 'none'} /></motion.button></motion.div>
+          <motion.div variants={fadeUp} className="detail-price"><b>{formatPrice(displayPrice, currencyCode)}</b>{compareAtPrice && compareAtPrice > displayPrice && <s>{formatPrice(compareAtPrice, currencyCode)}</s>}</motion.div>
           <div className="product-info__divider" />
 
           {selectableOptions.map((option) => {
@@ -139,20 +142,20 @@ export function ProductDetails({ product: initialProduct, related }: { product: 
 
           {product.colors.length === 1 && !selectableOptions.some((option) => ['color', 'colour'].includes(optionKey(option.name))) && <p className="product-option-note"><span>Colour</span>{product.colors[0]}</p>}
 
-          <div className="detail-actions"><div className="quantity"><button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity"><Minus size={14} /></button><span aria-label={`Quantity ${quantity}`}>{quantity}</span><button type="button" onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity"><Plus size={14} /></button></div><button type="button" className="add-button" onClick={add} disabled={!purchasable}>{purchaseLabel}</button></div>
+          <div className="detail-actions"><div className="quantity"><button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity"><Minus size={14} /></button><span aria-label={`Quantity ${quantity}`}>{quantity}</span><button type="button" onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity"><Plus size={14} /></button></div><motion.button whileHover={reducedMotion ? undefined : { y: -1 }} whileTap={reducedMotion ? undefined : { scale: 0.985 }} type="button" className="add-button" onClick={add} disabled={!purchasable}>{purchaseLabel}</motion.button></div>
           {purchasable && variant && <CheckoutButton className="buy-now" mode="buy-now" lines={[{ handle: product.handle, title: product.title, variantId: variant.id, quantity, size: selections.size, color: selections.color ?? selections.colour }]}>Buy now</CheckoutButton>}
           <p className="product-shipping-note">Shipping, duties and returns are calculated for your market at checkout.</p>
           {variant?.sku && <p className="product-style">Style: {variant.sku}</p>}
 
-          {tabs.length > 0 && <div className="product-tabs"><div role="tablist" aria-label="Product information">{tabs.map((tab) => <button type="button" role="tab" aria-selected={selectedTabId === tab.id} key={tab.id} onClick={() => setActiveTab(tab.id)}>{tab.label}</button>)}</div>{tabs.map((tab) => selectedTabId === tab.id && <div role="tabpanel" key={tab.id}><p>{tab.content}</p></div>)}</div>}
+          {tabs.length > 0 && <div className="product-tabs"><div role="tablist" aria-label="Product information">{tabs.map((tab) => <button type="button" role="tab" aria-selected={selectedTabId === tab.id} key={tab.id} onClick={() => setActiveTab(tab.id)}>{tab.label}</button>)}</div><AnimatePresence mode="wait" initial={false}>{tabs.map((tab) => selectedTabId === tab.id && <motion.div role="tabpanel" key={tab.id} initial={reducedMotion ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: reducedMotion ? 0 : 0.2 }}><p>{tab.content}</p></motion.div>)}</AnimatePresence></div>}
 
           <div className="product-share"><span>Share</span><button type="button" onClick={copyLink}><Share2 size={15} />{copied ? 'Link copied' : 'Copy link'}</button></div>
-        </article>
+        </motion.article>
       </section>
 
       {relatedProducts.length > 0 && <section className="product-recommendations" aria-labelledby="recommendations-title"><p className="eyebrow">Continue the edit</p><h2 id="recommendations-title">You may also like</h2><div className="catalog-grid">{relatedProducts.map((item) => <CatalogProductCard key={item.id} product={item} />)}</div></section>}
 
-      {sizeGuideOpen && <div className="size-guide-dialog" role="dialog" aria-modal="true" aria-labelledby="size-guide-title"><button type="button" className="size-guide-dialog__scrim" aria-label="Close size guide" onClick={() => setSizeGuideOpen(false)} /><div className="size-guide-dialog__panel"><button type="button" className="size-guide-dialog__close" aria-label="Close size guide" onClick={() => setSizeGuideOpen(false)}><X /></button><p className="eyebrow">House guidance</p><h2 id="size-guide-title">Size guide</h2><p>Size guidance can vary by piece. Please review the available Shopify sizes for this design and contact the House if you need personalised assistance.</p></div></div>}
+      <AnimatePresence initial={false}>{sizeGuideOpen && <motion.div className="size-guide-dialog" role="dialog" aria-modal="true" aria-labelledby="size-guide-title" initial={false} animate="visible" exit="exit"><motion.button variants={overlayFade} type="button" className="size-guide-dialog__scrim" aria-label="Close size guide" onClick={() => setSizeGuideOpen(false)} /><motion.div variants={drawerBottom} initial={reducedMotion ? false : 'hidden'} animate="visible" exit="exit" className="size-guide-dialog__panel"><button type="button" className="size-guide-dialog__close" aria-label="Close size guide" onClick={() => setSizeGuideOpen(false)}><X /></button><p className="eyebrow">House guidance</p><h2 id="size-guide-title">Size guide</h2><p>Size guidance can vary by piece. Please review the available Shopify sizes for this design and contact the House if you need personalised assistance.</p></motion.div></motion.div>}</AnimatePresence>
     </>
   );
 }

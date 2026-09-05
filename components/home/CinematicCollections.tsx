@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { fadeUp, staggerContainer, viewportOnce } from '@/lib/motion';
 
 const asset = (file: string) => `/api/assets?file=${encodeURIComponent(file)}`;
 
@@ -18,40 +19,19 @@ const stories = [
 ];
 
 export function CinematicIntro() {
-  return (
-    <section className="cinematic-intro cinematic-intro--campaign" aria-labelledby="cinematic-intro-title">
-      <div className="cinematic-intro__gallery" aria-hidden="true">
-        {dressingImages.map((file, index) => (
-          <figure className={`cinematic-intro__portrait cinematic-intro__portrait--${index + 1}`} key={file}>
-            <Image src={asset(file)} alt="" fill sizes={index === 0 ? '(max-width: 768px) 84vw, 34vw' : '(max-width: 768px) 70vw, 25vw'} />
-          </figure>
-        ))}
-      </div>
-      <div className="cinematic-intro__veil" aria-hidden="true" />
-      <div className="cinematic-intro__content">
-        <p className="cinematic-intro__marker">01 / The Aristocrat Edit</p>
-        <h2 id="cinematic-intro-title"><span>Dressing</span><i>Reimagined</i></h2>
-        <p>A study in modern Indian elegance — timeless silhouettes shaped for the way we live now.</p>
-      </div>
-    </section>
-  );
+  const reducedMotion = useReducedMotion();
+  return <motion.section className="cinematic-intro cinematic-intro--campaign" aria-labelledby="cinematic-intro-title" initial={reducedMotion ? false : 'hidden'} whileInView="visible" viewport={viewportOnce}>
+    <div className="cinematic-intro__gallery" aria-hidden="true">
+      {dressingImages.map((file, index) => <motion.figure variants={fadeUp} className={`cinematic-intro__portrait cinematic-intro__portrait--${index + 1}`} key={file}><Image src={asset(file)} alt="" fill sizes={index === 0 ? '(max-width: 768px) 84vw, 34vw' : '(max-width: 768px) 70vw, 25vw'} /></motion.figure>)}
+    </div>
+    <div className="cinematic-intro__veil" aria-hidden="true" />
+    <motion.div variants={staggerContainer} className="cinematic-intro__content"><motion.p variants={fadeUp} className="cinematic-intro__marker">01 / The Aristocrat Edit</motion.p><motion.h2 variants={fadeUp} id="cinematic-intro-title"><span>Dressing</span><i>Reimagined</i></motion.h2><motion.p variants={fadeUp}>A study in modern Indian elegance — timeless silhouettes shaped for the way we live now.</motion.p></motion.div>
+  </motion.section>;
 }
 
 export function CinematicCollections() {
-  const root = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 768px)').matches) return;
-    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('is-revealed');
-      observer.unobserve(entry.target);
-    }), { threshold: 0.25 });
-    root.current?.querySelectorAll('.cinematic-story').forEach((story) => observer.observe(story));
-    return () => observer.disconnect();
-  }, []);
-
-  return <section ref={root} className="cinematic-collections">
-    {stories.map((story) => <article key={story.number} className={`cinematic-story ${story.reversed ? 'cinematic-story--reversed' : ''}`}><div className="cinematic-story__sticky"><div className="cinematic-story__image"><Image src={asset(story.image)} alt={`${story.cta.replace('Explore ', '')} collection`} fill sizes="(max-width: 768px) 100vw, 55vw" /></div><div className="cinematic-story__copy"><p className="eyebrow">{story.number}</p><h3>{story.title}</h3><p>{story.copy}</p><Link className="cinematic-story__cta" href={story.href}>{story.cta} <span aria-hidden="true">→</span></Link></div></div></article>)}
+  const reducedMotion = useReducedMotion();
+  return <section className="cinematic-collections">
+    {stories.map((story) => <motion.article key={story.number} className={`cinematic-story is-revealed ${story.reversed ? 'cinematic-story--reversed' : ''}`} initial={reducedMotion ? false : 'hidden'} whileInView="visible" viewport={viewportOnce}><div className="cinematic-story__sticky"><div className="cinematic-story__image"><Image src={asset(story.image)} alt={`${story.cta.replace('Explore ', '')} collection`} fill sizes="(max-width: 768px) 100vw, 55vw" /></div><motion.div variants={staggerContainer} className="cinematic-story__copy"><motion.p variants={fadeUp} className="eyebrow">{story.number}</motion.p><motion.h3 variants={fadeUp}>{story.title}</motion.h3><motion.p variants={fadeUp}>{story.copy}</motion.p><motion.div variants={fadeUp}><Link className="cinematic-story__cta" href={story.href}>{story.cta} <span aria-hidden="true">→</span></Link></motion.div></motion.div></div></motion.article>)}
   </section>;
 }

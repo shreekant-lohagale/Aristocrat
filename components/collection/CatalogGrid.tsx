@@ -1,6 +1,7 @@
 'use client';
 
 import { SlidersHorizontal, X } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { CatalogProduct } from '@/types/commerce';
@@ -8,6 +9,7 @@ import { CatalogProductCard } from '@/components/product/CatalogProductCard';
 import { ProductGridSkeleton } from '@/components/ui/ProductGridSkeleton';
 import { normalizeCollectionHandle } from '@/lib/catalog/collections';
 import { useStore } from '@/context/StoreProvider';
+import { drawerBottom, overlayFade, staggerContainer } from '@/lib/motion';
 
 const pageSize = 12;
 const sortOptions = [
@@ -32,6 +34,7 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
   const [error, setError] = useState('');
   const [requestKey, setRequestKey] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const reducedMotion = useReducedMotion();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -147,21 +150,22 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
 
       <CatalogResults currentPage={currentPage} clear={clear} hasActiveFilters={hasActiveFilters} emptyMessage={normalizeCollectionHandle(collection ?? '') === 'jewellery' ? 'Pieces for this collection are coming soon.' : undefined} filtered={filtered.length} totalPages={totalPages} update={update} visible={visible} />
 
-      {drawerOpen && <div className="mobile-filter-sheet" role="dialog" aria-modal="true" aria-label="Product filters">
-        <button className="mobile-filter-sheet__scrim" aria-label="Close filters" onClick={() => setDrawerOpen(false)} />
-        <div className="mobile-filter-sheet__panel" data-lenis-prevent>
+      <AnimatePresence initial={false}>{drawerOpen && <motion.div className="mobile-filter-sheet" role="dialog" aria-modal="true" aria-label="Product filters" initial={false} animate="visible" exit="exit">
+        <motion.button variants={overlayFade} className="mobile-filter-sheet__scrim" aria-label="Close filters" onClick={() => setDrawerOpen(false)} />
+        <motion.div variants={drawerBottom} initial={reducedMotion ? false : 'hidden'} animate="visible" exit="exit" className="mobile-filter-sheet__panel" data-lenis-prevent>
           <header><div><p>Refine the edit</p><h3>Filters</h3></div><button type="button" aria-label="Close filters" onClick={() => setDrawerOpen(false)}><X size={20} /></button></header>
           <div className="mobile-filter-sheet__content"><FilterPanel {...groupProps} hasFilters={hasActiveFilters} clear={clear} /></div>
           <footer><button type="button" className="mobile-filter-sheet__clear" onClick={clear} disabled={!hasActiveFilters}>Clear all</button><button type="button" className="mobile-filter-sheet__apply" onClick={() => setDrawerOpen(false)}>View {filtered.length} {filtered.length === 1 ? 'piece' : 'pieces'}</button></footer>
-        </div>
-      </div>}
+        </motion.div>
+      </motion.div>}</AnimatePresence>
     </section>
   );
 }
 
 function CatalogResults({ visible, filtered, totalPages, currentPage, update, clear, emptyMessage, hasActiveFilters }: { visible: CatalogProduct[]; filtered: number; totalPages: number; currentPage: number; update: (key: string, value: string) => void; clear: () => void; emptyMessage?: string; hasActiveFilters: boolean }) {
+  const reducedMotion = useReducedMotion();
   const resolvedEmptyMessage = emptyMessage ?? (hasActiveFilters ? 'No pieces match your selection.' : 'This collection does not have any published pieces yet.');
-  return <div className="catalog-results"><div className="catalog-grid">{visible.map((product) => <CatalogProductCard key={product.id} product={product} />)}</div>{visible.length === 0 && <div className="empty-results"><p>{resolvedEmptyMessage}</p>{hasActiveFilters && <button className="button" onClick={clear}>Clear filters</button>}</div>}{filtered > 0 && totalPages > 1 && <div className="pagination">{Array.from({ length: totalPages }, (_, index) => <button key={index} className={currentPage === index + 1 ? 'active' : ''} aria-label={`Page ${index + 1}`} aria-current={currentPage === index + 1 ? 'page' : undefined} onClick={() => update('page', String(index + 1))}>{index + 1}</button>)}</div>}</div>;
+  return <div className="catalog-results"><motion.div className="catalog-grid" variants={staggerContainer} initial={reducedMotion ? false : 'hidden'} animate="visible">{visible.map((product) => <CatalogProductCard key={product.id} product={product} />)}</motion.div>{visible.length === 0 && <div className="empty-results"><p>{resolvedEmptyMessage}</p>{hasActiveFilters && <button className="button" onClick={clear}>Clear filters</button>}</div>}{filtered > 0 && totalPages > 1 && <div className="pagination">{Array.from({ length: totalPages }, (_, index) => <button key={index} className={currentPage === index + 1 ? 'active' : ''} aria-label={`Page ${index + 1}`} aria-current={currentPage === index + 1 ? 'page' : undefined} onClick={() => update('page', String(index + 1))}>{index + 1}</button>)}</div>}</div>;
 }
 
 function FilterPanel({ values, categories, colors, sizes, priceOptions, update, hasFilters, clear }: { values: { category: string; price: string; size: string; color: string; availability: string }; categories: string[]; colors: string[]; sizes: string[]; priceOptions: readonly (readonly [string, string])[]; update: (key: string, value: string) => void; hasFilters: boolean; clear: () => void }) {
