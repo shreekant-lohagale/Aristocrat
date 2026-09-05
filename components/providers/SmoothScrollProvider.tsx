@@ -11,7 +11,7 @@ type SmoothScrollProviderProps = {
 export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const mobileViewport = window.matchMedia('(max-width: 767px)');
+    const mobileViewport = window.matchMedia('(max-width: 1023px), (pointer: coarse)');
     let lenis: Lenis | null = null;
 
     const onAnchorClick = (event: MouseEvent) => {

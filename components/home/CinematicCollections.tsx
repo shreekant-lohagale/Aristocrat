@@ -23,12 +23,7 @@ export function CinematicIntro() {
       <div className="cinematic-intro__gallery" aria-hidden="true">
         {dressingImages.map((file, index) => (
           <figure className={`cinematic-intro__portrait cinematic-intro__portrait--${index + 1}`} key={file}>
-            <Image
-              src={asset(file)}
-              alt=""
-              fill
-              sizes={index === 0 ? '(max-width: 768px) 84vw, 34vw' : '(max-width: 768px) 70vw, 25vw'}
-            />
+            <Image src={asset(file)} alt="" fill sizes={index === 0 ? '(max-width: 768px) 84vw, 34vw' : '(max-width: 768px) 70vw, 25vw'} />
           </figure>
         ))}
       </div>
@@ -44,13 +39,19 @@ export function CinematicIntro() {
 
 export function CinematicCollections() {
   const root = useRef<HTMLElement>(null);
+
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => entry.target.classList.toggle('is-revealed', entry.isIntersecting)), { threshold: 0.35 });
+    if (window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 768px)').matches) return;
+    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-revealed');
+      observer.unobserve(entry.target);
+    }), { threshold: 0.25 });
     root.current?.querySelectorAll('.cinematic-story').forEach((story) => observer.observe(story));
     return () => observer.disconnect();
   }, []);
+
   return <section ref={root} className="cinematic-collections">
-    {stories.map((story, index) => <article key={story.number} className={`cinematic-story ${story.reversed ? 'cinematic-story--reversed' : ''}`}><div className="cinematic-story__sticky"><div className="cinematic-story__image"><Image src={asset(story.image)} alt={`${story.cta.replace('Explore ', '')} collection`} fill priority={index === 0} sizes="(max-width: 768px) 100vw, 55vw" /></div><div className="cinematic-story__copy"><p className="eyebrow">{story.number}</p><h3>{story.title}</h3><p>{story.copy}</p><Link className="cinematic-story__cta" href={story.href}>{story.cta} <span aria-hidden="true">→</span></Link></div></div></article>)}
+    {stories.map((story) => <article key={story.number} className={`cinematic-story ${story.reversed ? 'cinematic-story--reversed' : ''}`}><div className="cinematic-story__sticky"><div className="cinematic-story__image"><Image src={asset(story.image)} alt={`${story.cta.replace('Explore ', '')} collection`} fill sizes="(max-width: 768px) 100vw, 55vw" /></div><div className="cinematic-story__copy"><p className="eyebrow">{story.number}</p><h3>{story.title}</h3><p>{story.copy}</p><Link className="cinematic-story__cta" href={story.href}>{story.cta} <span aria-hidden="true">→</span></Link></div></div></article>)}
   </section>;
 }

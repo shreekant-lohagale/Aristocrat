@@ -24,6 +24,7 @@ type Store = {
   cartCount: number;
   subtotal: number;
   wishlist: string[];
+  customerAuthenticated: boolean | null;
   wishlistStatus: 'loading' | 'ready' | 'error';
   wishlistError: string | null;
   refreshWishlist: () => Promise<void>;
@@ -70,6 +71,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [country, setCountryState] = useState(countries[0]);
   const [cart, setCart] = useState<CartLine[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
+  const [customerAuthenticated, setCustomerAuthenticated] = useState<boolean | null>(null);
   const [wishlistStatus, setWishlistStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const [wishlistError, setWishlistError] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -92,8 +94,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const fetchCustomerWishlist = useCallback(async () => {
     const response = await fetch(wishlistEndpoint, { cache: 'no-store', credentials: 'same-origin' });
-    if (response.status === 401) return null;
+    if (response.status === 401) {
+      setCustomerAuthenticated(false);
+      return null;
+    }
     if (!response.ok) throw new Error('Unable to load customer wishlist.');
+    setCustomerAuthenticated(true);
     const payload = await response.json() as { wishlist?: unknown };
     return normalizeWishlist(payload.wishlist);
   }, []);
@@ -106,8 +112,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ wishlist: normalizeWishlist(next) }),
     });
-    if (response.status === 401) return null;
+    if (response.status === 401) {
+      setCustomerAuthenticated(false);
+      return null;
+    }
     if (!response.ok) throw new Error('Unable to save customer wishlist.');
+    setCustomerAuthenticated(true);
     const payload = await response.json() as { wishlist?: unknown };
     return normalizeWishlist(payload.wishlist);
   }, []);
@@ -346,11 +356,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     cartCount: cart.reduce((sum, line) => sum + line.quantity, 0),
     subtotal: cart.reduce((sum, line) => sum + line.product.price * line.quantity, 0),
     wishlist,
+    customerAuthenticated,
     wishlistStatus,
     wishlistError,
     refreshWishlist,
     toggleWishlist,
-  }), [country, cart, wishlist, wishlistStatus, wishlistError, refreshWishlist, toggleWishlist]);
+  }), [country, cart, wishlist, customerAuthenticated, wishlistStatus, wishlistError, refreshWishlist, toggleWishlist]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

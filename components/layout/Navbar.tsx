@@ -39,7 +39,9 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const { cartCount, wishlist } = useStore();
+  const { cartCount, wishlist, customerAuthenticated } = useStore();
+  const accountLabel = customerAuthenticated === true ? 'My Account' : customerAuthenticated === false ? 'Sign In' : 'Account';
+  const accountHref = customerAuthenticated === false ? '/account/auth/login' : '/account';
 
   useEffect(() => {
     const update = () => setScrolled(window.scrollY > 88);
@@ -123,7 +125,7 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
             </Link>
 
             <Link
-              className="editorial-navbar__icon"
+              className="editorial-navbar__icon editorial-navbar__wishlist"
               href="/wishlist"
               aria-label={`Wishlist, ${wishlist.length} items`}
             >
@@ -133,10 +135,11 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
 
             <Link
               className="editorial-navbar__icon editorial-navbar__account"
-              href="/account"
-              aria-label="Account"
+              href={accountHref}
+              aria-label={accountLabel}
             >
               <UserRound size={19} strokeWidth={1.6} />
+              <span className="editorial-navbar__account-label">{accountLabel}</span>
             </Link>
 
             <button
@@ -181,8 +184,8 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
 
           <nav aria-label="Mobile navigation">
             {mobileLinks.map(([label, href]) => (
-              <Link href={href} key={href} onClick={closeMenu}>
-                {label}
+              <Link href={href === '/account' ? accountHref : href} key={href} onClick={closeMenu}>
+                {href === '/account' ? accountLabel : label}
               </Link>
             ))}
           </nav>
