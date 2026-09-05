@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { BuyNowButton } from '@/components/ui/BuyNowButton';
 import { InlineLoader } from '@/components/ui/InlineLoader';
 import type { CartLine } from '@/types/commerce';
 import type { CheckoutLineInput } from '@/types/checkout';
@@ -12,6 +13,7 @@ type CheckoutButtonProps = {
   className?: string;
   onStart?: () => void;
   children?: React.ReactNode;
+  priceLabel?: string;
 };
 
 function toInput(line: CartLine | CheckoutLineInput): CheckoutLineInput {
@@ -27,7 +29,7 @@ function toInput(line: CartLine | CheckoutLineInput): CheckoutLineInput {
     : line;
 }
 
-export function CheckoutButton({ lines, mode = 'cart', className, onStart, children }: CheckoutButtonProps) {
+export function CheckoutButton({ lines, mode = 'cart', className, onStart, children, priceLabel }: CheckoutButtonProps) {
   const { country } = useStore();
   const unavailable = lines.some((line) => !toInput(line).variantId);
   const [pending, setPending] = useState(false);
@@ -53,9 +55,7 @@ export function CheckoutButton({ lines, mode = 'cart', className, onStart, child
         signal: controller.signal,
       });
       const data = await response.json() as { checkoutUrl?: string; error?: string };
-      if (!response.ok || !data.checkoutUrl) {
-        throw new Error(data.error ?? 'Checkout is temporarily unavailable. Please try again.');
-      }
+      if (!response.ok || !data.checkoutUrl) throw new Error(data.error ?? 'Checkout is temporarily unavailable. Please try again.');
       window.location.assign(data.checkoutUrl);
     } catch (checkoutError) {
       const message = checkoutError instanceof DOMException && checkoutError.name === 'AbortError'
@@ -72,9 +72,11 @@ export function CheckoutButton({ lines, mode = 'cart', className, onStart, child
 
   return (
     <div className="checkout-action">
-      <button type="button" className={className ?? 'add-button'} onClick={checkout} disabled={pending || unavailable}>
-        {unavailable ? 'Currently unavailable' : pending ? <><InlineLoader label="Preparing checkout" />Preparing checkout…</> : children ?? 'Proceed to checkout'}
-      </button>
+      {mode === 'buy-now'
+        ? <BuyNowButton onClick={checkout} disabled={unavailable} pending={pending} priceLabel={priceLabel} />
+        : <button type="button" className={className ?? 'add-button'} onClick={checkout} disabled={pending || unavailable} aria-busy={pending}>
+            {unavailable ? 'Currently unavailable' : pending ? <><InlineLoader label="Preparing checkout" />Preparing checkout…</> : children ?? 'Proceed to checkout'}
+          </button>}
       {error && <p className="checkout-error" role="alert">{error}</p>}
     </div>
   );

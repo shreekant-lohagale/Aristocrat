@@ -143,7 +143,7 @@ export function ProductDetails({ product: initialProduct, related }: { product: 
           {product.colors.length === 1 && !selectableOptions.some((option) => ['color', 'colour'].includes(optionKey(option.name))) && <p className="product-option-note"><span>Colour</span>{product.colors[0]}</p>}
 
           <div className="detail-actions"><div className="quantity"><button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity"><Minus size={14} /></button><span aria-label={`Quantity ${quantity}`}>{quantity}</span><button type="button" onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity"><Plus size={14} /></button></div><motion.button whileHover={reducedMotion ? undefined : { y: -1 }} whileTap={reducedMotion ? undefined : { scale: 0.985 }} type="button" className="add-button" onClick={add} disabled={!purchasable}>{purchaseLabel}</motion.button></div>
-          {purchasable && variant && <CheckoutButton className="buy-now" mode="buy-now" lines={[{ handle: product.handle, title: product.title, variantId: variant.id, quantity, size: selections.size, color: selections.color ?? selections.colour }]}>Buy now</CheckoutButton>}
+          {purchasable && variant && <CheckoutButton mode="buy-now" priceLabel={formatPrice(displayPrice, currencyCode)} lines={[{ handle: product.handle, title: product.title, variantId: variant.id, quantity, size: selections.size, color: selections.color ?? selections.colour }]}>Buy now</CheckoutButton>}
           <p className="product-shipping-note">Shipping, duties and returns are calculated for your market at checkout.</p>
           {variant?.sku && <p className="product-style">Style: {variant.sku}</p>}
 

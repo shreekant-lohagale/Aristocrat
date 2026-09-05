@@ -1,38 +1,5 @@
+import { BrandLoader } from '@/components/ui/BrandLoader';
+
 export function HouseLoader() {
-  return (
-    <div
-      className="house-loader-screen"
-      role="status"
-      aria-live="polite"
-      aria-label="Loading House of Aristocrat"
-    >
-      <div className="house-speeder" aria-hidden="true">
-        <span>
-          <span />
-          <span />
-          <span />
-          <span />
-        </span>
-
-        <div className="house-speeder__base">
-          <span />
-          <div className="house-speeder__face" />
-        </div>
-      </div>
-
-      <div className="house-longfazers" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <span />
-      </div>
-
-      <div className="house-loader-brand" aria-hidden="true">
-        <span>HOUSE OF ARISTOCRAT</span>
-        <small>EVERYDAY FASHION</small>
-      </div>
-
-      <span className="sr-only">Loading House of Aristocrat</span>
-    </div>
-  );
+  return <BrandLoader />;
 }
