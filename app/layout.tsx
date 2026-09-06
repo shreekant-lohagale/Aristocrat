@@ -11,6 +11,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: siteTitle, template: '%s | House of Aristocrat' },
   description: siteDescription,
+  icons: {
+    icon: [{ url: '/icon.png', type: 'image/png', sizes: '512x512' }],
+    apple: [{ url: '/apple-icon.png', type: 'image/png', sizes: '180x180' }],
+  },
   keywords: ['Indo-Western fashion', 'Indian fashion', "women's fashion", 'Kurtis', 'Dresses', 'Chaniya Choli', 'Indian designer fashion', 'House of Aristocrat'],
   alternates: { canonical: '/' },
   openGraph: {

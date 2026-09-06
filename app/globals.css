@@ -2566,15 +2566,6 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
 /* Final House of Aristocrat palette: stronger navy/cream campaign composition. */
 :root { --hoa-navy: #011B3C; --hoa-white: #FFFFFF; --hoa-copper: #7A5A35; --hoa-gold-muted: #BD9569; --hoa-blue-gray: #B3BFC8; --hoa-gold: #D49603; --hoa-chambray: #365184; --hoa-cream: #FCF7F0; --hoa-gray: #565656; --clay: var(--hoa-gold-muted); }
 body { background: var(--hoa-cream); color: var(--hoa-navy); }
-.editorial-hero--brand-split { display: grid; min-height: calc(100dvh - 30px); grid-template-columns: minmax(0, 46fr) minmax(0, 54fr); overflow: hidden; background: var(--hoa-cream); }
-.editorial-hero__brand-panel { position: relative; display: grid; min-height: 100%; place-items: center start; overflow: hidden; background: linear-gradient(135deg, #001D3D 0%, #011B3C 66%, #0b2a50 100%); }
-.editorial-hero__brand-panel::after { position: absolute; inset: 0; background: radial-gradient(circle at 15% 80%, rgb(54 81 132 / 18%), transparent 36%); content: ''; pointer-events: none; }
-.editorial-hero__brand-content { position: relative; z-index: 1; display: flex; width: min(100% - 56px, 560px); flex-direction: column; align-items: flex-start; margin-left: clamp(28px, 8vw, 150px); }
-.editorial-hero__logo { width: clamp(360px, 31vw, 560px); max-width: 100%; height: auto; object-fit: contain; opacity: .98; filter: brightness(1.05) contrast(1.03) drop-shadow(0 4px 18px rgb(0 0 0 / 12%)); }
-.editorial-hero__brand-content > a { display: inline-flex; min-height: 48px; align-items: center; gap: 11px; margin-top: clamp(28px, 3vw, 36px); padding: 0 32px; border: 0; background: var(--hoa-cream); color: var(--hoa-navy); font-family: 'Poppins', Arial, sans-serif; font-size: 10px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; transition: background .28s ease, transform .28s ease; }
-.editorial-hero__brand-content > a:hover { background: var(--hoa-gold); color: var(--hoa-navy); transform: translateY(-2px); }
-.editorial-hero__model-panel { position: relative; min-height: 100%; overflow: hidden; background: radial-gradient(circle at 55% 44%, #FFFFFF 0%, var(--hoa-cream) 65%, #e9e2d8 100%); }
-.editorial-hero__model-panel img { object-fit: contain; object-position: center bottom; }
 .editorial-navbar:not(.editorial-navbar--solid) { color: var(--hoa-white); text-shadow: 0 1px 9px rgb(0 29 61 / 22%); }
 .editorial-navbar--solid, .editorial-navbar--scrolled { background: rgb(252 247 240 / 96%); color: var(--hoa-navy); text-shadow: none; }
 .editorial-navbar__search { border-bottom-color: currentColor !important; }
@@ -2590,8 +2581,6 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
 .footer { background: var(--hoa-navy); border-top-color: var(--hoa-gold-muted); }
 .newsletter-form { border-color: rgb(255 255 255 / 25%); }
 .footer-grid > div:first-child > .eyebrow, .footer-grid a:hover { color: var(--hoa-gold-muted); }
-@media (max-width: 768px) { .editorial-hero--brand-split { min-height: auto; grid-template-columns: 1fr; } .editorial-hero__brand-panel { min-height: 48dvh; padding: 120px 24px 68px; } .editorial-hero__brand-content { width: min(100%, 420px); margin: 0; } .editorial-hero__logo { width: clamp(250px, 70vw, 360px); } .editorial-hero__model-panel { min-height: 52dvh; height: 52dvh; } .editorial-hero__model-panel img { object-position: center bottom; } .editorial-hero__brand-content > a { min-height: 45px; margin-top: 25px; padding-inline: 25px; } }
-.editorial-hero--brand-split .editorial-hero__logo { display: block; }
 
 /* Navbar polish â€” restrained editorial hierarchy and premium interaction details. */
 .editorial-navbar { height: 76px; transition: background-color .3s ease-out, color .3s ease-out, height .3s ease-out, box-shadow .3s ease-out; }
@@ -2633,16 +2622,6 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
 .editorial-navbar__links { align-items: center; }
 .editorial-navbar__actions { align-items: center; justify-content: flex-end; }
 @media (max-width: 960px) { .editorial-navbar__inner { max-width: none; } }
-/* Shop the Collection â€” branded expanding-circle Explore button. */
-.editorial-hero__brand-content > a.hero-explore-button { position: relative; z-index: 0; display: inline-flex; min-height: 50px; align-items: center; justify-content: center; gap: 12px; overflow: hidden; isolation: isolate; margin-top: clamp(28px, 3vw, 36px); padding: 0 14px 0 23px; border: 2px solid var(--hoa-cream); border-radius: 999px; background: var(--hoa-cream); color: var(--hoa-navy); font-size: 10px; letter-spacing: .14em; transition: color .35s ease, border-color .35s ease, transform .25s ease; }
-.hero-explore-button::before { position: absolute; z-index: -1; top: 50%; left: -120%; width: 100%; aspect-ratio: 1; border-radius: 50%; background: var(--hoa-gold); content: ''; transform: translateY(-50%) scale(.72); transition: left .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1); }
-.hero-explore-button svg { display: grid; width: 31px; height: 31px; padding: 7px; border: 1px solid currentColor; border-radius: 50%; transform: rotate(45deg); transition: background-color .3s ease, border-color .3s ease, transform .3s ease; }
-.hero-explore-button:hover { border-color: var(--hoa-gold); color: var(--hoa-navy); transform: translateY(-2px); }
-.hero-explore-button:hover::before { left: 0; transform: translateY(-50%) scale(2.3); }
-.hero-explore-button:hover svg { border-color: transparent; background: var(--hoa-cream); transform: rotate(90deg); }
-.hero-explore-button:focus-visible { outline: 2px solid var(--hoa-gold); outline-offset: 5px; }
-@media (prefers-reduced-motion: reduce) { .hero-explore-button, .hero-explore-button::before, .hero-explore-button svg { transition: none; } }
-@media (max-width: 768px) { .editorial-hero__brand-content > a.hero-explore-button { min-height: 47px; margin-top: 25px; padding-left: 20px; } }
 /* Reusable House CTA interactions. */
 .explore-button { position: relative; display: inline-flex; align-items: center; justify-content: center; overflow: hidden; isolation: isolate; min-height: 42px; padding: 0 24px; border: 2px solid var(--hoa-navy); border-radius: 999px; background: var(--hoa-navy); color: var(--hoa-white); font-family: 'Poppins', Arial, sans-serif; font-size: 10px; font-weight: 600; letter-spacing: .16em; line-height: 1; text-decoration: none; text-transform: uppercase; transition: border-color .3s ease, background-color .3s ease, transform .3s ease; }
 .explore-button__glow { position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: radial-gradient(circle, rgb(255 255 255 / 18%) 0%, rgb(255 255 255 / 0%) 70%); transform: scale(0); transition: transform .5s ease; }
@@ -4745,9 +4724,6 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
     height: 40px;
     flex-basis: 40px;
   }
-  .editorial-hero--brand-split { min-height: 100svh; }
-  .editorial-hero__brand-panel { min-height: 48svh; }
-  .editorial-hero__model-panel { min-height: 52svh; height: 52svh; }
   .cinematic-story,
   .cinematic-story__sticky { height: auto; min-height: 0; }
   .cinematic-story__image img,
@@ -5004,4 +4980,200 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
   .editorial-scroll-story__cta::after,
   .editorial-scroll-story__cta span { transition: none; }
   .editorial-scroll-stories__progress { display: none; }
+}
+
+/* Homepage hero — full-width campaign image with a House navy editorial field. */
+.editorial-hero--campaign {
+  position: relative;
+  display: block;
+  min-height: calc(100svh - 30px);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--hoa-midnight);
+  color: var(--hoa-white);
+}
+
+.editorial-hero__campaign-visual {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  transform-origin: 72% 50%;
+}
+
+.editorial-hero__campaign-visual .image-with-loader { position: absolute; inset: 0; }
+.editorial-hero__campaign-visual .image-with-loader__placeholder { background: var(--hoa-midnight); }
+.editorial-hero__campaign-visual .image-with-loader__image {
+  object-fit: cover;
+  object-position: 52% top;
+}
+
+.editorial-hero__campaign-shade {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 56%, rgb(54 81 132 / 18%), transparent 29%),
+    linear-gradient(90deg, rgb(0 29 61 / 96%) 0%, rgb(1 27 60 / 89%) 30%, rgb(1 27 60 / 62%) 45%, rgb(1 27 60 / 19%) 61%, transparent 74%);
+  pointer-events: none;
+}
+
+.editorial-hero__campaign-shade::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--navbar-height);
+  background: linear-gradient(90deg, rgb(0 29 61 / 32%), rgb(0 29 61 / 22%));
+  content: '';
+}
+
+.editorial-hero__campaign-layout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 100%;
+  min-height: calc(100svh - 30px);
+  grid-template-columns: minmax(0, 56%) minmax(0, 44%);
+  align-items: center;
+  padding: calc(var(--navbar-height) + 42px) clamp(32px, 6vw, 112px) clamp(56px, 7vh, 92px);
+}
+
+.editorial-hero__campaign-signature {
+  display: grid;
+  width: min(32vw, 475px);
+  max-width: 100%;
+  align-items: center;
+  justify-self: start;
+}
+
+.editorial-hero__campaign-signature img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.editorial-hero__campaign-content {
+  display: flex;
+  width: min(100%, 580px);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-self: end;
+  padding-left: clamp(30px, 4vw, 70px);
+}
+
+.editorial-hero__campaign-content h1 {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: var(--hoa-white);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(4.2rem, 6vw, 7.2rem);
+  font-weight: 400;
+  letter-spacing: -.06em;
+  line-height: .78;
+}
+
+.editorial-hero__campaign-content h1 span,
+.editorial-hero__campaign-content h1 i { display: block; }
+.editorial-hero__campaign-content h1 i { margin-left: clamp(24px, 3.5vw, 58px); color: var(--hoa-gold-muted); font-weight: 400; }
+
+.editorial-hero__campaign-copy {
+  max-width: 455px;
+  margin: clamp(28px, 3vw, 42px) 0 0;
+  color: rgb(255 255 255 / 84%);
+  font: 400 clamp(13px, .95vw, 15px)/1.75 'Poppins', Arial, sans-serif;
+}
+
+.editorial-hero__campaign-actions {
+  display: flex;
+  align-items: center;
+  margin-top: clamp(26px, 3vw, 40px);
+}
+
+.editorial-hero__campaign-actions .discover-button { flex: 0 0 auto; width: 13.6rem; margin: 0; }
+
+@media (max-width: 1023px) and (min-width: 769px) {
+  .editorial-hero__campaign-layout { grid-template-columns: 56% 44%; padding-inline: 5vw; }
+  .editorial-hero__campaign-signature { width: min(34vw, 350px); }
+  .editorial-hero__campaign-content { padding-left: 28px; }
+  .editorial-hero__campaign-content h1 { font-size: clamp(3.8rem, 8.3vw, 5.6rem); }
+  .editorial-hero__campaign-shade { background: linear-gradient(90deg, rgb(0 29 61 / 98%) 0%, rgb(1 27 60 / 90%) 39%, rgb(1 27 60 / 48%) 57%, transparent 76%); }
+}
+
+@media (max-width: 768px) {
+  .editorial-hero--campaign { min-height: max(720px, calc(100svh - 29px)); background: var(--hoa-midnight); }
+  .editorial-hero__campaign-visual { top: var(--navbar-height); bottom: 0; height: auto; transform-origin: 62% 35%; }
+  .editorial-hero__campaign-visual .image-with-loader__image { object-fit: cover; object-position: 52% top; }
+  .editorial-hero__campaign-shade {
+    background:
+      linear-gradient(90deg, rgb(0 29 61 / 72%) 0%, rgb(1 27 60 / 20%) 72%, transparent),
+      linear-gradient(0deg, rgb(0 29 61 / 98%) 0%, rgb(1 27 60 / 86%) 31%, rgb(1 27 60 / 32%) 58%, transparent 78%);
+  }
+  .editorial-hero__campaign-shade::after { background: var(--hoa-midnight); }
+  .editorial-hero__campaign-layout {
+    display: flex;
+    min-height: max(720px, calc(100svh - 29px));
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: calc(var(--navbar-height) + 34px) 22px 42px;
+  }
+  .editorial-hero__campaign-signature { width: min(54vw, 220px); margin-bottom: 22px; }
+  .editorial-hero__campaign-content { width: 100%; padding: 0; }
+  .editorial-hero__campaign-content h1 { font-size: clamp(3.9rem, 19vw, 5.5rem); line-height: .8; }
+  .editorial-hero__campaign-content h1 i { margin-left: 18px; }
+  .editorial-hero__campaign-copy { max-width: 330px; margin-top: 23px; font-size: 12px; line-height: 1.65; }
+  .editorial-hero__campaign-actions { align-items: flex-start; margin-top: 22px; }
+  .editorial-hero__campaign-actions .discover-button { width: 13.2rem; }
+}
+
+@media (max-width: 390px) {
+  .editorial-hero__campaign-content { padding-inline: 18px; padding-bottom: 30px; }
+  .editorial-hero__campaign-content h1 { font-size: clamp(3.55rem, 18.5vw, 4.5rem); }
+  .editorial-hero__campaign-copy { max-width: 300px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-hero__campaign-visual { transition: none; }
+}
+
+/* Persistent text-only brand signature for the campaign navbar. */
+.editorial-navbar__brand {
+  display: inline-flex;
+  width: auto;
+  max-width: none;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  color: inherit;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(18px, 1.35vw, 23px);
+  font-weight: 400;
+  letter-spacing: .035em;
+  line-height: 1;
+  white-space: nowrap;
+  transition: color 220ms ease;
+}
+
+.editorial-navbar__brand:hover { color: var(--hoa-gold-muted); }
+.editorial-navbar__brand:focus-visible { outline: 2px solid var(--hoa-gold); outline-offset: 5px; }
+.editorial-navbar__market .country-trigger { font-size: 10.5px; }
+.editorial-navbar__account-label { font-size: 10px; }
+
+@media (max-width: 1099px) {
+  .editorial-navbar__brand {
+    position: static;
+    width: auto;
+    max-width: none;
+    font-size: clamp(16px, 2.3vw, 19px);
+  }
+}
+
+@media (max-width: 767px) {
+  .editorial-navbar__brand { width: auto; font-size: clamp(13px, 4vw, 16px); letter-spacing: .02em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-navbar__brand { transition: none; }
 }

@@ -118,6 +118,10 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
             </div>
           </div>
 
+          <Link className="editorial-navbar__brand" href="/" aria-label="House of Aristocrat home">
+            House of Aristocrat
+          </Link>
+
           <div className="editorial-navbar__right">
             <Link
               className="editorial-navbar__mobile-search"
