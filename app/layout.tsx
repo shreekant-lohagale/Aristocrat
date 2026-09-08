@@ -24,13 +24,13 @@ export const metadata: Metadata = {
     siteName: 'House of Aristocrat',
     title: siteTitle,
     description: 'Elevated Indo-Western fashion, modern silhouettes and timeless Indian elegance for the contemporary woman.',
-    images: [{ url: '/opengraph-image.png', width: 1200, height: 630, alt: 'House of Aristocrat — Modern Indo-Western Fashion' }],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'House of Aristocrat — Everyday Elegance' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: siteTitle,
     description: 'Elevated Indo-Western fashion, modern silhouettes and timeless Indian elegance.',
-    images: ['/twitter-image.png'],
+    images: ['/twitter-image'],
   },
 };
 
