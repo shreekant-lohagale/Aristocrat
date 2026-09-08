@@ -5177,3 +5177,135 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
 @media (prefers-reduced-motion: reduce) {
   .editorial-navbar__brand { transition: none; }
 }
+
+/* Final homepage polish: compact spacing, isolated story states, and stable offsets. */
+@media (min-width: 769px) {
+  .cinematic-intro.cinematic-intro--campaign {
+    min-height: clamp(650px, 80svh, 900px);
+  }
+
+  .cinematic-intro--campaign .cinematic-intro__portrait--1 {
+    top: max(5%, calc(var(--navbar-height) + 10px));
+  }
+
+  .cinematic-intro--campaign .cinematic-intro__portrait--2 { bottom: 5%; }
+
+  .cinematic-intro.cinematic-intro--campaign .cinematic-intro__content {
+    padding-block: clamp(44px, 5.5vw, 84px);
+  }
+}
+
+.editorial-category--kurtis > img,
+.editorial-category--indo-western > img {
+  filter: saturate(.9) contrast(1.035);
+  transform: scale(1.035);
+}
+
+.editorial-category--kurtis:hover > img,
+.editorial-category--indo-western:hover > img { transform: scale(1.06); }
+
+.editorial-category--kurtis .editorial-category__veil,
+.editorial-category--indo-western .editorial-category__veil {
+  background:
+    linear-gradient(180deg, rgb(189 149 105 / 8%), transparent 38%),
+    linear-gradient(180deg, rgb(1 27 60 / 2%) 20%, rgb(1 27 60 / 18%) 48%, rgb(1 27 60 / 88%) 100%);
+}
+
+@media (min-width: 1024px) {
+  .editorial-scroll-story {
+    z-index: 0;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 420ms ease, transform 520ms cubic-bezier(.22,.61,.36,1), visibility 0s linear 520ms;
+  }
+
+  .editorial-scroll-story.is-active {
+    z-index: 2;
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+
+  .editorial-scroll-story__panel { will-change: auto; }
+}
+
+.new-arrivals-section {
+  scroll-margin-top: calc(var(--navbar-height) + 18px);
+  padding-top: calc(var(--navbar-height) + clamp(22px, 2.4vw, 38px));
+}
+
+#new-arrivals-title { scroll-margin-top: calc(var(--navbar-height) + 22px); }
+
+.product-coverflow__frame { padding-inline: clamp(10px, 1.5vw, 24px); }
+.product-coverflow__details { margin-top: 8px; }
+.product-coverflow__pagination { margin-top: 14px; }
+
+.campaign-banner::after {
+  background: linear-gradient(90deg, rgb(1 27 60 / 94%), rgb(1 27 60 / 61%) 48%, rgb(1 27 60 / 20%) 78%);
+}
+
+.maison-story,
+.maison-story > .maison-story__visual,
+.maison-story > .maison-story__content {
+  min-height: clamp(540px, 68svh, 700px);
+}
+
+.homepage-account-cta { min-height: 62px; padding-block: 9px; }
+.editorial-navbar__account-label { font-size: 10.5px; letter-spacing: .105em; }
+
+.announcement {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent);
+}
+
+@media (min-width: 769px) and (max-width: 1199px) {
+  .maison-story__content h2 { font-size: clamp(2.8rem, 4.2vw, 4.3rem); }
+}
+
+@media (max-width: 768px) {
+  .cinematic-intro.cinematic-intro--campaign { padding-bottom: 58px; }
+  .cinematic-intro.cinematic-intro--campaign .cinematic-intro__gallery { gap: 10px; margin-top: 30px; }
+  .new-arrivals-section { padding-top: calc(var(--navbar-height) + 20px); }
+  .maison-story,
+  .maison-story > .maison-story__visual,
+  .maison-story > .maison-story__content { min-height: 0; }
+  .homepage-account-cta { padding-block: 7px; }
+  .editorial-navbar:not(.editorial-navbar--solid) .editorial-navbar__right {
+    color: var(--hoa-white);
+    text-shadow: 0 1px 8px rgb(1 27 60 / 30%);
+  }
+}
+
+@media (max-width: 767px) {
+  .editorial-navbar__inner { position: relative; }
+
+  .editorial-navbar__brand {
+    position: absolute;
+    left: 50%;
+    grid-row: auto;
+    grid-column: auto;
+    font-size: clamp(13px, 3.8vw, 15px);
+    transform: translateX(-50%);
+  }
+
+  .editorial-navbar__right {
+    position: absolute;
+    right: 10px;
+    grid-row: auto;
+    grid-column: auto;
+  }
+
+  .editorial-navbar__right > .editorial-navbar__account { display: inline-flex !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-scroll-story,
+  .editorial-scroll-story.is-active {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

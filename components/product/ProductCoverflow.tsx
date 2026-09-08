@@ -64,7 +64,7 @@ export function ProductCoverflow({ products, reducedMotion = false }: ProductCov
     if (!width || !count) return;
 
     const mobile = mobileRef.current;
-    const pitch = width * (mobile ? 0.94 : 1.08);
+    const pitch = width * (mobile ? 0.94 : 1);
     const rotate = reducedMotion ? 0 : mobile ? 11 : 25;
     const depth = reducedMotion ? 0 : mobile ? 0.14 : 0.34;
     const position = positionRef.current;
@@ -80,7 +80,7 @@ export function ProductCoverflow({ products, reducedMotion = false }: ProductCov
       const distance = Math.abs(offset);
       const ramp = Math.pow(distance, 0.68);
       const tilt = Math.min(rotate * ramp, 64) * Math.sign(offset);
-      const scale = Math.max(mobile ? 0.88 : 0.84, 1 - distance * (mobile ? 0.065 : 0.08));
+      const scale = Math.max(mobile ? 0.88 : 0.84, (mobile ? 1 : 1.05) - distance * (mobile ? 0.065 : 0.1));
       const ringEdge = loop && count > 2
         ? Math.min(1, Math.max(0, (count / 2 - distance) / 0.42))
         : 1;

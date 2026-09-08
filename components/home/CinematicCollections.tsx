@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { motion, useMotionValueEvent, useReducedMotion, useScroll } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { fadeUp, staggerContainer, viewportOnce } from '@/lib/motion';
@@ -52,7 +52,7 @@ export function CinematicCollections() {
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] });
 
   useMotionValueEvent(scrollYProgress, 'change', (progress) => {
-    const next = progress < 0.25 ? 0 : progress < 0.75 ? 1 : 2;
+    const next = progress < 1 / 3 ? 0 : progress < 2 / 3 ? 1 : 2;
     setActiveStory((current) => current === next ? current : next);
   });
 
@@ -60,7 +60,7 @@ export function CinematicCollections() {
     <section ref={containerRef} className="editorial-scroll-stories" aria-label="The House editorial stories">
       <div className="editorial-scroll-stories__sticky">
         <div className="editorial-scroll-stories__layers">
-          {stories.map((story, index) => <EditorialStoryLayer key={story.number} story={story} index={index} progress={scrollYProgress} active={activeStory === index} interactive={interactiveDesktop} reducedMotion={Boolean(reducedMotion)} />)}
+          {stories.map((story, index) => <EditorialStoryLayer key={story.number} story={story} active={activeStory === index} interactive={interactiveDesktop} reducedMotion={Boolean(reducedMotion)} />)}
         </div>
         <div className="editorial-scroll-stories__progress" aria-hidden="true">
           <span>{String(activeStory + 1).padStart(2, '0')}</span>
@@ -72,11 +72,9 @@ export function CinematicCollections() {
   );
 }
 
-function EditorialStoryLayer({ story, index, progress, active, interactive, reducedMotion }: { story: Story; index: number; progress: MotionValue<number>; active: boolean; interactive: boolean; reducedMotion: boolean }) {
-  const leftY = useTransform(progress, [0, 1], [`${index * 100}%`, `${(index - 2) * 100}%`]);
-  const rightY = useTransform(progress, [0, 1], [`${-index * 100}%`, `${(2 - index) * 100}%`]);
-  const image = <StoryImage story={story} side={story.reversed ? 'right' : 'left'} y={story.reversed ? rightY : leftY} />;
-  const copy = <StoryCopy story={story} active={active} interactive={interactive} reducedMotion={reducedMotion} side={story.reversed ? 'left' : 'right'} y={story.reversed ? leftY : rightY} />;
+function EditorialStoryLayer({ story, active, interactive, reducedMotion }: { story: Story; active: boolean; interactive: boolean; reducedMotion: boolean }) {
+  const image = <StoryImage story={story} side={story.reversed ? 'right' : 'left'} />;
+  const copy = <StoryCopy story={story} active={active} interactive={interactive} reducedMotion={reducedMotion} side={story.reversed ? 'left' : 'right'} />;
 
   return (
     <article className={`editorial-scroll-story ${active ? 'is-active' : ''} ${story.dark ? 'editorial-scroll-story--dark' : ''}`} aria-hidden={interactive && !active ? true : undefined}>
@@ -85,19 +83,19 @@ function EditorialStoryLayer({ story, index, progress, active, interactive, redu
   );
 }
 
-function StoryImage({ story, side, y }: { story: Story; side: 'left' | 'right'; y: MotionValue<string> }) {
-  return <motion.div className={`editorial-scroll-story__panel editorial-scroll-story__image editorial-scroll-story__panel--${side}`} style={{ y }}><Image src={asset(story.image)} alt={story.alt} fill sizes="(max-width: 1023px) 100vw, 50vw" style={{ objectPosition: story.imagePosition }} /></motion.div>;
+function StoryImage({ story, side }: { story: Story; side: 'left' | 'right' }) {
+  return <div className={`editorial-scroll-story__panel editorial-scroll-story__image editorial-scroll-story__panel--${side}`}><Image src={asset(story.image)} alt={story.alt} fill sizes="(max-width: 1023px) 100vw, 50vw" style={{ objectPosition: story.imagePosition }} /></div>;
 }
 
-function StoryCopy({ story, side, y, active, interactive, reducedMotion }: { story: Story; side: 'left' | 'right'; y: MotionValue<string>; active: boolean; interactive: boolean; reducedMotion: boolean }) {
+function StoryCopy({ story, side, active, interactive, reducedMotion }: { story: Story; side: 'left' | 'right'; active: boolean; interactive: boolean; reducedMotion: boolean }) {
   return (
-    <motion.div className={`editorial-scroll-story__panel editorial-scroll-story__copy editorial-scroll-story__panel--${side}`} style={{ y }}>
+    <div className={`editorial-scroll-story__panel editorial-scroll-story__copy editorial-scroll-story__panel--${side}`}>
       <motion.div className="editorial-scroll-story__copy-inner" variants={staggerContainer} initial={reducedMotion ? false : 'hidden'} animate={!reducedMotion && interactive ? (active ? 'visible' : 'hidden') : undefined} whileInView={!reducedMotion && !interactive ? 'visible' : undefined} viewport={viewportOnce}>
         <motion.p variants={fadeUp} className="eyebrow">{story.number}</motion.p>
         <motion.h3 variants={fadeUp}>{story.title}</motion.h3>
         <motion.p variants={fadeUp}>{story.copy}</motion.p>
         <motion.div variants={fadeUp}><Link className="editorial-scroll-story__cta" href={story.href} tabIndex={interactive && !active ? -1 : undefined}>{story.cta} <span aria-hidden="true">→</span></Link></motion.div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
