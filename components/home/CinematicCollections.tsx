@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useMotionValueEvent, useReducedMotion, useScroll } from 'framer-motion';
+import { motion, type MotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { fadeUp, staggerContainer, viewportOnce } from '@/lib/motion';
@@ -30,7 +30,7 @@ type Story = {
 const stories: Story[] = [
   { number: '01 / Everyday elegance', title: <>Kurtis,<br />Refined for<br />Every Day</>, copy: 'Modern proportions, thoughtful details and timeless Indian character — designed to move effortlessly from day to evening.', href: '/collections/kurtis', cta: 'Explore Kurtis', image: '05_slate_ruffled_kurta.png', alt: 'Model wearing a slate ruffled House of Aristocrat kurti', imagePosition: 'center center' },
   { number: '02 / Modern femininity', title: <>Dresses,<br />Made to Be<br />Remembered</>, copy: 'Fluid silhouettes and elevated details for moments that deserve something beautifully effortless.', href: '/collections/dresses', cta: 'Explore Dresses', image: '01_black_sleeveless_maxi.png', alt: 'Model wearing a black sleeveless House of Aristocrat dress', imagePosition: 'center center', reversed: true, dark: true },
-  { number: '03 / Modern heritage', title: <>Tradition,<br />Styled Forward</>, copy: 'Indian craft language meets contemporary form — a collection created between heritage and modernity.', href: '/collections/indo-western', cta: 'Explore Indo-Western', image: 'new images/WhatsApp Image 2026-08-31 at 11.09.11 PM (1).jpeg', alt: 'Model wearing a navy House of Aristocrat heritage lehenga', imagePosition: 'center top' },
+  { number: '03 / Modern heritage', title: <>Tradition,<br />Styled Forward</>, copy: 'Indian craft language meets contemporary form — celebration dressing created between heritage and modernity.', href: '/collections/chaniya-choli', cta: 'Explore Chaniya Choli', image: 'new images/WhatsApp Image 2026-08-31 at 11.09.11 PM (1).jpeg', alt: 'Model wearing a navy House of Aristocrat Chaniya Choli', imagePosition: 'center top' },
 ];
 
 export function CinematicIntro() {
@@ -50,9 +50,25 @@ export function CinematicCollections() {
   const interactiveDesktop = useMediaQuery('(min-width: 1024px) and (prefers-reduced-motion: no-preference)');
   const [activeStory, setActiveStory] = useState(0);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] });
+  const storyOneOpacity = useTransform(scrollYProgress, [0, 0.27, 0.37, 1], [1, 1, 0, 0]);
+  const storyTwoOpacity = useTransform(scrollYProgress, [0, 0.27, 0.37, 0.61, 0.71, 1], [0, 0, 1, 1, 0, 0]);
+  const storyThreeOpacity = useTransform(scrollYProgress, [0, 0.61, 0.71, 1], [0, 0, 1, 1]);
+  const storyOneY = useTransform(scrollYProgress, [0, 0.27, 0.37], [0, 0, -12]);
+  const storyTwoY = useTransform(scrollYProgress, [0, 0.27, 0.37, 0.61, 0.71], [18, 18, 0, 0, -12]);
+  const storyThreeY = useTransform(scrollYProgress, [0, 0.61, 0.71], [18, 18, 0]);
+  const chapterProgress = useTransform(scrollYProgress, (progress) => {
+    if (progress < 0.32) return progress / 0.32;
+    if (progress < 0.66) return (progress - 0.32) / 0.34;
+    return (progress - 0.66) / 0.34;
+  });
+  const storyMotion = [
+    { opacity: storyOneOpacity, y: storyOneY },
+    { opacity: storyTwoOpacity, y: storyTwoY },
+    { opacity: storyThreeOpacity, y: storyThreeY },
+  ];
 
   useMotionValueEvent(scrollYProgress, 'change', (progress) => {
-    const next = progress < 1 / 3 ? 0 : progress < 2 / 3 ? 1 : 2;
+    const next = progress < 0.32 ? 0 : progress < 0.66 ? 1 : 2;
     setActiveStory((current) => current === next ? current : next);
   });
 
@@ -60,11 +76,11 @@ export function CinematicCollections() {
     <section ref={containerRef} className="editorial-scroll-stories" aria-label="The House editorial stories">
       <div className="editorial-scroll-stories__sticky">
         <div className="editorial-scroll-stories__layers">
-          {stories.map((story, index) => <EditorialStoryLayer key={story.number} story={story} active={activeStory === index} interactive={interactiveDesktop} reducedMotion={Boolean(reducedMotion)} />)}
+          {stories.map((story, index) => <EditorialStoryLayer key={story.number} story={story} active={activeStory === index} interactive={interactiveDesktop} reducedMotion={Boolean(reducedMotion)} opacity={storyMotion[index].opacity} y={storyMotion[index].y} />)}
         </div>
         <div className="editorial-scroll-stories__progress" aria-hidden="true">
           <span>{String(activeStory + 1).padStart(2, '0')}</span>
-          <i><motion.b style={{ scaleY: scrollYProgress }} /></i>
+          <i><motion.b style={{ scaleY: chapterProgress }} /></i>
           <span>03</span>
         </div>
       </div>
@@ -72,14 +88,14 @@ export function CinematicCollections() {
   );
 }
 
-function EditorialStoryLayer({ story, active, interactive, reducedMotion }: { story: Story; active: boolean; interactive: boolean; reducedMotion: boolean }) {
+function EditorialStoryLayer({ story, active, interactive, reducedMotion, opacity, y }: { story: Story; active: boolean; interactive: boolean; reducedMotion: boolean; opacity: MotionValue<number>; y: MotionValue<number> }) {
   const image = <StoryImage story={story} side={story.reversed ? 'right' : 'left'} />;
   const copy = <StoryCopy story={story} active={active} interactive={interactive} reducedMotion={reducedMotion} side={story.reversed ? 'left' : 'right'} />;
 
   return (
-    <article className={`editorial-scroll-story ${active ? 'is-active' : ''} ${story.dark ? 'editorial-scroll-story--dark' : ''}`} aria-hidden={interactive && !active ? true : undefined}>
+    <motion.article style={interactive ? { opacity, y } : undefined} className={`editorial-scroll-story ${active ? 'is-active' : ''} ${story.dark ? 'editorial-scroll-story--dark' : ''}`} aria-hidden={interactive && !active ? true : undefined}>
       {story.reversed ? <>{copy}{image}</> : <>{image}{copy}</>}
-    </article>
+    </motion.article>
   );
 }
 

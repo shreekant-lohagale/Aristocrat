@@ -65,8 +65,8 @@ export function ProductCoverflow({ products, reducedMotion = false }: ProductCov
 
     const mobile = mobileRef.current;
     const pitch = width * (mobile ? 0.94 : 1);
-    const rotate = reducedMotion ? 0 : mobile ? 11 : 25;
-    const depth = reducedMotion ? 0 : mobile ? 0.14 : 0.34;
+    const rotate = reducedMotion ? 0 : mobile ? 9 : 19;
+    const depth = reducedMotion ? 0 : mobile ? 0.11 : 0.24;
     const position = positionRef.current;
 
     cardRefs.current.forEach((card, index) => {
@@ -194,7 +194,7 @@ export function ProductCoverflow({ products, reducedMotion = false }: ProductCov
     }
 
     event.preventDefault();
-    const pitch = cardWidthRef.current * (mobileRef.current ? 0.94 : 1.08);
+    const pitch = cardWidthRef.current * (mobileRef.current ? 0.94 : 1);
     if (!pitch) return;
     const nextPosition = clampPosition(drag.startPosition - deltaX / pitch);
     const now = performance.now();
@@ -229,7 +229,6 @@ export function ProductCoverflow({ products, reducedMotion = false }: ProductCov
 
   if (!count) return null;
   const active = products[Math.min(selected, count - 1)];
-  const activeSaved = isProductWishlisted(wishlist, active);
   const activePurchasable = Boolean(active.shopifyVariantId && active.shopifyAvailableForSale);
   const activeNeedsOptions = (active.shopifyVariantCount ?? 0) > 1;
   const activeDiscount = Boolean(active.compareAtPrice && active.compareAtPrice > active.price);
@@ -330,14 +329,6 @@ export function ProductCoverflow({ products, reducedMotion = false }: ProductCov
             {!activePurchasable ? 'Sold out' : activeNeedsOptions ? 'Choose options' : activeAdded ? 'Added' : 'Add to bag'}
           </button>
         </div>
-        <button
-          type="button"
-          className="product-coverflow__caption-wishlist"
-          onClick={() => toggleWishlist(active.handle, productWishlistAliases(active))}
-          aria-label={`${activeSaved ? 'Remove' : 'Add'} ${active.title} ${activeSaved ? 'from' : 'to'} wishlist`}
-        >
-          <Heart size={15} fill={activeSaved ? 'currentColor' : 'none'} aria-hidden="true" /> {activeSaved ? 'Saved' : 'Save'}
-        </button>
       </div>
 
       {count > 1 && (

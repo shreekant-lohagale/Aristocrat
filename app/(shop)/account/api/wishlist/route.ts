@@ -20,7 +20,9 @@ function errorResponse(error: unknown) {
 
 export async function GET(request: NextRequest) {
   const accessToken = request.cookies.get(customerCookieNames.accessToken)?.value;
-  if (!accessToken) return NextResponse.json({ authenticated: false, wishlist: [] }, { status: 401, headers: responseHeaders });
+  // An anonymous visitor is an expected storefront state, not a request failure.
+  // Returning 200 avoids a noisy console error while keeping writes protected.
+  if (!accessToken) return NextResponse.json({ authenticated: false, wishlist: [] }, { headers: responseHeaders });
   try {
     const record = await readCustomerWishlist(accessToken);
     return NextResponse.json({ authenticated: true, wishlist: record.wishlist }, { headers: responseHeaders });

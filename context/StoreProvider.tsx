@@ -99,8 +99,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       return null;
     }
     if (!response.ok) throw new Error('Unable to load customer wishlist.');
+    const payload = await response.json() as { authenticated?: boolean; wishlist?: unknown };
+    if (payload.authenticated === false) {
+      setCustomerAuthenticated(false);
+      return null;
+    }
     setCustomerAuthenticated(true);
-    const payload = await response.json() as { wishlist?: unknown };
     return normalizeWishlist(payload.wishlist);
   }, []);
 
