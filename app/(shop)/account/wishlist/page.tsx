@@ -4,6 +4,8 @@ import { WishlistPreview } from '@/components/account/WishlistPreview';
 import { getCustomerAccountState } from '@/lib/shopify/customer-account';
 import { getHostedCustomerAccountUrl } from '@/lib/shopify/customer-account-url';
 
+export const metadata = { title: 'Account Wishlist' };
+
 export default async function AccountWishlistPage() {
   const accountState = await getCustomerAccountState();
   const authenticated = accountState.status === 'authenticated';

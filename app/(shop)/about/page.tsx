@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { InformationPage } from '@/components/common/InformationPage';
+import { brandedOpenGraph } from '@/lib/seo/site';
 
-export const metadata: Metadata = { title: 'About the House', description: 'Discover the design point of view behind House of Aristocrat.', alternates: { canonical: '/about' } };
+export const metadata: Metadata = { title: 'About the House', description: 'Discover the design point of view behind House of Aristocrat.', alternates: { canonical: '/about' }, openGraph: brandedOpenGraph('/about') };
 
 export default function AboutPage() {
   return <InformationPage eyebrow="The Maison" title="Designed between tradition and tomorrow" intro="House of Aristocrat creates expressive Indian and Indo-Western dressing for a modern way of life.">

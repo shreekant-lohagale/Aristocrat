@@ -42,8 +42,8 @@ This folder owns route composition, server rendering, loading/error boundaries, 
 | `/account/auth/logout` | Clears cookies and ends Shopify session | GET redirect handler | ID token, end-session endpoint |
 | `/api/assets` | Safely serves nested assets under `files/` | Filesystem route handler | Path containment and extension allowlist |
 | `/api/images/[name]` | Serves flat WebP assets | Filesystem route handler | Basename sanitization |
-| `/sitemap.xml` | Static/collection/product sitemap | Metadata route | Catalog with outage fallback |
-| `/robots.txt` | Crawler rules | Metadata route | Hard-coded production sitemap URL |
+| `/sitemap.xml` | Public routes and available Shopify collection/product URLs | Metadata route | Catalog with outage fallback; origin from `lib/seo/site.ts` |
+| `/robots.txt` | Public/private crawl rules | Metadata route | Centralized site origin; public image routes remain crawlable |
 | `/opengraph-image` | Generated social card | Image metadata route | `ImageResponse` |
 | `/twitter-image` | Generated X/Twitter card | Image metadata route | `ImageResponse` |
 | `/icon.png`, `/apple-icon.png` | Site/application icons | Static metadata assets | Files in `app/` |
@@ -55,6 +55,7 @@ Collection pages intentionally do not render the main navbar or announcement bar
 - Collection handles pass through `normalizeCollectionHandle`; known definitions and live Shopify details determine whether the route exists.
 - Product pages use `notFound()` when Shopify has no matching handle and derive their back/related collection from non-special collection membership.
 - Product and collection pages generate route-specific metadata on the server.
+- Home and public pages set their own canonicals; utility/account pages are noindex and are omitted from the sitemap. Live Shopify products emit Product/Offer JSON-LD.
 - Catalog and Customer Account data uses `no-store`; OpenID discovery is revalidated hourly.
 - Published privacy, terms, shipping, refund and contact fields come from Shopify when configured. The pages state when approved content is unavailable; do not fill gaps with invented business policy.
 

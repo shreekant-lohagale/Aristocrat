@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { InformationPage } from '@/components/common/InformationPage';
 
-export const metadata: Metadata = { title: 'Size Guide', description: 'Size guide status for House of Aristocrat clothing categories.', alternates: { canonical: '/size-guide' } };
+export const metadata: Metadata = { title: 'Size Guide', description: 'Size guidance for House of Aristocrat clothing categories.', alternates: { canonical: '/size-guide' }, robots: { index: false, follow: true } };
 
 const categories = ['Kurtis', 'Dresses', 'Indo-Western', 'Chaniya Choli'] as const;
 

@@ -6,6 +6,7 @@ import { Footer } from '@/components/layout/Footer';
 import { Navbar } from '@/components/layout/Navbar';
 import { editorialCategories } from '@/lib/catalog/categories';
 import { getCatalog } from '@/lib/catalog/products';
+import { brandedOpenGraph } from '@/lib/seo/site';
 
 const asset = (file: string) => `/api/assets?file=${encodeURIComponent(file)}`;
 const storeCategoryHandles = new Set(['kurtis', 'dresses', 'indo-western', 'chaniya-choli']);
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   title: 'The Store',
   description: 'Enter the House of Aristocrat store and discover elevated kurtis, dresses, Indo-Western pieces and Chaniya Choli collections.',
   alternates: { canonical: '/store' },
-  openGraph: { url: '/store', title: 'The Store | House of Aristocrat' },
+  openGraph: { ...brandedOpenGraph('/store'), title: 'The Store | House of Aristocrat' },
 };
 
 export default async function StorePage() {

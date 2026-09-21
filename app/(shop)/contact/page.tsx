@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { InformationPage } from '@/components/common/InformationPage';
 import { PublishedPolicy } from '@/components/common/PublishedPolicy';
 import { getPublishedShopInformation } from '@/lib/shopify/shop-information';
+import { brandedOpenGraph } from '@/lib/seo/site';
 
-export const metadata: Metadata = { title: 'Contact', description: 'Customer care and order support for House of Aristocrat.', alternates: { canonical: '/contact' } };
+export const metadata: Metadata = { title: 'Contact', description: 'Customer care and order support for House of Aristocrat.', alternates: { canonical: '/contact' }, openGraph: brandedOpenGraph('/contact') };
 export const dynamic = 'force-dynamic';
 
 export default async function ContactPage() {

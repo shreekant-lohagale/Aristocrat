@@ -5,6 +5,8 @@ import { CatalogGrid } from '@/components/collection/CatalogGrid';
 import { CollectionHeader } from '@/components/collection/CollectionHeader';
 import { getCollectionByHandle, normalizeCollectionHandle } from '@/lib/catalog/collections';
 import { getCollectionDetails } from '@/lib/catalog/products';
+import { brandedOpenGraph } from '@/lib/seo/site';
+import { hasShopifyStorefrontConfig } from '@/lib/shopify/config';
 
 const descriptions: Record<string, string> = {
   'new-arrivals': 'The latest House of Aristocrat pieces, made for an elevated everyday wardrobe.',
@@ -22,11 +24,12 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
   const normalizedHandle = normalizeCollectionHandle(handle);
   const collection = getCollectionByHandle(normalizedHandle);
   const shopifyCollection = await getCollectionDetails(normalizedHandle);
-  if (!collection && !shopifyCollection) return { title: 'Collection not found' };
+  if (!collection && !shopifyCollection) return { title: 'Collection not found', robots: { index: false, follow: false } };
   const description = shopifyCollection?.description || descriptions[normalizedHandle] || 'Explore elevated Indo-Western fashion from House of Aristocrat.';
   const canonical = `/collections/${normalizedHandle}`;
   const title = shopifyCollection?.title || collection?.name || normalizedHandle;
-  return { title, description, alternates: { canonical }, openGraph: { url: canonical, title: `${title} | House of Aristocrat`, description } };
+  const indexable = Boolean(shopifyCollection) || (normalizedHandle === 'new-arrivals' && hasShopifyStorefrontConfig());
+  return { title, description, alternates: { canonical }, robots: { index: indexable, follow: true }, openGraph: { ...brandedOpenGraph(canonical), title: `${title} | House of Aristocrat`, description } };
 }
 
 export default async function CollectionPage({ params }: { params: Promise<{ handle: string }> }) {

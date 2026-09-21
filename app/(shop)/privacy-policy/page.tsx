@@ -2,12 +2,13 @@ import type { Metadata } from 'next';
 import { InformationPage } from '@/components/common/InformationPage';
 import { PublishedPolicy } from '@/components/common/PublishedPolicy';
 import { getPublishedShopInformation } from '@/lib/shopify/shop-information';
+import { brandedOpenGraph } from '@/lib/seo/site';
 
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const policy = (await getPublishedShopInformation())?.privacyPolicy;
-  return { title: 'Privacy Policy', description: 'The published House of Aristocrat privacy policy.', alternates: { canonical: '/privacy-policy' }, robots: { index: Boolean(policy?.body), follow: true } };
+  return { title: 'Privacy Policy', description: 'The published House of Aristocrat privacy policy.', alternates: { canonical: '/privacy-policy' }, openGraph: brandedOpenGraph('/privacy-policy'), robots: { index: Boolean(policy?.body), follow: true } };
 }
 
 export default async function PrivacyPolicyPage() {

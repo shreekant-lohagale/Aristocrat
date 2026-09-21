@@ -1,5 +1,4 @@
 import { ImageResponse } from 'next/og';
-import { headers } from 'next/headers';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -12,21 +11,14 @@ const fontDirectory = path.join(process.cwd(), 'public', 'fonts');
 const playfairRegular = readFile(path.join(fontDirectory, 'PlayfairDisplay-Regular.ttf'));
 const playfairItalic = readFile(path.join(fontDirectory, 'PlayfairDisplay-Italic.ttf'));
 const poppinsRegular = readFile(path.join(fontDirectory, 'Poppins-Regular.ttf'));
-
-function assetUrl(origin: string, file: string) {
-  const url = new URL('/api/assets', origin);
-  url.searchParams.set('file', file);
-  return url.toString();
-}
+const assetDirectory = path.join(process.cwd(), 'files');
+const heroImage = readFile(path.join(assetDirectory, 'new images', 'WhatsApp Image 2026-08-31 at 11.09.10 PM.jpeg'));
+const logoImage = readFile(path.join(assetDirectory, 'House_of_Aristocrat_Logo_Transparent_2000px.png'));
 
 export default async function OpenGraphImage() {
-  const [playfair, playfairEmphasis, poppins] = await Promise.all([playfairRegular, playfairItalic, poppinsRegular]);
-  const requestHeaders = await headers();
-  const host = requestHeaders.get('x-forwarded-host') ?? requestHeaders.get('host') ?? 'localhost:3000';
-  const protocol = requestHeaders.get('x-forwarded-proto') ?? (host.startsWith('localhost') ? 'http' : 'https');
-  const origin = `${protocol}://${host}`;
-  const hero = assetUrl(origin, 'new images/WhatsApp Image 2026-08-31 at 11.09.10 PM.jpeg');
-  const logo = assetUrl(origin, 'House_of_Aristocrat_Logo_Transparent_2000px.png');
+  const [playfair, playfairEmphasis, poppins, heroBytes, logoBytes] = await Promise.all([playfairRegular, playfairItalic, poppinsRegular, heroImage, logoImage]);
+  const hero = `data:image/jpeg;base64,${heroBytes.toString('base64')}`;
+  const logo = `data:image/png;base64,${logoBytes.toString('base64')}`;
 
   return new ImageResponse(
     (

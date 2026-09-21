@@ -2,13 +2,14 @@ import type { Metadata } from 'next';
 import { InformationPage } from '@/components/common/InformationPage';
 import { PublishedPolicy } from '@/components/common/PublishedPolicy';
 import { getPublishedShopInformation } from '@/lib/shopify/shop-information';
+import { brandedOpenGraph } from '@/lib/seo/site';
 
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const information = await getPublishedShopInformation();
   const policy = information?.termsOfService || information?.termsOfSale;
-  return { title: 'Terms of Use', description: 'The published House of Aristocrat terms.', alternates: { canonical: '/terms' }, robots: { index: Boolean(policy?.body), follow: true } };
+  return { title: 'Terms of Use', description: 'The published House of Aristocrat terms.', alternates: { canonical: '/terms' }, openGraph: brandedOpenGraph('/terms'), robots: { index: Boolean(policy?.body), follow: true } };
 }
 
 export default async function TermsPage() {

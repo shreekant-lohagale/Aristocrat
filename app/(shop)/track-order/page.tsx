@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { InformationPage } from '@/components/common/InformationPage';
 
-export const metadata: Metadata = { title: 'Track Order', description: 'Find secure order status and carrier tracking through Shopify.', alternates: { canonical: '/track-order' } };
+export const metadata: Metadata = { title: 'Track Order', description: 'Find secure order status and carrier tracking through Shopify.', alternates: { canonical: '/track-order' }, robots: { index: false, follow: true } };
 
 export default function TrackOrderPage() {
   return <InformationPage eyebrow="Your order" title="Track your order" intro="Order status is managed through Shopify and the carrier, when tracking is available.">

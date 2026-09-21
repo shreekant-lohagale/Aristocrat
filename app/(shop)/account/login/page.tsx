@@ -3,6 +3,8 @@ import { BackButton } from '@/components/common/BackButton';
 import { getHostedCustomerAccountUrl } from '@/lib/shopify/customer-account-url';
 import { hasCustomerAccountApiConfig } from '@/lib/shopify/customer-account';
 
+export const metadata = { title: 'Sign In' };
+
 export default function LoginPage() {
   if (hasCustomerAccountApiConfig()) redirect('/account/auth/login');
   const accountUrl = getHostedCustomerAccountUrl();

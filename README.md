@@ -314,10 +314,10 @@ Implemented:
 
 Known gaps:
 
-- `metadataBase`, sitemap, and robots use the Vercel URL directly.
-- No Product, Organization, Website/SearchAction, or Breadcrumb JSON-LD exists.
-- Robots currently allows account, cart, checkout, search, and wishlist pages.
-- Sitemap `lastModified` is generated at request/build time rather than from content timestamps.
+- The current Vercel canonical origin is centralized in `lib/seo/site.ts`; replace it once the final custom domain is approved.
+- Organization and WebSite JSON-LD use verified brand/site identity; live Shopify products emit Product/Offer JSON-LD. No fabricated reviews, shipping terms, address or social profiles are added.
+- Utility/customer routes are noindex; robots disallows account, cart, checkout, search, wishlist and private API endpoints while public image assets remain crawlable.
+- The sitemap omits utility routes and only uses Shopify product `publishedAt` for product `lastModified`; it is limited to the current 100-product catalog query.
 - Review visible copy and metadata for existing character-encoding artifacts.
 
 ## Support and legal routes
@@ -330,8 +330,8 @@ The app is structured for Vercel and uses standard `next build`. Add all product
 
 When moving to a custom domain:
 
-1. Update `metadataBase` in `app/layout.tsx`.
-2. Update the base/sitemap URL in `app/sitemap.ts` and `app/robots.ts`.
+1. Update the single canonical origin in `lib/seo/site.ts`.
+2. Verify `metadataBase`, canonical tags, social image URLs, sitemap and robots output after deployment.
 3. Add the exact production origin, `/account/auth/callback`, and `/account` logout URI to the Shopify Customer Account application.
 4. Verify the token-exchange `Origin`, account redirects, Shopify Markets, checkout domain, and image delivery.
 5. Redeploy and inspect canonical, Open Graph, Twitter, robots, and sitemap output.
@@ -372,7 +372,7 @@ Live checkout, Customer Account callback, authenticated/cross-device wishlist an
 - Apart from intake validator tests, no general automated test suite, CI, analytics/RUM, consent tooling, or error monitoring is configured.
 - Information/legal routes exist. Shopify-published policies and contact information are displayed when the Storefront API is configured; missing approved content is identified on the relevant page.
 - Newsletter submission requires a configured provider webhook; otherwise the footer presents its unavailable state.
-- Canonical host configuration is hard-coded rather than environment-driven.
+- Canonical host configuration is centralized in `lib/seo/site.ts`, but still awaits the final approved custom domain.
 - `CartProvider`, local address/profile components, and several older homepage components are dormant.
 - Some source strings show character-encoding artifacts that need a separate content/code cleanup.
 
@@ -393,7 +393,7 @@ Shopify Payments activation/verification, live Shopify acceptance testing, Canad
 - [ ] Confirm Shopify-published policies and contact information are available to the production Storefront API
 - [ ] Add client-approved category size charts and confirm Canada, USA, and India shipping charges
 - [ ] Configure a newsletter provider webhook if email subscriptions are required
-- [ ] Add structured data and non-index rules for private/utility pages
+- [x] Add verified Organization/WebSite/Product structured data and noindex rules for private/utility pages
 - [ ] Add analytics, consent management, Web Vitals/RUM, and error monitoring
 - [ ] Add unit/integration/end-to-end tests and CI gates
 - [ ] Implement cursor pagination/server-side filtering before exceeding 100 products

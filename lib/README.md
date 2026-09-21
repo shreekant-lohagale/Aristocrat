@@ -12,6 +12,7 @@
 | `catalog/` | Collection definitions, product retrieval/mapping orchestration, fallback and image helpers | Mixed; inspect imports before using in clients |
 | `account/addresses.ts` | Local address type/storage key for dormant local editor | Shared, but not active Shopify account data |
 | `motion.ts` | Reusable Framer Motion transitions/variants | Client-compatible shared module |
+| `seo/site.ts` | Canonical Vercel origin, branded OG image metadata and safe JSON-LD serialization | Server metadata/pages |
 
 See [Shopify integration](shopify/README.md) and [catalog architecture](catalog/README.md).
 
@@ -43,4 +44,3 @@ client components
 - `lib/account/addresses.ts` supports an unmounted local editor and is not a Shopify persistence layer.
 - Catalog and Shopify files contain some compact one-line implementations that are harder to review.
 - There is no test coverage around mapping, collection normalization, cart reconciliation, or wishlist conflicts.
-

@@ -2,13 +2,12 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { StoreProvider } from '@/context/StoreProvider';
 import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider';
+import { absoluteSiteUrl, brandedOgImage, serializeJsonLd, siteDescription, siteOrigin } from '@/lib/seo/site';
 
-const siteUrl = 'https://house-of-aristocrat.vercel.app';
 const siteTitle = 'House of Aristocrat | Modern Indo-Western Fashion';
-const siteDescription = 'Discover House of Aristocrat — elevated Indo-Western fashion, modern silhouettes and timeless Indian elegance designed for the contemporary woman.';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(siteOrigin),
   title: { default: siteTitle, template: '%s | House of Aristocrat' },
   description: siteDescription,
   icons: {
@@ -16,15 +15,13 @@ export const metadata: Metadata = {
     apple: [{ url: '/apple-icon.png', type: 'image/png', sizes: '180x180' }],
   },
   keywords: ['Indo-Western fashion', 'Indian fashion', "women's fashion", 'Kurtis', 'Dresses', 'Chaniya Choli', 'Indian designer fashion', 'House of Aristocrat'],
-  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     locale: 'en_CA',
-    url: siteUrl,
     siteName: 'House of Aristocrat',
     title: siteTitle,
     description: 'Elevated Indo-Western fashion, modern silhouettes and timeless Indian elegance for the contemporary woman.',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'House of Aristocrat — Everyday Elegance' }],
+    images: [brandedOgImage],
   },
   twitter: {
     card: 'summary_large_image',
@@ -35,5 +32,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en" suppressHydrationWarning><body suppressHydrationWarning><SmoothScrollProvider><StoreProvider>{children}</StoreProvider></SmoothScrollProvider></body></html>;
+  const organization = { '@context': 'https://schema.org', '@type': 'Organization', name: 'House of Aristocrat', url: absoluteSiteUrl('/') };
+  const website = { '@context': 'https://schema.org', '@type': 'WebSite', name: 'House of Aristocrat', url: absoluteSiteUrl('/') };
+  return <html lang="en" suppressHydrationWarning><body suppressHydrationWarning><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd([organization, website]) }} /><SmoothScrollProvider><StoreProvider>{children}</StoreProvider></SmoothScrollProvider></body></html>;
 }

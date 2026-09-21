@@ -1,17 +1,34 @@
 import type { MetadataRoute } from 'next';
 import { collectionDefinitions } from '@/lib/catalog/collections';
 import { getCatalog } from '@/lib/catalog/products';
+import { getPublishedShopInformation } from '@/lib/shopify/shop-information';
+import { absoluteSiteUrl } from '@/lib/seo/site';
+
+const staticPaths = ['/', '/store', '/collections', '/about', '/contact'];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = 'https://house-of-aristocrat.vercel.app';
-  const staticPages = ['', 'store', 'collections', 'search', 'wishlist', 'account', 'about', 'contact', 'shipping-returns', 'size-guide', 'track-order', 'privacy-policy', 'terms'];
-  const collectionPages = collectionDefinitions.map((collection) => `collections/${collection.handle}`);
-  let productPages: string[] = [];
-  try {
-    productPages = (await getCatalog()).map((product) => `products/${product.handle}`);
-  } catch {
-    // Keep the static sitemap available during a temporary Shopify outage.
-  }
-  return [...staticPages, ...collectionPages, ...productPages].map((path) => ({ url: `${base}/${path}`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: path === '' ? 1 : 0.7 }));
-}
+  const entries: MetadataRoute.Sitemap = staticPaths.map((path) => ({ url: absoluteSiteUrl(path) }));
+  const policies = await getPublishedShopInformation();
+  if (policies?.shippingPolicy?.body && policies.refundPolicy?.body) entries.push({ url: absoluteSiteUrl('/shipping-returns') });
+  if (policies?.privacyPolicy?.body) entries.push({ url: absoluteSiteUrl('/privacy-policy') });
+  if (policies?.termsOfService?.body || policies?.termsOfSale?.body) entries.push({ url: absoluteSiteUrl('/terms') });
 
+  try {
+    const products = (await getCatalog()).filter((product) => product.source === 'shopify');
+    const handles = new Set(products.flatMap((product) => product.collectionHandles));
+    if (products.length) handles.add('new-arrivals');
+    for (const collection of collectionDefinitions) {
+      if (handles.has(collection.handle)) entries.push({ url: absoluteSiteUrl(`/collections/${collection.handle}`) });
+    }
+    for (const product of products) {
+      const published = product.publishedAt ? new Date(product.publishedAt) : null;
+      entries.push({
+        url: absoluteSiteUrl(`/products/${product.handle}`),
+        ...(published && !Number.isNaN(published.getTime()) ? { lastModified: published } : {}),
+      });
+    }
+  } catch {
+    // Keep stable public routes available while Shopify is unavailable.
+  }
+  return entries;
+}

@@ -3,12 +3,13 @@ import Link from 'next/link';
 import { InformationPage } from '@/components/common/InformationPage';
 import { PublishedPolicy } from '@/components/common/PublishedPolicy';
 import { getPublishedShopInformation } from '@/lib/shopify/shop-information';
+import { brandedOpenGraph } from '@/lib/seo/site';
 
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const information = await getPublishedShopInformation();
-  return { title: 'Shipping & Returns', description: 'Published shipping, return and exchange policies for House of Aristocrat.', alternates: { canonical: '/shipping-returns' }, robots: { index: Boolean(information?.shippingPolicy?.body && information?.refundPolicy?.body), follow: true } };
+  return { title: 'Shipping & Returns', description: 'Published shipping, return and exchange policies for House of Aristocrat.', alternates: { canonical: '/shipping-returns' }, openGraph: brandedOpenGraph('/shipping-returns'), robots: { index: Boolean(information?.shippingPolicy?.body && information?.refundPolicy?.body), follow: true } };
 }
 
 export default async function ShippingReturnsPage() {

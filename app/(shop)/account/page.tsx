@@ -13,6 +13,8 @@ import {
 } from '@/lib/shopify/customer-account';
 import { getHostedCustomerAccountUrl } from '@/lib/shopify/customer-account-url';
 
+export const metadata = { title: 'My Account' };
+
 export default async function AccountPage({ searchParams }: { searchParams: Promise<{ auth?: string }> }) {
   const params = await searchParams;
   const accountState = await getCustomerAccountState();
