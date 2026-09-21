@@ -11,12 +11,13 @@ import {
   X,
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { useStore } from '@/context/StoreProvider';
 import { AnnouncementBar } from './AnnouncementBar';
 import { CountrySelector } from './CountrySelector';
 import { drawerRight } from '@/lib/motion';
+import { useModalFocus } from '@/hooks/useModalFocus';
 
 const asset = (file: string) => `/api/assets?file=${encodeURIComponent(file)}`;
 
@@ -41,6 +42,7 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
   const { cartCount, wishlist, customerAuthenticated } = useStore();
   const accountLabel = customerAuthenticated === true ? 'My Account' : customerAuthenticated === false ? 'Sign In' : 'Account';
@@ -52,17 +54,6 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
     update();
     window.addEventListener('scroll', update, { passive: true });
     return () => window.removeEventListener('scroll', update);
-  }, []);
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setMenuOpen(false);
-      }
-    };
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
   useEffect(() => {
@@ -78,6 +69,7 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
 
   const solidNav = solid || scrolled || hovered || menuOpen;
   const closeMenu = () => setMenuOpen(false);
+  useModalFocus(menuOpen, menuRef, closeMenu);
 
   return (
     <>
@@ -166,11 +158,13 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
       <AnimatePresence initial={false}>
       {menuOpen && (
         <motion.div
+          ref={menuRef}
           id="mobile-navigation"
           className="editorial-mobile-menu"
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"
+          tabIndex={-1}
           variants={drawerRight}
           initial={reducedMotion ? false : 'hidden'}
           animate="visible"
@@ -185,7 +179,7 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
                 height={42}
               />
             </Link>
-            <button type="button" aria-label="Close navigation" onClick={closeMenu}>
+            <button type="button" data-modal-initial-focus aria-label="Close navigation" onClick={closeMenu}>
               <X size={22} strokeWidth={1.6} />
             </button>
           </header>

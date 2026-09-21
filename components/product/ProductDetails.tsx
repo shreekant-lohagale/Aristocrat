@@ -2,6 +2,7 @@
 
 import { Check, ChevronLeft, ChevronRight, Heart, Minus, Plus, Ruler, Share2, X } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CatalogProduct, ProductOptionValue, ProductVariant } from '@/types/commerce';
 import { useStore } from '@/context/StoreProvider';
@@ -12,6 +13,7 @@ import { productImageSrc } from '@/lib/catalog/image';
 import { isProductWishlisted, productWishlistAliases } from '@/lib/catalog/wishlist';
 import { normalizeCollectionHandle } from '@/lib/catalog/collections';
 import { drawerBottom, fadeUp, overlayFade, staggerContainer } from '@/lib/motion';
+import { useModalFocus } from '@/hooks/useModalFocus';
 
 const optionKey = (name: string) => name.trim().toLowerCase();
 
@@ -33,10 +35,13 @@ export function ProductDetails({ product: initialProduct, related }: { product: 
   const [quantity, setQuantity] = useState(1);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
   const [relatedProducts, setRelatedProducts] = useState(related);
   const galleryRef = useRef<HTMLDivElement>(null);
+  const sizeGuidePanelRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
+  useModalFocus(sizeGuideOpen, sizeGuidePanelRef, () => setSizeGuideOpen(false));
 
   useEffect(() => {
     const controller = new AbortController();
@@ -57,13 +62,6 @@ export function ProductDetails({ product: initialProduct, related }: { product: 
       .catch(() => undefined);
     return () => controller.abort();
   }, [country.code, initialProduct.handle]);
-
-  useEffect(() => {
-    if (!sizeGuideOpen) return;
-    const close = (event: KeyboardEvent) => { if (event.key === 'Escape') setSizeGuideOpen(false); };
-    window.addEventListener('keydown', close);
-    return () => window.removeEventListener('keydown', close);
-  }, [sizeGuideOpen]);
 
   const selectableOptions = product.options.filter((option) => option.values.some((value) => value !== 'Default Title'));
   const selectionsComplete = selectableOptions.every((option) => Boolean(selections[optionKey(option.name)]));
@@ -112,9 +110,14 @@ export function ProductDetails({ product: initialProduct, related }: { product: 
 
   const scrollGallery = (direction: number) => galleryRef.current?.scrollBy({ left: galleryRef.current.clientWidth * 0.7 * direction, behavior: 'smooth' });
   const copyLink = async () => {
-    await navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1600);
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopyError(false);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      setCopyError(true);
+    }
   };
 
   return (
@@ -144,18 +147,18 @@ export function ProductDetails({ product: initialProduct, related }: { product: 
 
           <div className="detail-actions"><div className="quantity"><button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease quantity"><Minus size={14} /></button><span aria-label={`Quantity ${quantity}`}>{quantity}</span><button type="button" onClick={() => setQuantity(quantity + 1)} aria-label="Increase quantity"><Plus size={14} /></button></div><motion.button whileHover={reducedMotion ? undefined : { y: -1 }} whileTap={reducedMotion ? undefined : { scale: 0.985 }} type="button" className="add-button" onClick={add} disabled={!purchasable}>{purchaseLabel}</motion.button></div>
           {purchasable && variant && <CheckoutButton mode="buy-now" priceLabel={formatPrice(displayPrice, currencyCode)} lines={[{ handle: product.handle, title: product.title, variantId: variant.id, quantity, size: selections.size, color: selections.color ?? selections.colour }]}>Buy now</CheckoutButton>}
-          <p className="product-shipping-note">Shipping, duties and returns are calculated for your market at checkout.</p>
+          <p className="product-shipping-note">Review <Link href="/shipping-returns">shipping &amp; returns</Link> before ordering.</p>
           {variant?.sku && <p className="product-style">Style: {variant.sku}</p>}
 
           {tabs.length > 0 && <div className="product-tabs"><div role="tablist" aria-label="Product information">{tabs.map((tab) => <button type="button" role="tab" aria-selected={selectedTabId === tab.id} key={tab.id} onClick={() => setActiveTab(tab.id)}>{tab.label}</button>)}</div><AnimatePresence mode="wait" initial={false}>{tabs.map((tab) => selectedTabId === tab.id && <motion.div role="tabpanel" key={tab.id} initial={reducedMotion ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: reducedMotion ? 0 : 0.2 }}><p>{tab.content}</p></motion.div>)}</AnimatePresence></div>}
 
-          <div className="product-share"><span>Share</span><button type="button" onClick={copyLink}><Share2 size={15} />{copied ? 'Link copied' : 'Copy link'}</button></div>
+          <div className="product-share"><span>Share</span><button type="button" onClick={() => void copyLink()}><Share2 size={15} />{copyError ? 'Copy unavailable' : copied ? 'Link copied' : 'Copy link'}</button></div>
         </motion.article>
       </section>
 
       {relatedProducts.length > 0 && <section className="product-recommendations" aria-labelledby="recommendations-title"><p className="eyebrow">Continue the edit</p><h2 id="recommendations-title">You may also like</h2><div className="catalog-grid">{relatedProducts.map((item) => <CatalogProductCard key={item.id} product={item} />)}</div></section>}
 
-      <AnimatePresence initial={false}>{sizeGuideOpen && <motion.div className="size-guide-dialog" role="dialog" aria-modal="true" aria-labelledby="size-guide-title" initial={false} animate="visible" exit="exit"><motion.button variants={overlayFade} type="button" className="size-guide-dialog__scrim" aria-label="Close size guide" onClick={() => setSizeGuideOpen(false)} /><motion.div variants={drawerBottom} initial={reducedMotion ? false : 'hidden'} animate="visible" exit="exit" className="size-guide-dialog__panel"><button type="button" className="size-guide-dialog__close" aria-label="Close size guide" onClick={() => setSizeGuideOpen(false)}><X /></button><p className="eyebrow">House guidance</p><h2 id="size-guide-title">Size guide</h2><p>Size guidance can vary by piece. Please review the available Shopify sizes for this design and contact the House if you need personalised assistance.</p></motion.div></motion.div>}</AnimatePresence>
+      <AnimatePresence initial={false}>{sizeGuideOpen && <motion.div className="size-guide-dialog" role="dialog" aria-modal="true" aria-labelledby="size-guide-title" initial={false} animate="visible" exit="exit"><motion.button variants={overlayFade} type="button" className="size-guide-dialog__scrim" aria-label="Close size guide" onClick={() => setSizeGuideOpen(false)} /><motion.div ref={sizeGuidePanelRef} tabIndex={-1} variants={drawerBottom} initial={reducedMotion ? false : 'hidden'} animate="visible" exit="exit" className="size-guide-dialog__panel"><button type="button" data-modal-initial-focus className="size-guide-dialog__close" aria-label="Close size guide" onClick={() => setSizeGuideOpen(false)}><X /></button><p className="eyebrow">House guidance</p><h2 id="size-guide-title">Size guide</h2><p>Size guidance can vary by piece. Please review the available Shopify sizes for this design and contact the House if you need personalised assistance.</p></motion.div></motion.div>}</AnimatePresence>
     </>
   );
 }

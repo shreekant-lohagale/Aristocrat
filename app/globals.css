@@ -4279,6 +4279,7 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
   display: grid;
   min-height: clamp(580px, 74svh, 760px);
   grid-template-columns: minmax(0, 52fr) minmax(0, 48fr);
+  overflow: clip;
   background: var(--hoa-cream);
 }
 .maison-story > .maison-story__visual {

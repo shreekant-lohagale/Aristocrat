@@ -1,7 +1,37 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import type { CatalogProduct } from '@/types/commerce';
 import { useStore } from '@/context/StoreProvider';
 import { CatalogProductCard } from '@/components/product/CatalogProductCard';
 import { isProductWishlisted } from '@/lib/catalog/wishlist';
-export function WishlistGrid() { const { country, wishlist, wishlistStatus, wishlistError, refreshWishlist } = useStore(); const [products, setProducts] = useState<CatalogProduct[]>([]); const [catalogStatus, setCatalogStatus] = useState<'loading' | 'ready' | 'error'>('loading'); useEffect(() => { const controller = new AbortController(); setCatalogStatus('loading'); fetch(`/api/catalog?country=${country.code}`, { signal: controller.signal }).then((response) => { if (!response.ok) throw new Error('Catalog request failed'); return response.json(); }).then((catalog: CatalogProduct[]) => { setProducts(catalog); setCatalogStatus('ready'); }).catch((error: unknown) => { if (!(error instanceof DOMException && error.name === 'AbortError')) setCatalogStatus('error'); }); return () => controller.abort(); }, [country.code]); const saved = products.filter((product) => isProductWishlisted(wishlist, product)); if (wishlistStatus === 'loading' || catalogStatus === 'loading') return <div className="account-wishlist-loading" aria-label="Loading wishlist"><span /><span /><span /></div>; if (wishlistStatus === 'error' || catalogStatus === 'error') return <div><p className="lede">{wishlistError ?? 'Your wishlist could not be loaded.'}</p><button className="button" type="button" onClick={() => void refreshWishlist()}>Try again</button></div>; return saved.length ? <div className="catalog-grid">{saved.map((product) => <CatalogProductCard key={product.id} product={product} />)}</div> : <p className="lede">Your saved edit is empty. Discover a piece worth keeping close.</p>; }
+
+export function WishlistGrid() {
+  const { country, wishlist, wishlistStatus, wishlistError, refreshWishlist } = useStore();
+  const [products, setProducts] = useState<CatalogProduct[]>([]);
+  const [catalogStatus, setCatalogStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [requestKey, setRequestKey] = useState(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setCatalogStatus('loading');
+    fetch(`/api/catalog?country=${country.code}`, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error('Catalog request failed');
+        return response.json() as Promise<CatalogProduct[]>;
+      })
+      .then((catalog) => { setProducts(catalog); setCatalogStatus('ready'); })
+      .catch((error: unknown) => {
+        if (!(error instanceof DOMException && error.name === 'AbortError')) setCatalogStatus('error');
+      });
+    return () => controller.abort();
+  }, [country.code, requestKey]);
+
+  const saved = products.filter((product) => isProductWishlisted(wishlist, product));
+  if (wishlistStatus === 'loading' || catalogStatus === 'loading') return <div className="account-wishlist-loading" aria-label="Loading wishlist"><span /><span /><span /></div>;
+  if (wishlistStatus === 'error' || catalogStatus === 'error') return <div><p className="lede">{wishlistError ?? 'Your wishlist could not be loaded.'}</p><button className="button" type="button" onClick={() => {
+    if (catalogStatus === 'error') setRequestKey((key) => key + 1);
+    if (wishlistStatus === 'error') void refreshWishlist();
+  }}>Try again</button></div>;
+  return saved.length ? <div className="catalog-grid">{saved.map((product) => <CatalogProductCard key={product.id} product={product} />)}</div> : <p className="lede">Your saved edit is empty. Discover a piece worth keeping close.</p>;
+}

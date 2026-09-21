@@ -2,7 +2,7 @@
 
 import { SlidersHorizontal, X } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { CatalogProduct } from '@/types/commerce';
 import { CatalogProductCard } from '@/components/product/CatalogProductCard';
@@ -10,6 +10,7 @@ import { ProductGridSkeleton } from '@/components/ui/ProductGridSkeleton';
 import { normalizeCollectionHandle } from '@/lib/catalog/collections';
 import { useStore } from '@/context/StoreProvider';
 import { drawerBottom, overlayFade, staggerContainer } from '@/lib/motion';
+import { useModalFocus } from '@/hooks/useModalFocus';
 
 const pageSize = 12;
 const sortOptions = [
@@ -34,10 +35,12 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
   const [error, setError] = useState('');
   const [requestKey, setRequestKey] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const filterPanelRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const requestedPage = Number(searchParams.get('page') ?? 1);
   const values = {
     category: searchParams.get('category') ?? '',
     price: searchParams.get('price') ?? '',
@@ -45,7 +48,7 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
     color: searchParams.get('color') ?? '',
     availability: searchParams.get('availability') ?? '',
     sort: searchParams.get('sort') ?? 'featured',
-    page: Number(searchParams.get('page') ?? 1),
+    page: Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1,
   };
 
   useEffect(() => {
@@ -76,14 +79,13 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
   useEffect(() => {
     if (!drawerOpen) return;
     const previousOverflow = document.body.style.overflow;
-    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setDrawerOpen(false); };
     document.body.style.overflow = 'hidden';
-    window.addEventListener('keydown', closeOnEscape);
     return () => {
       document.body.style.overflow = previousOverflow;
-      window.removeEventListener('keydown', closeOnEscape);
     };
   }, [drawerOpen]);
+
+  useModalFocus(drawerOpen, filterPanelRef, () => setDrawerOpen(false));
 
   const update = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -152,8 +154,8 @@ export function CatalogGrid({ collection, limit = pageSize, variant = 'default' 
 
       <AnimatePresence initial={false}>{drawerOpen && <motion.div className="mobile-filter-sheet" role="dialog" aria-modal="true" aria-label="Product filters" initial={false} animate="visible" exit="exit">
         <motion.button variants={overlayFade} className="mobile-filter-sheet__scrim" aria-label="Close filters" onClick={() => setDrawerOpen(false)} />
-        <motion.div variants={drawerBottom} initial={reducedMotion ? false : 'hidden'} animate="visible" exit="exit" className="mobile-filter-sheet__panel" data-lenis-prevent>
-          <header><div><p>Refine the edit</p><h3>Filters</h3></div><button type="button" aria-label="Close filters" onClick={() => setDrawerOpen(false)}><X size={20} /></button></header>
+        <motion.div ref={filterPanelRef} tabIndex={-1} variants={drawerBottom} initial={reducedMotion ? false : 'hidden'} animate="visible" exit="exit" className="mobile-filter-sheet__panel" data-lenis-prevent>
+          <header><div><p>Refine the edit</p><h3>Filters</h3></div><button type="button" data-modal-initial-focus aria-label="Close filters" onClick={() => setDrawerOpen(false)}><X size={20} /></button></header>
           <div className="mobile-filter-sheet__content"><FilterPanel {...groupProps} hasFilters={hasActiveFilters} clear={clear} /></div>
           <footer><button type="button" className="mobile-filter-sheet__clear" onClick={clear} disabled={!hasActiveFilters}>Clear all</button><button type="button" className="mobile-filter-sheet__apply" onClick={() => setDrawerOpen(false)}>View {filtered.length} {filtered.length === 1 ? 'piece' : 'pieces'}</button></footer>
         </motion.div>
