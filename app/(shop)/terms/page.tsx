@@ -1,13 +1,19 @@
 import type { Metadata } from 'next';
 import { InformationPage } from '@/components/common/InformationPage';
+import { PublishedPolicy } from '@/components/common/PublishedPolicy';
+import { getPublishedShopInformation } from '@/lib/shopify/shop-information';
 
-export const metadata: Metadata = { title: 'Terms', description: 'Terms for using the House of Aristocrat storefront.' };
+export const dynamic = 'force-dynamic';
 
-export default function TermsPage() {
-  return <InformationPage eyebrow="Legal" title="Terms of use" intro="These terms apply when browsing this storefront or placing an order through its Shopify checkout.">
-    <section><h2>Store use</h2><p>Use this website lawfully and do not interfere with its operation, security or other customers. Product imagery, copy and House of Aristocrat branding may not be reused without permission.</p></section>
-    <section><h2>Products and orders</h2><p>Availability, variant options, market pricing, taxes, delivery services and final totals are confirmed through Shopify. An order is subject to successful payment and acceptance. Obvious pricing or availability errors may be corrected before fulfilment.</p></section>
-    <section><h2>Account security</h2><p>You are responsible for protecting access to your customer account and for ensuring checkout and delivery information is accurate.</p></section>
-    <section><h2>Policies</h2><p>Shipping, return and privacy guidance forms part of these terms. Mandatory consumer rights that apply in your location are not excluded by this page.</p></section>
+export async function generateMetadata(): Promise<Metadata> {
+  const information = await getPublishedShopInformation();
+  const policy = information?.termsOfService || information?.termsOfSale;
+  return { title: 'Terms of Use', description: 'The published House of Aristocrat terms.', alternates: { canonical: '/terms' }, robots: { index: Boolean(policy?.body), follow: true } };
+}
+
+export default async function TermsPage() {
+  const information = await getPublishedShopInformation();
+  return <InformationPage eyebrow="Legal" title="Terms of use" intro="The House terms published through Shopify appear below when available.">
+    <PublishedPolicy policy={information?.termsOfService || information?.termsOfSale} unavailable="The approved terms are not available to this storefront yet. Client-approved terms must be connected before publication." />
   </InformationPage>;
 }

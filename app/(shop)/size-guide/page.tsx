@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { InformationPage } from '@/components/common/InformationPage';
 
-export const metadata: Metadata = { title: 'Size Guide', description: 'House of Aristocrat fit and measurement guidance.' };
+export const metadata: Metadata = { title: 'Size Guide', description: 'Size guide status for House of Aristocrat clothing categories.', alternates: { canonical: '/size-guide' } };
+
+const categories = ['Kurtis', 'Dresses', 'Indo-Western', 'Chaniya Choli'] as const;
 
 export default function SizeGuidePage() {
-  return <InformationPage eyebrow="Fit notes" title="Size guide" intro="Use your body measurements together with the size options shown on each product page.">
-    <section><h2>How to measure</h2><dl className="information-page__definitions"><div><dt>Bust</dt><dd>Measure around the fullest part of the bust, keeping the tape level.</dd></div><div><dt>Waist</dt><dd>Measure around your natural waist without pulling the tape tight.</dd></div><div><dt>Hip</dt><dd>Measure around the fullest part of your hips with your feet together.</dd></div><div><dt>Length</dt><dd>Measure from the highest shoulder point to your preferred finished length.</dd></div></dl></section>
-    <section><h2>Choosing your size</h2><p>Product silhouettes and ease vary. Prioritise the product-specific options and fit information shown on the item page. If you fall between sizes, consider the garment shape and the fit you prefer.</p></section>
+  return <InformationPage eyebrow="Fit notes" title="Size guide" intro="Category-specific measurements are being confirmed. Select the available size on each product page when shopping.">
+    {categories.map((category) => <section key={category}><h2>{category}</h2><p>The verified {category} size chart has not been added yet. Please use the size options and fit details supplied with the individual product.</p></section>)}
+    <aside className="information-page__notice">No body or garment measurements are published here until the client confirms the category charts.</aside>
   </InformationPage>;
 }

@@ -5349,6 +5349,20 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
 .information-page__definitions div { display: grid; grid-template-columns: 90px 1fr; gap: 18px; padding: 13px 0; border-bottom: 1px solid rgb(1 27 60 / 10%); }
 .information-page__definitions dt { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
 .information-page__definitions dd { margin: 0; color: var(--hoa-gray); font-size: 12px; line-height: 1.65; }
+.information-page__content > .information-page__published-policy { grid-column: 1 / -1; }
+.information-page__policy-text {
+  max-width: 72ch;
+  color: var(--hoa-gray);
+  font-size: 13px;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+.information-page a:focus-visible { outline: 2px solid var(--hoa-gold-muted); outline-offset: 4px; }
+@media (max-width: 768px) {
+  .information-page__content > .information-page__published-policy { grid-column: auto; }
+  .information-page__header h1 { overflow-wrap: anywhere; }
+}
 
 .newsletter-form button:disabled,
 .newsletter-form input:disabled { cursor: wait; opacity: .58; }

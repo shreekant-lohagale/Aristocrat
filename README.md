@@ -346,8 +346,8 @@ Use `npm run test:shopify` for connectivity and `npm run audit:shopify` for cata
 - `app/globals.css` is large and contains legacy/repeated styles.
 - Tailwind is installed but unused; shadcn is absent.
 - No automated tests, CI, analytics/RUM, consent tooling, or error monitoring are configured.
-- Information/legal routes referenced by the UI are missing, including `/about`, `/contact`, `/shipping-returns`, `/size-guide`, and `/track-order`.
-- Footer social links are placeholders and the newsletter form has no active submit integration; `/api/newsletter` does not exist.
+- Information/legal routes exist. Shopify-published policies and contact information are displayed when the Storefront API is configured; missing approved content is identified on the relevant page.
+- Newsletter submission requires a configured provider webhook; otherwise the footer presents its unavailable state.
 - Canonical host configuration is hard-coded rather than environment-driven.
 - `CartProvider`, local address/profile components, and several older homepage components are dormant.
 - Some source strings show character-encoding artifacts that need a separate content/code cleanup.
@@ -361,8 +361,10 @@ Use `npm run test:shopify` for connectivity and `npm run audit:shopify` for cata
 - [ ] Verify Shopify Markets prices and checkout for all five supported countries
 - [ ] Add and verify the custom domain, DNS, canonical host, and redirect policy
 - [ ] Register final Customer Account callback, JavaScript origin, and logout URI
-- [ ] Add About, Contact, Shipping/Returns, Size Guide, Track Order, Privacy, and Terms pages
-- [ ] Connect newsletter submission and replace placeholder social links
+- [x] Add About, Contact, Shipping/Returns, Size Guide, Track Order, Privacy, and Terms pages
+- [ ] Confirm Shopify-published policies and contact information are available to the production Storefront API
+- [ ] Add client-approved category size charts and confirm Canada, USA, and India shipping charges
+- [ ] Configure a newsletter provider webhook if email subscriptions are required
 - [ ] Add structured data and non-index rules for private/utility pages
 - [ ] Add analytics, consent management, Web Vitals/RUM, and error monitoring
 - [ ] Add unit/integration/end-to-end tests and CI gates
