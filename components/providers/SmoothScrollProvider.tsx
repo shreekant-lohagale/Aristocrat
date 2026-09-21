@@ -1,7 +1,7 @@
 ﻿'use client';
 
-import Lenis from 'lenis';
-import gsap from 'gsap';
+import type Lenis from 'lenis';
+import type gsap from 'gsap';
 import { useEffect } from 'react';
 
 type SmoothScrollProviderProps = {
@@ -13,6 +13,8 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const mobileViewport = window.matchMedia('(max-width: 1023px), (pointer: coarse)');
     let lenis: Lenis | null = null;
+    let ticker: typeof gsap | null = null;
+    let generation = 0;
 
     const onAnchorClick = (event: MouseEvent) => {
       const target = event.target;
@@ -29,11 +31,13 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
     };
 
     const destroy = () => {
+      generation += 1;
       if (!lenis) return;
       document.removeEventListener('click', onAnchorClick);
-      gsap.ticker.remove(update);
+      ticker?.ticker.remove(update);
       lenis.destroy();
       lenis = null;
+      ticker = null;
       document.documentElement.classList.remove('lenis', 'lenis-smooth');
     };
 
@@ -44,19 +48,25 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
     const initialise = () => {
       destroy();
       if (reducedMotion.matches || mobileViewport.matches) return;
-
-      lenis = new Lenis({
-        autoRaf: false,
-        duration: 1.18,
-        smoothWheel: true,
-        wheelMultiplier: 0.95,
-        touchMultiplier: 1,
+      const current = generation;
+      void Promise.all([import('lenis'), import('gsap')]).then(([lenisModule, gsapModule]) => {
+        if (current !== generation || reducedMotion.matches || mobileViewport.matches) return;
+        lenis = new lenisModule.default({
+          autoRaf: false,
+          duration: 1.18,
+          smoothWheel: true,
+          wheelMultiplier: 0.95,
+          touchMultiplier: 1,
+        });
+        ticker = gsapModule.default;
+        document.documentElement.classList.add('lenis', 'lenis-smooth');
+        ticker.ticker.add(update);
+        ticker.ticker.lagSmoothing(0);
+        document.addEventListener('click', onAnchorClick);
+      }).catch(() => {
+        if (current === generation) destroy();
+        // Native scrolling remains available if the optional desktop modules fail to load.
       });
-
-      document.documentElement.classList.add('lenis', 'lenis-smooth');
-      gsap.ticker.add(update);
-      gsap.ticker.lagSmoothing(0);
-      document.addEventListener('click', onAnchorClick);
     };
 
     initialise();

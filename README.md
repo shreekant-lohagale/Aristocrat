@@ -382,6 +382,8 @@ Shopify Payments activation/verification, live Shopify acceptance testing, Canad
 
 ## Production checklist
 
+The owner-specific release gates, severity, production acceptance tests, launch-day checks, and post-launch checks are in [LAUNCH_CHECKLIST.md](LAUNCH_CHECKLIST.md). The short list below is a developer reminder, not a claim that Shopify Admin or the live store is ready.
+
 - [ ] Verify production Storefront and Customer Account API configuration
 - [ ] Publish and audit all required Shopify collections/products
 - [ ] Configure Shopify Payments/payment methods
