@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { staggerContainer, staggerItem, viewportOnce } from '@/lib/motion';
 
 const asset = (file: string) => `/api/assets?file=${encodeURIComponent(file)}`;
@@ -28,6 +28,16 @@ const houseLinks = [
 export function Footer() {
   const reducedMotion = useReducedMotion();
   const [newsletter, setNewsletter] = useState<NewsletterState>({ kind: 'idle', message: '' });
+  const [subscriptionAvailable, setSubscriptionAvailable] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/newsletter')
+      .then((response) => response.json())
+      .then((result: { available?: boolean }) => { if (active) setSubscriptionAvailable(Boolean(result.available)); })
+      .catch(() => { if (active) setSubscriptionAvailable(false); });
+    return () => { active = false; };
+  }, []);
 
   const subscribe = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -61,10 +71,10 @@ export function Footer() {
           <Image className="footer-logo" src={asset('House_of_Aristocrat_Logo_Transparent_2000px.png')} alt="House of Aristocrat" width={250} height={58} />
           <p className="eyebrow">Join the House</p>
           <p className="footer-copy">Private edits, new collections and stories from House of Aristocrat.</p>
-          <form className="newsletter-form" onSubmit={subscribe} noValidate>
+          {subscriptionAvailable === true ? <form className="newsletter-form" onSubmit={subscribe} noValidate>
             <input name="email" aria-label="Email address" placeholder="Your email address" type="email" autoComplete="email" disabled={newsletter.kind === 'loading'} />
             <button aria-label="Subscribe" type="submit" disabled={newsletter.kind === 'loading'}><ArrowUpRight /></button>
-          </form>
+          </form> : subscriptionAvailable === false ? <p className="footer-newsletter-unavailable">Email updates are coming soon.</p> : null}
           <p className={`newsletter-form__status newsletter-form__status--${newsletter.kind}`} role="status" aria-live="polite">{newsletter.message}</p>
         </motion.div>
         <motion.div variants={staggerItem}>

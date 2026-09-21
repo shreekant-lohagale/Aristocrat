@@ -66,7 +66,7 @@ export function ProductCoverflow({ products, reducedMotion = false }: ProductCov
     const mobile = mobileRef.current;
     const pitch = width * (mobile ? 0.94 : 1);
     const rotate = reducedMotion ? 0 : mobile ? 9 : 19;
-    const depth = reducedMotion ? 0 : mobile ? 0.11 : 0.24;
+    const depth = reducedMotion ? 0 : mobile ? 0.09 : 0.16;
     const position = positionRef.current;
 
     cardRefs.current.forEach((card, index) => {
@@ -79,7 +79,7 @@ export function ProductCoverflow({ products, reducedMotion = false }: ProductCov
 
       const distance = Math.abs(offset);
       const ramp = Math.pow(distance, 0.68);
-      const tilt = Math.min(rotate * ramp, 64) * Math.sign(offset);
+      const tilt = Math.min(rotate * ramp, mobile ? 20 : 38) * Math.sign(offset);
       const scale = Math.max(mobile ? 0.88 : 0.84, (mobile ? 1 : 1.05) - distance * (mobile ? 0.065 : 0.1));
       const ringEdge = loop && count > 2
         ? Math.min(1, Math.max(0, (count / 2 - distance) / 0.42))

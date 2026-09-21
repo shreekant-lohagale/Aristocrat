@@ -56,11 +56,6 @@ export function CinematicCollections() {
   const storyOneY = useTransform(scrollYProgress, [0, 0.27, 0.37], [0, 0, -12]);
   const storyTwoY = useTransform(scrollYProgress, [0, 0.27, 0.37, 0.61, 0.71], [18, 18, 0, 0, -12]);
   const storyThreeY = useTransform(scrollYProgress, [0, 0.61, 0.71], [18, 18, 0]);
-  const chapterProgress = useTransform(scrollYProgress, (progress) => {
-    if (progress < 0.32) return progress / 0.32;
-    if (progress < 0.66) return (progress - 0.32) / 0.34;
-    return (progress - 0.66) / 0.34;
-  });
   const storyMotion = [
     { opacity: storyOneOpacity, y: storyOneY },
     { opacity: storyTwoOpacity, y: storyTwoY },
@@ -80,7 +75,7 @@ export function CinematicCollections() {
         </div>
         <div className="editorial-scroll-stories__progress" aria-hidden="true">
           <span>{String(activeStory + 1).padStart(2, '0')}</span>
-          <i><motion.b style={{ scaleY: chapterProgress }} /></i>
+          <i><motion.b style={{ scaleY: scrollYProgress }} /></i>
           <span>03</span>
         </div>
       </div>

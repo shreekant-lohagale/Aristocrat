@@ -3,6 +3,10 @@ import { z } from 'zod';
 
 const requestSchema = z.object({ email: z.string().trim().email().max(254) });
 
+export function GET() {
+  return NextResponse.json({ available: Boolean(process.env.NEWSLETTER_SUBSCRIBE_WEBHOOK_URL) });
+}
+
 export async function POST(request: Request) {
   let parsed: z.infer<typeof requestSchema>;
   try {

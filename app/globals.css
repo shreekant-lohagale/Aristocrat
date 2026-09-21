@@ -5447,3 +5447,43 @@ body { background: var(--hoa-cream); color: var(--hoa-navy); }
   .editorial-hero__campaign-actions { margin-top: 18px; }
   .product-coverflow__actions { flex-wrap: wrap; justify-content: center; }
 }
+
+/* Final homepage fit and interaction polish. */
+.editorial-scroll-stories__layers { isolation: isolate; }
+.editorial-scroll-story__image img { mix-blend-mode: multiply; }
+.editorial-category__content > .editorial-category__pending {
+  display: inline-block;
+  width: auto;
+  margin: 3px 0 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--hoa-gold-muted);
+  color: var(--hoa-white);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.footer-newsletter-unavailable {
+  margin: 22px 0 0;
+  color: rgb(255 255 255 / 72%);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.newsletter-form input { min-width: 0; }
+.newsletter-form input:focus-visible,
+.newsletter-form button:focus-visible,
+.footer a:focus-visible { outline: 2px solid var(--hoa-gold-muted); outline-offset: 4px; }
+@media (max-width: 768px) {
+  .editorial-category--dresses .editorial-category__content h3,
+  .editorial-category--indo-western .editorial-category__content h3 { font-size: clamp(1.3rem, 6vw, 2rem); overflow-wrap: anywhere; }
+  .editorial-scroll-story__copy { padding-inline: max(20px, env(safe-area-inset-left)) max(20px, env(safe-area-inset-right)); }
+  .footer-grid { gap: 34px; }
+  .footer-bottom { flex-wrap: wrap; row-gap: 13px; }
+}
+@media (max-width: 390px) {
+  .editorial-categories { padding-inline: 16px; }
+  .editorial-categories__grid { gap: 10px; }
+  .editorial-category__content,
+  .editorial-category--featured .editorial-category__content { padding: 17px; }
+  .product-coverflow__details { padding-inline: 16px; }
+}
