@@ -17,8 +17,17 @@ The `Final Product` PNGs are source image mappings, not approval to publish. Wha
 
 ## Completing the intake
 
-`client-completion.csv` has one row per Product 1–27, prefilled only with source identity, image path, and known quantity. The client/developer must supply the final product name, category, confirmed currency, regular price, optional approved sale price, size, quantity confirmation, colour, material/fabric, description, exact included items, image approval, any additional approved images, optional SKU, and explicit publish decision. Do not copy values from the development fallback catalog or infer them from photographs. Leave unknown fields blank until confirmed.
+`client-completion.csv` has one row per Product 1–27, prefilled only with source identity, image path, source price amount, and known quantity. The client/developer must supply the final product name, category, confirmed currency, regular price, optional approved sale price, size, quantity confirmation, colour, material/fabric, description, exact included items, image approval, any additional approved images, optional SKU, and explicit publish decision. Do not copy values from the development fallback catalog or infer them from photographs. Leave unknown fields blank until confirmed.
 
 The original CSV is retained unchanged. The 27 price amounts have been transcribed into `sourcePriceAmount`, with row numbers, raw price strings, names, comments, and deal notes for traceability. The `$` symbol is insufficient to fill `priceCurrency`. Reconcile any discrepancy with the client before setting a record ready. The blank `regularPrice` field is for the client-confirmed selling price and must not silently inherit a source amount without currency and approval.
 
 To prepare a future import, review the completed template against the source records, update the intake JSON with approved fields, and run `node scripts/validate-product-intake.mjs` and `node --test scripts/validate-product-intake.test.mjs`. The validator checks numbered image mappings and requires a final title, category, three-letter currency, positive regular price, size, nonnegative integer quantity, approved image, exact included items, and explicit publish approval before `publicationStatus` can be `ready`. Material and description remain editorial fields for client completion; the script does not interpret them as permission to publish. A `ready` marker is only a local review state; there is deliberately no Shopify import or publish command.
+
+## Later Shopify handoff
+
+1. Obtain the client's completed fields and resolve every discrepancy with the unchanged source CSV. Confirm currency explicitly; `$` does not identify CAD or USD. Confirm Product 1's discount separately from its `Opening Dis` note and Products 4–12's exact set contents separately from `Full set`.
+2. Record approved details in the intake and run the validator/tests. Keep Product 28, model images and Jewellery separate until each has its own authorized commercial record.
+3. Through a separately approved Shopify merchant workflow, create draft products with real variant/size/stock data and approved images. This repository has no Admin API product-creation tool and stores no Admin credential.
+4. Review draft prices, currency, market availability, copy, images, variants, inventory and collection membership with the client. Publish to the Headless sales channel only after explicit approval, then verify product, collection, search, cart and checkout behavior through the Storefront API.
+
+Passing the local validator is a data-quality gate, not authorization to create inventory or publish. Do not map WhatsApp reference photos to customer-facing product images without specific image approval.

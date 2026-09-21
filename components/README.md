@@ -10,12 +10,12 @@ Components are grouped by storefront feature. Shared state comes from `StoreProv
 | --- | --- |
 | `home/` | Current homepage campaign/editorial composition |
 | `collection/` | Collection heading, catalog loading, filters, sort, pagination |
-| `product/` | Reusable product cards and interactive PDP |
+| `product/` | Reusable product cards, interactive PDP and homepage coverflow |
 | `cart/` | Cart drawer/page summary and checkout action |
 | `account/` | Branded customer overview, navigation, wishlist preview |
 | `layout/` | Announcement bar, navbar, market selector and footer |
 | `ui/` | Buttons, loaders, image-loading wrapper and skeletons |
-| `common/` | Small generic controls such as back/button wrappers |
+| `common/` | Back/button wrappers and reusable support/legal information renderers |
 | `providers/` | Global client behavior; currently desktop Lenis/GSAP integration |
 | `search/` | Debounced catalog search experience |
 | `wishlist/` | Standalone wishlist-to-catalog view |
@@ -43,10 +43,10 @@ Detailed guides: [home](home/README.md), [collections](collection/README.md), [p
 - CSS uses explicit mobile/tablet breakpoints rather than a Tailwind utility workflow.
 - On mobile, prefer native scrolling, ordinary document flow, opacity, and small translate transitions.
 - Drawers/dialogs must restore body overflow, close on Escape, expose dialog semantics, and use `data-lenis-prevent` where desktop Lenis could interfere.
+- `hooks/useModalFocus.ts` supplies initial focus, Tab containment and focus return for modal surfaces; do not duplicate a partial focus trap in each feature.
 
 ## Creating or extending components
 
 Reuse a UI primitive when interaction and semantics already match. Create a feature component when it owns domain-specific behavior or layout. Keep `CatalogProduct` mapping out of components and never introduce hard-coded production commerce records into JSX.
 
 Known dormant components include older homepage sections (`Categories`, `SeasonEdit`, `EditorialCollectionGrid`), `collection/ProductGrid`, and local account editors. Confirm imports before editing them.
-

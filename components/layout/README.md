@@ -19,7 +19,7 @@ The navbar is transparent over compatible hero content and becomes solid from ex
 
 Account navigation depends on `customerAuthenticated`: logged-out users go to `/account/auth/login`, authenticated/unknown users go to `/account`. This status is derived by `StoreProvider` through the protected wishlist endpoint.
 
-When changing menu behavior, preserve Escape closing, body-overflow restoration, dialog semantics, minimum touch targets, visible focus treatment, and reduced motion.
+When changing menu behavior, preserve Escape closing, body-overflow restoration, dialog semantics, focus trapping/restoration through `useModalFocus`, minimum touch targets, visible focus treatment, and reduced motion.
 
 ## Country selector
 
@@ -33,16 +33,7 @@ Supported markets are defined centrally in `StoreProvider`; catalog and checkout
 
 ## Footer
 
-`Footer.tsx` renders the official logo, newsletter presentation, client-care links, social placeholders, and copyright line with Framer Motion entrance.
-
-Known issues:
-
-- Newsletter markup has no submit handler; the `services/newsletter.ts` wrapper points to a missing `/api/newsletter` route.
-- Client-care routes such as `/contact`, `/shipping-returns`, `/size-guide`, and `/track-order` are not implemented.
-- Social links use `#` placeholders.
-- Privacy/Terms copy is not linked.
-
-Do not present these as completed production integrations until corresponding routes/services exist.
+`Footer.tsx` renders the official logo, client-care and House links, Privacy/Terms links, and a newsletter area with Framer Motion entrance. There are no invented social URLs. All listed internal destinations have routes. The footer checks `GET /api/newsletter`; when `NEWSLETTER_SUBSCRIBE_WEBHOOK_URL` is absent, it says email updates are coming soon. When configured, the form posts to the route and displays success/error feedback. The endpoint validates the address with Zod and optionally authenticates to the provider with `NEWSLETTER_SUBSCRIBE_TOKEN`. Do not claim a live newsletter subscription until the provider is configured and tested.
 
 ## Safe extension points
 
@@ -51,4 +42,3 @@ Do not present these as completed production integrations until corresponding ro
 - Avoid embedding customer identity or tokens in header markup.
 - Ensure dropdowns are not clipped by header overflow and open within the viewport.
 - Verify transparent and solid color contrast over every page that renders the navbar.
-

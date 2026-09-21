@@ -69,3 +69,5 @@ Never create an empty navigation item merely because a future Shopify collection
 `pending-product-assets.ts` records client-supplied photography without inventing commerce data. Do not turn an entry into a fallback/Shopify record until product identity, title, price, compare-at price, sizes, stock, SKU, colour, fabric, and description are authoritative. If an asset may replace an existing product image, confirm it depicts the same garment first.
 
 The separate [unpublished intake](../../catalog-intake/README.md) maps the numbered Product 1–27 CSV rows and images, Product 28's image-only candidate, and the twelve Chaniya Choli model images. It is developer reference data and is not imported by this catalog layer.
+
+The original intake CSV preserves a `$` price symbol without a confirmed currency. No intake record may enter this runtime catalogue merely because it has an image or a source price. Confirm client fields, create approved products in Shopify through a separately authorized merchant workflow, publish to the Headless sales channel, and then verify the mapped Storefront response before adding editorial promotion.

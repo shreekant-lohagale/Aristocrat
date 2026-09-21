@@ -24,8 +24,9 @@ Buy Now passes one selected variant with mode `buy-now`; the server creates a se
 
 - Checkout is disabled when any line lacks a Shopify variant ID.
 - Requests time out client-side after 15 seconds.
+- The pending state disables repeat submission; verify this when changing the checkout action.
 - Pending state uses `InlineLoader`; errors remain visible with `role="alert"`.
-- The drawer uses Framer Motion, an interactive scrim, `data-lenis-prevent`, and preserves the underlying page until closed.
+- The drawer uses Framer Motion, an interactive scrim, dialog semantics, `useModalFocus` for keyboard containment/return, and `data-lenis-prevent` for its scrollable panel.
 - Empty cart views link to collections.
 
 ## Safe changes
@@ -41,4 +42,3 @@ Buy Now passes one selected variant with mode `buy-now`; the server creates a se
 - The local cart is not customer-bound, cross-device, or explicitly multi-tab synchronized.
 - Discounts, gift cards, shipping, taxes, and payment are resolved in Shopify-hosted checkout rather than the storefront UI.
 - A cart is synchronized with Shopify at checkout time, not after every browser cart edit.
-

@@ -19,6 +19,7 @@ This folder owns server-side communication with Shopify. Product UI should consu
 | `customer-account.ts` | OpenID/Customer API discovery and customer summary query |
 | `customer-account-url.ts` | Validates the hosted customer account fallback URL |
 | `customer-wishlist.ts` | Reads/writes `custom.wishlist` with compare-digest protection |
+| `shop-information.ts` | Reads Shopify-published contact, privacy, shipping, refund and terms fields with an unavailable fallback |
 
 All modules that read environment variables, cookies, filesystem/server APIs, or access tokens are server-only by architecture. Do not import them into client components.
 
@@ -31,6 +32,8 @@ https://<SHOPIFY_STORE_DOMAIN>/api/2026-07/graphql.json
 ```
 
 The preferred variables are `SHOPIFY_STORE_DOMAIN` and `SHOPIFY_STOREFRONT_ACCESS_TOKEN`. Legacy `VTBSJMYH_SHOPIFY_*` alternatives remain supported. Production never permits local catalog fallback; development only does so when `ENABLE_LOCAL_CATALOG_FALLBACK=true`.
+
+`SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID` enables custom Customer Account OAuth when the store domain is also present. `SHOPIFY_CUSTOMER_ACCOUNT_URL` is an optional validated HTTPS destination for hosted orders, addresses, profile and fallback sign-in. Newsletter webhook variables belong to `/api/newsletter`, not this Shopify module. All variables are documented without values in the [root environment table](../../README.md#environment-variables).
 
 `shopifyFetch` sends the Storefront token in `X-Shopify-Storefront-Access-Token`, detects the GraphQL operation name for diagnostics, and converts network, HTTP, GraphQL, and missing-data cases into server errors. Do not include the token or complete response payload in logs.
 
@@ -115,6 +118,8 @@ The callback stores access/ID tokens in HttpOnly, same-site cookies scoped to `/
 
 There is no refresh-token storage or refresh flow. Do not document the session as permanent.
 
+Shopify must approve the exact storefront JavaScript origin, `/account/auth/callback` redirect URI and `/account` post-logout URI for each deployment. The login route derives callback/logout URLs from the incoming origin; the callback sends that origin in token exchange. Verify proxy and custom-domain behavior before launch.
+
 ## Wishlist metafield
 
 Required Shopify definition:
@@ -140,6 +145,12 @@ flowchart LR
 
 The browser merge, optimistic queue, multi-tab messaging, and logout isolation live in `context/StoreProvider.tsx`. Customer access tokens never leave the server endpoint.
 
+## Published policies and account handoff
+
+`shop-information.ts` queries Shopify's published contact information, privacy policy, shipping policy, refund policy, terms of service and terms of sale. It returns `null` when Storefront configuration is absent or the query fails; support/legal pages then show a notice rather than invented text. `PublishedPolicy` converts available HTML to text and links only to HTTPS original policy URLs. Privacy/terms/shipping pages control indexing based on whether the relevant published body is present. Merchant publication and final legal review remain external requirements.
+
+The custom `/account` page fetches a customer summary only. `/account/orders`, `/account/addresses` and `/account/profile` redirect to the hosted account URL when configured or use the login fallback. Do not treat dormant local account editors as Shopify-backed management.
+
 ## Error handling and security rules
 
 - Keep catalog failures distinct from missing/unpublished collections.
@@ -157,4 +168,3 @@ The browser merge, optimistic queue, multi-tab messaging, and logout isolation l
 - **Add a collection:** publish it in Shopify, add its canonical definition, and update intentional navigation/editorial surfaces.
 - **Diagnose access:** run `npm run test:shopify`, then `npm run audit:shopify` against a non-production credential set.
 - **Change account domain:** update Shopify-approved origins/callback/logout URLs and deployment variables together.
-

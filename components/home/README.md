@@ -19,28 +19,28 @@ The current homepage is assembled in `app/(shop)/page.tsx`. Its order is intenti
 
 | Component | Content source | Purpose |
 | --- | --- | --- |
-| `Hero` | Local official logo and `Brand Hero Pic.png` | Full-viewport split brand campaign and collection CTA |
+| `Hero` | Official logo and `new images/WhatsApp Image 2026-08-31 at 11.09.10 PM.jpeg` | Full-viewport campaign visual, Everyday Elegance headline and collection CTA |
 | `CinematicIntro` | Two local Chaniya Choli campaign photographs | Dressing, Reimagined editorial statement |
 | `EditorialCategories` | `lib/catalog/categories.ts` | Campaign-driven category navigation |
 | `CinematicCollections` | Local story configuration/images | Three desktop sticky collection stories |
 | `CampaignBanner` | Local campaign image | Full-width Modern Heritage promotion |
-| `FeaturedProducts` | `/api/catalog`, Shopify `new-arrivals` | Live product cards; eight-item presentation limit |
+| `FeaturedProducts` | `/api/catalog`, Shopify `new-arrivals` | Up to eight products in `ProductCoverflow`, with loading/error/empty states |
 | `MaisonStory` | Local campaign image/copy | Editorial brand story and `/about` CTA |
 | `HomepageAccountCta` | `StoreProvider.customerAuthenticated` | Minimal sign-in/account entry point |
 
-Only `FeaturedProducts` is directly Shopify-product-driven. Editorial category labels/routes are centralized in `lib/catalog/categories.ts`, while campaign story configuration currently lives in `CinematicCollections.tsx`.
+Only `FeaturedProducts` is directly Shopify-product-driven. Editorial category labels/routes are centralized in `lib/catalog/categories.ts`, while campaign story configuration currently lives in `CinematicCollections.tsx`. The three desktop story chapters share one progress treatment; mobile uses native stacked sections. `ProductCoverflow` is in `components/product/` and handles pointer, touch and keyboard selection with reduced-motion support.
 
 ## Motion and responsive behavior
 
 Homepage sections use shared `fadeUp`, `imageReveal`, stagger and viewport-once variants. Every component checks `useReducedMotion`.
 
-Desktop cinematic stories use a tall scroll area and sticky full-viewport composition. At 768px and below they become ordinary image-then-copy sections with no sticky/pinned behavior or image filtering. Global Lenis is also disabled on mobile/coarse pointers.
+Desktop cinematic stories use a tall scroll area and sticky full-viewport composition. At 1023px and below, or with reduced motion, they become ordinary image-then-copy sections with no sticky/pinned behavior. Global Lenis is also disabled at 1023px and below, on coarse pointers and with reduced motion.
 
 Do not add mobile scrub/parallax, continuous scale, expensive blur animation, or another scroll loop. Preserve ordinary document flow on touch devices.
 
 ## Image and crop rules
 
-- Hero image: local `Brand Hero Pic.png`; it is the prioritized LCP visual.
+- Hero image: the local campaign JPEG named above; it is the prioritized LCP visual. Do not replace it during routine catalogue work.
 - Keep campaign subjects identifiable and faces/heads visible on mobile.
 - Use `next/image`, stable positioned/aspect-ratio wrappers, intentional `object-position`, and accurate `sizes`.
 - Non-critical sections should remain lazy-loaded by default.
@@ -56,6 +56,7 @@ Do not add mobile scrub/parallax, continuous scale, expensive blur animation, or
 - Preserve section order unless the product/design owner explicitly changes the editorial flow.
 - Add categories through the shared editorial registry only when both a valid collection and image exist.
 - Keep the hero and first viewport free of layout shifts.
-- Check CTA routes before publishing; `/about` is currently referenced but its page does not exist.
+- Check every CTA route before publishing; `/about` and the other support/legal destinations now exist.
 - Test at desktop, tablet, 430/390/375/360px, reduced motion, slow images, and Shopify outage states.
 
+The homepage design and section order are frozen at their current 9/10 state. Change them only for a confirmed bug or explicit client request. Preserve the hero image, centered wordmark, palette and editorial chapter concepts.

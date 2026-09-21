@@ -2,7 +2,7 @@
 
 [Back to the project README](../../README.md) · [Component overview](../README.md) · [Catalog domain](../../lib/catalog/README.md)
 
-This folder renders collection headings and the interactive catalog used by `/collections`, `/collections/[handle]`, and the homepage New Arrivals section.
+This folder renders collection headings and the interactive catalog used by `/collections` and `/collections/[handle]`. Homepage New Arrivals is currently `FeaturedProducts` plus `ProductCoverflow`, not `CatalogGrid`.
 
 ## Active files
 
@@ -34,7 +34,7 @@ Changing a non-page filter clears `page`; updates use `router.replace(..., { scr
 - Missing/unpublished Shopify collections have a distinct retryable error.
 - Empty collections and filtered-empty results have different copy/actions.
 - Jewellery currently has explicit coming-soon empty copy.
-- `variant="new-arrivals"` applies homepage-specific presentation; `limit={8}` is used there.
+- `variant="new-arrivals"` remains an available `CatalogGrid` presentation option, but the current homepage does not use it.
 
 ## Safe extension points
 
@@ -44,4 +44,3 @@ Changing a non-page filter clears `page`; updates use `router.replace(..., { scr
 - For catalogs above 100 products, redesign the API around cursors/server facets rather than increasing only the client page count.
 
 Do not fetch Shopify directly from this client component or compare raw collection labels without `normalizeCollectionHandle`.
-

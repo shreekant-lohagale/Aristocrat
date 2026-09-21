@@ -30,7 +30,11 @@ This folder owns route composition, server rendering, loading/error boundaries, 
 | `/account/addresses` | Hosted address management handoff | Server redirect | `SHOPIFY_CUSTOMER_ACCOUNT_URL` |
 | `/account/profile` | Hosted profile management handoff | Server redirect | `SHOPIFY_CUSTOMER_ACCOUNT_URL` |
 | `/account/wishlist` | Branded full wishlist inside account shell | Async server shell + client wishlist | Customer state, `WishlistPreview` |
+| `/about`, `/contact` | House and client-care information | Server pages; contact reads published Shopify contact information | `InformationPage`, `getPublishedShopInformation` |
+| `/shipping-returns`, `/size-guide`, `/track-order` | Support guidance and secure order handoff | Server pages; shipping/returns reads Shopify policies | Published content and account routes |
+| `/privacy-policy`, `/terms` | Legal information | Dynamic server pages; noindex when approved body is unavailable | Shopify-published policies |
 | `/api/catalog` | Product, collection and search JSON boundary | Dynamic route handler; no-store | `lib/catalog/products.ts` |
+| `/api/newsletter` | Availability GET and optional provider POST | Route handler | Optional server-side webhook settings |
 | `/api/shopify/checkout` | Creates/reconciles Shopify carts | POST route handler | `lib/shopify/cart.ts` |
 | `/account/api/wishlist` | Authenticated wishlist GET/PUT | Force-dynamic private route handler | HttpOnly customer token, `custom.wishlist` |
 | `/account/auth/login` | Starts OAuth/PKCE | GET redirect handler | Shopify OpenID discovery |
@@ -42,6 +46,7 @@ This folder owns route composition, server rendering, loading/error boundaries, 
 | `/robots.txt` | Crawler rules | Metadata route | Hard-coded production sitemap URL |
 | `/opengraph-image` | Generated social card | Image metadata route | `ImageResponse` |
 | `/twitter-image` | Generated X/Twitter card | Image metadata route | `ImageResponse` |
+| `/icon.png`, `/apple-icon.png` | Site/application icons | Static metadata assets | Files in `app/` |
 
 Collection pages intentionally do not render the main navbar or announcement bar. Product, store, homepage, and account layout paths render navigation through their own page/layout composition.
 
@@ -51,6 +56,7 @@ Collection pages intentionally do not render the main navbar or announcement bar
 - Product pages use `notFound()` when Shopify has no matching handle and derive their back/related collection from non-special collection membership.
 - Product and collection pages generate route-specific metadata on the server.
 - Catalog and Customer Account data uses `no-store`; OpenID discovery is revalidated hourly.
+- Published privacy, terms, shipping, refund and contact fields come from Shopify when configured. The pages state when approved content is unavailable; do not fill gaps with invented business policy.
 
 ## Loading and errors
 
@@ -68,4 +74,3 @@ Collection pages intentionally do not render the main navbar or announcement bar
 - Update `sitemap.ts`, `robots.ts`, navigation, and footer when adding/removing public routes.
 
 Do not add secrets to route output, cache customer responses publicly, or widen asset-file access beyond `files/`.
-
