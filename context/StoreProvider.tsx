@@ -10,6 +10,7 @@ const countries: Country[] = [
   { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', currency: 'GBP', symbol: '£', rate: 0.0095 },
   { code: 'AU', name: 'Australia', flag: '🇦🇺', currency: 'AUD', symbol: 'A$', rate: 0.018 },
 ];
+const defaultCountry = countries.find((country) => country.code === 'CA') ?? countries[0];
 
 type AddOptions = Pick<CartLine, 'size' | 'color' | 'variantId'>;
 type Store = {
@@ -42,6 +43,7 @@ const anonymousWishlistKey = 'hoa-anonymous-wishlist';
 const legacyWishlistKey = 'mahera-wishlist';
 const wishlistSyncKey = 'hoa-wishlist-sync';
 const wishlistEndpoint = '/account/api/wishlist';
+const canadaDefaultMigrationKey = 'hoa-market-default-ca-v1';
 
 function normalizeWishlist(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
@@ -68,7 +70,7 @@ function writeLocalWishlist(wishlist: string[]) {
 }
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [country, setCountryState] = useState(countries[0]);
+  const [country, setCountryState] = useState(defaultCountry);
   const [cart, setCart] = useState<CartLine[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [customerAuthenticated, setCustomerAuthenticated] = useState<boolean | null>(null);
@@ -187,8 +189,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     try {
       const savedCountry = localStorage.getItem('mahera-country');
       const savedCart = localStorage.getItem('mahera-cart');
-      const found = countries.find((entry) => entry.code === savedCountry);
+      const migratedToCanadaDefault = localStorage.getItem(canadaDefaultMigrationKey) === '1';
+      const shouldMigrateLegacyIndia = !migratedToCanadaDefault && (!savedCountry || savedCountry === 'IN');
+      const effectiveCountry = shouldMigrateLegacyIndia ? defaultCountry.code : savedCountry;
+      const found = countries.find((entry) => entry.code === effectiveCountry);
       if (found) setCountryState(found);
+      if (!migratedToCanadaDefault) {
+        if (shouldMigrateLegacyIndia) localStorage.setItem('mahera-country', defaultCountry.code);
+        localStorage.setItem(canadaDefaultMigrationKey, '1');
+      }
       if (savedCart) {
         setCart((JSON.parse(savedCart) as CartLine[]).map((line) => ({
           ...line,

@@ -29,6 +29,13 @@ const collectionLinks = [
   ['Jewellery', '/collections/jewellery'],
 ] as const;
 
+const primaryLinks = [
+  ['New Arrivals', '/collections/new-arrivals'],
+  ['Kurtis', '/collections/kurtis'],
+  ['Dresses', '/collections/dresses'],
+  ['Indo-Western', '/collections/indo-western'],
+] as const;
+
 const mobileLinks = [
   ['New Arrivals', '/collections/new-arrivals'],
   ...collectionLinks,
@@ -41,7 +48,6 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [hovered, setHovered] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
   const { cartCount, wishlist, customerAuthenticated } = useStore();
@@ -49,7 +55,7 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
   const accountHref = customerAuthenticated === false ? '/account/auth/login' : '/account';
 
   useEffect(() => {
-    const update = () => setScrolled(window.scrollY > 88);
+    const update = () => setScrolled(window.scrollY > 32);
 
     update();
     window.addEventListener('scroll', update, { passive: true });
@@ -67,7 +73,7 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
     };
   }, [menuOpen]);
 
-  const solidNav = solid || scrolled || hovered || menuOpen;
+  const solidNav = solid || scrolled || menuOpen;
   const closeMenu = () => setMenuOpen(false);
   useModalFocus(menuOpen, menuRef, closeMenu);
 
@@ -76,8 +82,6 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
       <AnnouncementBar />
 
       <motion.header
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
         className={`navbar editorial-navbar ${
           scrolled ? 'editorial-navbar--scrolled' : ''
         } ${solidNav ? 'editorial-navbar--solid' : ''}`}
@@ -101,9 +105,13 @@ export function Navbar({ solid = false }: { solid?: boolean }) {
               href="/search"
               aria-label="Search the collection"
             >
-              <span>Search the collection...</span>
               <Search size={17} strokeWidth={1.6} />
+              <span>Search</span>
             </Link>
+
+            <nav className="editorial-navbar__primary-links" aria-label="Featured collections">
+              {primaryLinks.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
+            </nav>
 
             <div className="editorial-navbar__market">
               <CountrySelector />
